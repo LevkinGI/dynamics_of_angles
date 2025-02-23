@@ -150,18 +150,21 @@ def update_graphs(H, T, material):
         M_val = M_array[t_index]
         chi_val = chi_T(T)
         K_val = K_T(T)
-        amplitude_phi_static = phi_amplitude
-        amplitude_theta_static = theta_amplitude
-        # Для материала 1 можно использовать предвычисленные частотные массивы f1_GHz, f2_GHz
-        freq_array1 = f1_GHz
-        freq_array2 = f2_GHz
+        if matereal_changed:
+            amplitude_phi_static = phi_amplitude
+            amplitude_theta_static = theta_amplitude
+            freq_array1 = f1_GHz
+            freq_array2 = f2_GHz
     else:  # материал 2
         m_val = m_array_2[t_index]
         M_val = M_array_2[t_index]
-        chi_val = chi_const    # константное значение
-        K_val = K_const
-        amplitude_phi_static = phi_amplitude_2
-        amplitude_theta_static = theta_amplitude_2
+        if matereal_changed:
+            chi_val = chi_const
+            K_val = K_const
+            amplitude_phi_static = phi_amplitude_2
+            amplitude_theta_static = theta_amplitude_2
+            freq_array1 = f1_GHz_2
+            freq_array2 = f2_GHz_2
     
     kappa = m_val / gamma
 
@@ -262,8 +265,9 @@ def update_graphs(H, T, material):
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_freqs, H)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_freqs, T)
     if matereal_changed:
-        phi_amp_fig = create_phi_amp_fig(amplitude_phi_static)
-        theta_amp_fig = create_theta_amp_fig(amplitude_theta_static)
+        phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
+        theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
+        freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
     else:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
