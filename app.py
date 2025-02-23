@@ -272,7 +272,7 @@ def update_graphs(H, T, material):
         phi_amp_fig = no_update
         theta_amp_fig = no_update
         freq_fig = no_update
-    return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig, freq_fig = no_update
+    return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig, freq_fig
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
