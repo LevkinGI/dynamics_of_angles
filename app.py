@@ -15,6 +15,7 @@ from constants import H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, phi_ampl
 from simulator import run_simulation
 # Импорт функций аппроксимации из Cython модуля вместо Python-версии:
 from fitting_cy import fit_function_theta, fit_function_phi
+from fitting import residuals_stage1, residuals_stage2, combined_residuals
 from plotting import create_phi_fig, create_theta_fig, create_yz_fig, create_H_fix_fig, create_T_fix_fig
 
 # Простой кэш для результатов симуляции по выбранным значениям H и T
