@@ -47,6 +47,15 @@ app.layout = html.Div([
         marks={i: str(i) for i in range(290, 351, 10)}
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
+    dcc.Dropdown(
+        id='material-dropdown',
+        options=[
+            {'label': 'Материал 1', 'value': '1'},
+            {'label': 'Материал 2', 'value': '2'}
+        ],
+        value='1',
+        style={'width': '300px', 'margin-bottom': '20px'}
+    ),
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
         dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'})
@@ -154,21 +163,19 @@ def update_graphs(H, T, material):
         M_val = M_array[t_index]
         chi_val = chi_T(T)
         K_val = K_T(T)
-        if material_changed:
-            amplitude_phi_static = phi_amplitude
-            amplitude_theta_static = theta_amplitude
-            freq_array1 = f1_GHz
-            freq_array2 = f2_GHz
+        amplitude_phi_static = phi_amplitude
+        amplitude_theta_static = theta_amplitude
+        freq_array1 = f1_GHz
+        freq_array2 = f2_GHz
     else:  # материал 2
         m_val = m_array_2[t_index]
         M_val = M_array_2[t_index]
-        if material_changed:
-            chi_val = chi_const
-            K_val = K_const
-            amplitude_phi_static = phi_amplitude_2
-            amplitude_theta_static = theta_amplitude_2
-            freq_array1 = f1_GHz_2
-            freq_array2 = f2_GHz_2
+        chi_val = chi_const
+        K_val = K_const
+        amplitude_phi_static = phi_amplitude_2
+        amplitude_theta_static = theta_amplitude_2
+        freq_array1 = f1_GHz_2
+        freq_array2 = f2_GHz_2
     
     kappa = m_val / gamma
 
