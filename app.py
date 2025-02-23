@@ -161,6 +161,31 @@ def update_graphs(H, T, material):
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
   
+    t_index = np.abs(T_vals - T).argmin()
+    h_index = np.abs(H_vals - H).argmin()
+    
+    # Выбор данных в зависимости от материала
+    if material == '1':
+        m_val = m_array[t_index]
+        M_val = M_array[t_index]
+        chi_val = chi_T(T)
+        K_val = K_T(T)
+        amplitude_phi_static = phi_amplitude
+        amplitude_theta_static = theta_amplitude
+        freq_array1 = f1_GHz
+        freq_array2 = f2_GHz
+    else:  # материал 2
+        m_val = m_array_2[t_index]
+        M_val = M_array_2[t_index]
+        chi_val = chi_const
+        K_val = K_const
+        amplitude_phi_static = phi_amplitude_2
+        amplitude_theta_static = theta_amplitude_2
+        freq_array1 = f1_GHz_2
+        freq_array2 = f2_GHz_2
+    
+    kappa = m_val / gamma
+  
     sim_key = (H, T, material)
     
     # Если кэш уже содержит симуляцию, извлекаем ее; иначе – вычисляем
