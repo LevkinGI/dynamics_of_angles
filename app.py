@@ -6,7 +6,7 @@ import numpy as np
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
-from dash import dcc, html
+from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
@@ -17,7 +17,7 @@ from simulator import run_simulation
 # Импорт функций аппроксимации из Cython модуля вместо Python-версии:
 from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
-from plotting import create_phi_fig, create_theta_fig, create_yz_fig, create_H_fix_fig, create_T_fix_fig, create_phi_amp_fig, create_theta_amp_fig
+from plotting import create_phi_fig, create_theta_fig, create_yz_fig, create_H_fix_fig, create_T_fix_fig, create_phi_amp_fig, create_theta_amp_fig, create_freq_fig
 
 # Простой кэш для результатов симуляции по выбранным значениям H и T
 simulation_cache = {}
@@ -131,9 +131,13 @@ def update_slider_values(H, T):
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
      Output('H_fix-graph', 'figure'),
-     Output('T_fix-graph', 'figure')],
+     Output('T_fix-graph', 'figure'),
+     Output('phi-amplitude-graph', 'figure'),
+     Output('theta-amplitude-graph', 'figure'),
+     Output('frequency-surface-graph', 'figure')],
     [Input('H-slider', 'value'),
-     Input('T-slider', 'value')]
+     Input('T-slider', 'value'),
+     Input('material-dropdown', 'value')]
 )
 def update_graphs(H, T, material):
     # Определяем, какой input вызвал callback
