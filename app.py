@@ -11,7 +11,7 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
-from constants import H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, phi_amplitude, theta_amplitude, chi_T, K_T, gamma
+from constants import H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, phi_amplitude, theta_amplitude, chi_T, K_T, m_array_2, M_array_2, f1_GHz_2, f2_GHz_2, phi_amplitude_2, theta_amplitude_2, chi_const, K_const, gamma
 from simulator import run_simulation
 # Импорт функций аппроксимации из Cython модуля вместо Python-версии:
 from fitting_cy import fit_function_theta, fit_function_phi
