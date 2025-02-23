@@ -161,122 +161,156 @@ def update_graphs(H, T, material):
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
   
-    t_index = np.abs(T_vals - T).argmin()
-    h_index = np.abs(H_vals - H).argmin()
-    
-    # Выбор данных в зависимости от материала
-    if material == '1':
-        m_val = m_array[t_index]
-        M_val = M_array[t_index]
-        chi_val = chi_T(T)
-        K_val = K_T(T)
-        amplitude_phi_static = phi_amplitude
-        amplitude_theta_static = theta_amplitude
-        freq_array1 = f1_GHz
-        freq_array2 = f2_GHz
-    else:  # материал 2
-        m_val = m_array_2[t_index]
-        M_val = M_array_2[t_index]
-        chi_val = chi_const
-        K_val = K_const
-        amplitude_phi_static = phi_amplitude_2
-        amplitude_theta_static = theta_amplitude_2
-        freq_array1 = f1_GHz_2
-        freq_array2 = f2_GHz_2
-    
-    kappa = m_val / gamma
-
-    # Симуляция с кэшированием
     sim_key = (H, T, material)
+    
+    # Если кэш уже содержит симуляцию, извлекаем ее; иначе – вычисляем
     if sim_key in simulation_cache:
-        sim_time, sol = simulation_cache[sim_key]
+        cached = simulation_cache[sim_key]
+        sim_time = cached["simulation"]["sim_time"]
+        sol = cached["simulation"]["sol"]
     else:
+        # Выбор параметров по материалу
+        t_index = np.abs(T_vals - T).argmin()
+        h_index = np.abs(H_vals - H).argmin()
+        if material == '1':
+            m_val = m_array[t_index]
+            M_val = M_array[t_index]
+            chi_val = chi_T(T)
+            K_val = K_T(T)
+        else:
+            m_val = m_array_2[t_index]
+            M_val = M_array_2[t_index]
+            chi_val = chi_const
+            K_val = K_const
+        kappa = m_val / gamma
+
         sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa)
-        simulation_cache[sim_key] = (sim_time, sol)
+        simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}
+
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
     phi = np.degrees(sol[1])
 
-    # Этап 1: Оптимизация параметров (без амплитуд)
-    A1_theta = np.max(theta) / 2
-    A2_theta = A1_theta
-    A1_phi = np.max(phi) / 2
-    A2_phi = A1_phi
+    # Если кэш уже содержит аппроксимацию, используем ее
+    if "approximation" in simulation_cache[sim_key]:
+        approx = simulation_cache[sim_key]["approximation"]
+        A1_theta_opt = approx["A1_theta_opt"]
+        f1_theta_opt = approx["f1_theta_opt"]
+        n1_theta_opt = approx["n1_theta_opt"]
+        A2_theta_opt = approx["A2_theta_opt"]
+        f2_theta_opt = approx["f2_theta_opt"]
+        n2_theta_opt = approx["n2_theta_opt"]
+        A1_phi_opt = approx["A1_phi_opt"]
+        f1_phi_opt = approx["f1_phi_opt"]
+        n1_phi_opt = approx["n1_phi_opt"]
+        A2_phi_opt = approx["A2_phi_opt"]
+        f2_phi_opt = approx["f2_phi_opt"]
+        n2_phi_opt = approx["n2_phi_opt"]
+        f1_GHz_opt = approx["f1_GHz_opt"]
+        f2_GHz_opt = approx["f2_GHz_opt"]
+        theta_fit = approx["theta_fit"]
+        phi_fit = approx["phi_fit"]
+        approx_freqs_GHz = approx["approx_freqs_GHz"]
+        theor_freqs_GHz = approx["theor_freqs_GHz"]
+    else:
+        # Выполнение аппроксимации (оптимизация) – эта часть наиболее затратная
+        # (код оптимизации, как и раньше)
+        A1_theta = np.max(theta) / 2
+        A2_theta = A1_theta
+        A1_phi = np.max(phi) / 2
+        A2_phi = A1_phi
 
-    initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, 50, 10]
-    lower_bounds_stage1 = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
-    upper_bounds_stage1 = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 100, 100]
+        initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, 50, 10]
+        lower_bounds_stage1 = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
+        upper_bounds_stage1 = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 100, 100]
 
-    result_stage1 = least_squares(
-        residuals_stage1,
-        x0=initial_guess_stage1,
-        bounds=(lower_bounds_stage1, upper_bounds_stage1),
-        args=(sim_time, theta, phi, A1_theta, A2_theta, A1_phi, A2_phi),
-        xtol=1e-4, ftol=1e-4, gtol=1e-4, max_nfev=10000
-    )
-    (f1_theta_opt, n1_theta_opt, f2_theta_opt, n2_theta_opt,
-     f1_phi_opt, n1_phi_opt, f2_phi_opt, n2_phi_opt,
-     f1_GHz_opt, f2_GHz_opt) = result_stage1.x
+        result_stage1 = least_squares(
+            residuals_stage1,
+            x0=initial_guess_stage1,
+            bounds=(lower_bounds_stage1, upper_bounds_stage1),
+            args=(sim_time, theta, phi, A1_theta, A2_theta, A1_phi, A2_phi),
+            xtol=1e-4, ftol=1e-4, gtol=1e-4, max_nfev=10000
+        )
+        (f1_theta_opt, n1_theta_opt, f2_theta_opt, n2_theta_opt,
+         f1_phi_opt, n1_phi_opt, f2_phi_opt, n2_phi_opt,
+         f1_GHz_opt, f2_GHz_opt) = result_stage1.x
 
-    # Этап 2: Оптимизация амплитуд и фаз
-    initial_guess_stage2 = [A1_theta, A2_theta, A1_phi, A2_phi]
-    result_stage2 = least_squares(
-        residuals_stage2,
-        x0=initial_guess_stage2,
-        args=(sim_time, theta, phi, f1_theta_opt, n1_theta_opt, f2_theta_opt, n2_theta_opt,
-              f1_phi_opt, n1_phi_opt, f2_phi_opt, n2_phi_opt, f1_GHz_opt, f2_GHz_opt),
-        xtol=1e-4, ftol=1e-4, gtol=1e-4, max_nfev=10000
-    )
-    A1_theta_opt, A2_theta_opt, A1_phi_opt, A2_phi_opt = result_stage2.x
+        initial_guess_stage2 = [A1_theta, A2_theta, A1_phi, A2_phi]
+        result_stage2 = least_squares(
+            residuals_stage2,
+            x0=initial_guess_stage2,
+            args=(sim_time, theta, phi, f1_theta_opt, n1_theta_opt, f2_theta_opt, n2_theta_opt,
+                  f1_phi_opt, n1_phi_opt, f2_phi_opt, n2_phi_opt, f1_GHz_opt, f2_GHz_opt),
+            xtol=1e-4, ftol=1e-4, gtol=1e-4, max_nfev=10000
+        )
+        A1_theta_opt, A2_theta_opt, A1_phi_opt, A2_phi_opt = result_stage2.x
 
-    # Этап 3: Финальная оптимизация всех параметров
-    initial_guess_stage3 = [
-        A1_theta_opt, f1_theta_opt, n1_theta_opt, A2_theta_opt, f2_theta_opt, n2_theta_opt,
-        A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
-        f1_GHz_opt, f2_GHz_opt
-    ]
-    lower_bounds_stage3 = [
-        -np.inf, -np.pi, 0.01, -np.inf, -np.pi, 0.01,
-        -np.inf, -np.pi, 0.01, -np.inf, -np.pi, 0.01, 0.1, 0.1
-    ]
-    upper_bounds_stage3 = [
-        np.inf, np.pi, 100, np.inf, np.pi, 100,
-        np.inf, np.pi, 100, np.inf, np.pi, 100, 100, 100
-    ]
-    result_stage3 = least_squares(
-        combined_residuals,
-        x0=initial_guess_stage3,
-        bounds=(lower_bounds_stage3, upper_bounds_stage3),
-        args=(sim_time, theta, phi),
-        xtol=1e-8, ftol=1e-8, gtol=1e-8, max_nfev=10000
-    )
-    opt_params = result_stage3.x
-    (A1_theta_opt, f1_theta_opt, n1_theta_opt, A2_theta_opt, f2_theta_opt, n2_theta_opt,
-     A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
-     f1_GHz_opt, f2_GHz_opt) = opt_params
+        initial_guess_stage3 = [
+            A1_theta_opt, f1_theta_opt, n1_theta_opt, A2_theta_opt, f2_theta_opt, n2_theta_opt,
+            A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
+            f1_GHz_opt, f2_GHz_opt
+        ]
+        lower_bounds_stage3 = [
+            -np.inf, -np.pi, 0.01, -np.inf, -np.pi, 0.01,
+            -np.inf, -np.pi, 0.01, -np.inf, -np.pi, 0.01, 0.1, 0.1
+        ]
+        upper_bounds_stage3 = [
+            np.inf, np.pi, 100, np.inf, np.pi, 100,
+            np.inf, np.pi, 100, np.inf, np.pi, 100, 100, 100
+        ]
+        result_stage3 = least_squares(
+            combined_residuals,
+            x0=initial_guess_stage3,
+            bounds=(lower_bounds_stage3, upper_bounds_stage3),
+            args=(sim_time, theta, phi),
+            xtol=1e-8, ftol=1e-8, gtol=1e-8, max_nfev=10000
+        )
+        opt_params = result_stage3.x
+        (A1_theta_opt, f1_theta_opt, n1_theta_opt, A2_theta_opt, f2_theta_opt, n2_theta_opt,
+         A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
+         f1_GHz_opt, f2_GHz_opt) = opt_params
 
-    theta_fit = fit_function_theta(sim_time, A1_theta_opt, f1_theta_opt, n1_theta_opt,
-                                   A2_theta_opt, f2_theta_opt, n2_theta_opt,
+        theta_fit = fit_function_theta(sim_time, A1_theta_opt, f1_theta_opt, n1_theta_opt,
+                                       A2_theta_opt, f2_theta_opt, n2_theta_opt,
+                                       f1_GHz_opt, f2_GHz_opt)
+        phi_fit = fit_function_phi(sim_time, A1_phi_opt, f1_phi_opt, n1_phi_opt,
+                                   A2_phi_opt, f2_phi_opt, n2_phi_opt,
                                    f1_GHz_opt, f2_GHz_opt)
-    phi_fit = fit_function_phi(sim_time, A1_phi_opt, f1_phi_opt, n1_phi_opt,
-                               A2_phi_opt, f2_phi_opt, n2_phi_opt,
-                               f1_GHz_opt, f2_GHz_opt)
 
-    approx_freqs = sorted([f1_GHz_opt, f2_GHz_opt], reverse=True)
-    approx_freqs_GHz = [np.round(f, 1) for f in approx_freqs]
-    theor_freqs_GHz = sorted(np.round([f1_GHz[t_index, h_index], f2_GHz[t_index, h_index]], 1), reverse=True)
+        approx_freqs = sorted([f1_GHz_opt, f2_GHz_opt], reverse=True)
+        approx_freqs_GHz = [np.round(f, 1) for f in approx_freqs]
+        theor_freqs_GHz = sorted(np.round([f1_GHz[t_index, h_index], f2_GHz[t_index, h_index]], 1), reverse=True)
 
-    theta_rad = np.pi / 2 + np.radians(theta)
-    phi_rad = np.radians(phi)
-    y = np.sin(theta_rad) * np.sin(phi_rad)
-    z = np.cos(theta_rad)
-
-    H_fix_freqs = (f1_GHz[t_index, :], f2_GHz[t_index, :])
-    T_fix_freqs = (f1_GHz[:, h_index], f2_GHz[:, h_index])
-
+        # Сохраняем результаты аппроксимации в кэш
+        simulation_cache[sim_key]["approximation"] = {
+            "A1_theta_opt": A1_theta_opt,
+            "f1_theta_opt": f1_theta_opt,
+            "n1_theta_opt": n1_theta_opt,
+            "A2_theta_opt": A2_theta_opt,
+            "f2_theta_opt": f2_theta_opt,
+            "n2_theta_opt": n2_theta_opt,
+            "A1_phi_opt": A1_phi_opt,
+            "f1_phi_opt": f1_phi_opt,
+            "n1_phi_opt": n1_phi_opt,
+            "A2_phi_opt": A2_phi_opt,
+            "f2_phi_opt": f2_phi_opt,
+            "n2_phi_opt": n2_phi_opt,
+            "f1_GHz_opt": f1_GHz_opt,
+            "f2_GHz_opt": f2_GHz_opt,
+            "theta_fit": theta_fit,
+            "phi_fit": phi_fit,
+            "approx_freqs_GHz": approx_freqs_GHz,
+            "theor_freqs_GHz": theor_freqs_GHz
+        }
+    
+    # Далее строим остальные графики, как и прежде
     phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz)
     theta_fig = create_theta_fig(time_ns, theta, theta_fit)
-    yz_fig = create_yz_fig(y, z, time_ns)
+    yz_fig = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
+                           np.cos(np.pi/2 + np.radians(theta)),
+                           time_ns)
+    H_fix_freqs = (f1_GHz[t_index, :], f2_GHz[t_index, :])
+    T_fix_freqs = (f1_GHz[:, h_index], f2_GHz[:, h_index])
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_freqs, H)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_freqs, T)
     if material_changed:
