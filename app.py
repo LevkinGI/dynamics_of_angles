@@ -11,15 +11,22 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
-from constants import (H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, phi_amplitude, theta_amplitude, chi_T, K_T, gamma, 
-                       m_array_2, M_array_2, phi_amplitude_2, theta_amplitude_2, K_const, chi_const)
+# Добавляем f1_GHz_2 и f2_GHz_2 в импорт
+from constants import (
+    H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, f1_GHz_2, f2_GHz_2,
+    phi_amplitude, theta_amplitude, chi_T, K_T, gamma, 
+    m_array_2, M_array_2, phi_amplitude_2, theta_amplitude_2, K_const, chi_const
+)
 from simulator import run_simulation
-# Импорт функций аппроксимации из Cython модуля вместо Python-версии:
+# Функции аппроксимации из Cython-модуля:
 from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
-from plotting import create_phi_fig, create_theta_fig, create_yz_fig, create_H_fix_fig, create_T_fix_fig, create_phi_amp_fig, create_theta_amp_fig, create_freq_fig
+from plotting import (
+    create_phi_fig, create_theta_fig, create_yz_fig, create_H_fix_fig,
+    create_T_fix_fig, create_phi_amp_fig, create_theta_amp_fig, create_freq_fig
+)
 
-# Простой кэш для результатов симуляции по выбранным значениям H и T
+# Кэш для результатов симуляции
 simulation_cache = {}
 
 app = dash.Dash(__name__)
@@ -192,9 +199,9 @@ def update_graphs(H, T, material):
 
     # Этап 1: Оптимизация параметров (без амплитуд)
     A1_theta = np.max(theta) / 2
-    A2_theta = np.max(theta) / 2
+    A2_theta = A1_theta
     A1_phi = np.max(phi) / 2
-    A2_phi = np.max(phi) / 2
+    A2_phi = A1_phi
 
     initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, 50, 10]
     lower_bounds_stage1 = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
@@ -248,7 +255,6 @@ def update_graphs(H, T, material):
      A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
      f1_GHz_opt, f2_GHz_opt) = opt_params
 
-    # Вычисление аппроксимирующих функций
     theta_fit = fit_function_theta(sim_time, A1_theta_opt, f1_theta_opt, n1_theta_opt,
                                    A2_theta_opt, f2_theta_opt, n2_theta_opt,
                                    f1_GHz_opt, f2_GHz_opt)
@@ -260,19 +266,17 @@ def update_graphs(H, T, material):
     approx_freqs_GHz = [np.round(f, 1) for f in approx_freqs]
     theor_freqs_GHz = sorted(np.round([f1_GHz[t_index, h_index], f2_GHz[t_index, h_index]], 1), reverse=True)
 
-    # Вычисление проекции траектории на плоскость yz
     theta_rad = np.pi / 2 + np.radians(theta)
     phi_rad = np.radians(phi)
     y = np.sin(theta_rad) * np.sin(phi_rad)
     z = np.cos(theta_rad)
 
-    # Построение графиков зависимостей
     H_fix_freqs = (f1_GHz[t_index, :], f2_GHz[t_index, :])
     T_fix_freqs = (f1_GHz[:, h_index], f2_GHz[:, h_index])
 
-    phi_fig = create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz)
-    theta_fig = create_theta_fig(time, theta, theta_fit)
-    yz_fig = create_yz_fig(y, z, time)
+    phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz)
+    theta_fig = create_theta_fig(time_ns, theta, theta_fit)
+    yz_fig = create_yz_fig(y, z, time_ns)
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_freqs, H)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_freqs, T)
     if material_changed:
