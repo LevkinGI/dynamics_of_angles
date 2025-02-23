@@ -1,42 +1,59 @@
 # constants.py
 import numpy as np
-from numba import njit, prange
+from numba import njit
 
-# Основные параметры моделирования
-N = 601  # 600 + 1
+# Исходные параметры (Материал 1)
+N = 601
 H_step = 10
 H_lim = 4000
-H_vals = np.arange(0, H_lim + 1, H_step)       # магнитное поле, Oe
-T_vals = np.linspace(290, 350, N)                # температура, K
+H_vals = np.arange(0, H_lim + 1, H_step)
+T_vals = np.linspace(290, 350, N)
 
-# Физические константы
 gamma = 1.76e7       # рад/(с·Oe)
 alpha = 3e-4
 h_IFE = 7500         # Oe
 delta_t = 250e-15    # с
 
-# Загрузка предварительно сохранённых массивов
+# Загрузка данных для материала 1
 m_array = np.load('m_array.npy')
 M_array = np.load('M_array.npy')
 phi_amplitude = np.load('phi_amplitude.npy')
 theta_amplitude = np.load('theta_amplitude.npy')
 
-# Функции, зависящие от температуры
-@njit(fastmath=True)
+# Функции, зависящие от температуры (Материал 1)
+@njit
 def K_T(T):
     return 0.19 * (T - 358)**2
 
-@njit(fastmath=True)
+@njit
 def chi_T(T):
     return 4.2e-7 * np.abs(T - 358)
 
-# Предвычисление meshgrid‑ов для H и T
+# Альтернативные данные для Материала 2
+m_array_2 = np.load('m_array_2.npy')
+M_array_2 = np.load('M_array_2.npy')
+phi_amplitude_2 = np.load('phi_amplitude_2.npy')
+theta_amplitude_2 = np.load('theta_amplitude_2.npy')
+
+# Для материала 2 зависимости K(T) и chi(T) заменяем константами
+K_const = 13500
+chi_const = 3.7e-4
+
 H_mesh, T_mesh = np.meshgrid(H_vals, T_vals)
-# Предполагается, что m_array и M_array соответствуют значениям T_vals
+
+# Предвычисление meshgrid’ов и частот для материала 1
 _, m_mesh = np.meshgrid(H_vals, m_array)
 _, M_mesh = np.meshgrid(H_vals, M_array)
 chi_mesh = chi_T(T_mesh)
 K_mesh = K_T(T_mesh)
+
+# Предвычисление meshgrid’ов и частот для материала 2
+_, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
+_, M_mesh_2 = np.meshgrid(H_vals, M_array_2)
+chi_mesh_2 = chi_const * np.ones(m_mesh_2.shape)
+K_mesh_2 = K_const * np.ones(m_mesh_2.shape)
+
+from numba import njit, prange
 
 @njit(parallel=True, fastmath=True)
 def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
@@ -80,3 +97,4 @@ def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
 
 # Вычисление частот с использованием оптимизированной функции
 f1_GHz, f2_GHz = compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+f1_GHz_2, f2_GHz_2 = compute_frequencies_numba(H_mesh, T_mesh, m_mesh_2, chi_mesh_2, K_mesh_2, gamma)
