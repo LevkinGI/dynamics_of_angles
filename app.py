@@ -136,6 +136,11 @@ def update_slider_values(H, T):
      Input('T-slider', 'value')]
 )
 def update_graphs(H, T, material):
+    # Определяем, какой input вызвал callback
+    ctx = callback_context
+    triggered_inputs = [t['prop_id'] for t in ctx.triggered]
+    matereal_changed = any('material-dropdown' in ti for ti in triggered_inputs)
+  
     t_index = np.abs(T_vals - T).argmin()
     h_index = np.abs(H_vals - H).argmin()
     
@@ -256,9 +261,14 @@ def update_graphs(H, T, material):
     yz_fig = create_yz_fig(y, z, time)
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_freqs, H)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_freqs, T)
-    phi_amp_fig = create_phi_amp_fig(amplitude_phi_static)
-    theta_amp_fig = create_theta_amp_fig(amplitude_theta_static)
-    return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig
+    if matereal_changed:
+        phi_amp_fig = create_phi_amp_fig(amplitude_phi_static)
+        theta_amp_fig = create_theta_amp_fig(amplitude_theta_static)
+    else:
+        phi_amp_fig = no_update
+        theta_amp_fig = no_update
+        freq_fig = no_update
+    return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig, freq_fig = no_update
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
