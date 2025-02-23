@@ -11,7 +11,8 @@ from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
-from constants import H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, phi_amplitude, theta_amplitude, chi_T, K_T, m_array_2, M_array_2, f1_GHz_2, f2_GHz_2, phi_amplitude_2, theta_amplitude_2, chi_const, K_const, gamma
+from constants import (H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, phi_amplitude, theta_amplitude, chi_T, K_T, gamma, 
+                       m_array_2, M_array_2, phi_amplitude_2, theta_amplitude_2, K_const, chi_const)
 from simulator import run_simulation
 # Импорт функций аппроксимации из Cython модуля вместо Python-версии:
 from fitting_cy import fit_function_theta, fit_function_phi
@@ -134,25 +135,39 @@ def update_slider_values(H, T):
     [Input('H-slider', 'value'),
      Input('T-slider', 'value')]
 )
-def update_graphs(H, T):
-    # Определяем индексы для температуры и магнитного поля
+def update_graphs(H, T, material):
     t_index = np.abs(T_vals - T).argmin()
     h_index = np.abs(H_vals - H).argmin()
-    m = m_array[t_index]
-    M = M_array[t_index]
-    chi_val = chi_T(T)
-    K_val = K_T(T)
-    kappa = m / gamma
+    
+    # Выбор данных в зависимости от материала
+    if material == '1':
+        m_val = m_array[t_index]
+        M_val = M_array[t_index]
+        chi_val = chi_T(T)
+        K_val = K_T(T)
+        amplitude_phi_static = phi_amplitude
+        amplitude_theta_static = theta_amplitude
+        # Для материала 1 можно использовать предвычисленные частотные массивы f1_GHz, f2_GHz
+        freq_array1 = f1_GHz
+        freq_array2 = f2_GHz
+    else:  # материал 2
+        m_val = m_array_2[t_index]
+        M_val = M_array_2[t_index]
+        chi_val = chi_const    # константное значение
+        K_val = K_const
+        amplitude_phi_static = phi_amplitude_2
+        amplitude_theta_static = theta_amplitude_2
+    
+    kappa = m_val / gamma
 
-    # Используем кэш, чтобы не выполнять повторно симуляцию для одинаковых параметров
-    sim_key = (H, T)
+    # Симуляция с кэшированием
+    sim_key = (H, T, material)
     if sim_key in simulation_cache:
         sim_time, sol = simulation_cache[sim_key]
     else:
-        sim_time, sol = run_simulation(H, T, m, M, chi_val, K_val, kappa)
+        sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa)
         simulation_cache[sim_key] = (sim_time, sol)
-
-    time = sim_time * 1e9  # перевод в наносекунды
+    time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
     phi = np.degrees(sol[1])
 
