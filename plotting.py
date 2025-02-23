@@ -154,32 +154,24 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     return fig
 
 def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
-    html.Div([
-        dcc.Graph(
-            id='frequency-surface-graph',
-            style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
-            figure=go.Figure(
-                data=[
-                    go.Surface(z=freq_array1, x=H_vals, y=T_vals,
-                               colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
-                               showscale=False, name='HF'),
-                    go.Surface(z=freq_array2, x=H_vals, y=T_vals,
-                               colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
-                               showscale=False, name='LF')
-                ],
-                layout=go.Layout(
-                    title="Частоты LF и HF в зависимости от H и T",
-                    scene=dict(
-                        xaxis_title='Магнитное поле (Oe)',
-                        yaxis_title='Температура (K)',
-                        zaxis_title='Частота (ГГц)'
-                    ),
-                    template="plotly_white"
-                )
-            )
-        ),
-        dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'}),
-        dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'})
-    ])
+    fig = go.Figure(
+        data=[
+            go.Surface(z=freq_array1, x=H_vals, y=T_vals,
+                       colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
+                       showscale=False, name='HF'),
+            go.Surface(z=freq_array2, x=H_vals, y=T_vals,
+                       colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
+                       showscale=False, name='LF')
+        ],
+        layout=go.Layout(
+            title="Частоты LF и HF в зависимости от H и T",
+            scene=dict(
+                xaxis_title='Магнитное поле (Oe)',
+                yaxis_title='Температура (K)',
+                zaxis_title='Частота (ГГц)'
+            ),
+            template="plotly_white"
+        )
+    )
     return fig
     
