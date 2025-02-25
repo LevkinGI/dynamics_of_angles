@@ -10,8 +10,8 @@ from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
+from collections import OrderedDict
 
-# Добавляем f1_GHz_2 и f2_GHz_2 в импорт
 from constants import (
     H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, f1_GHz_2, f2_GHz_2,
     phi_amplitude, theta_amplitude, chi_T, K_T, gamma, 
@@ -27,7 +27,7 @@ from plotting import (
 )
 
 # Кэш для результатов симуляции
-simulation_cache = {}
+simulation_cache = OrderedDict()
 
 app = dash.Dash(__name__)
 server = app.server
@@ -193,6 +193,7 @@ def update_graphs(H, T, material):
         cached = simulation_cache[sim_key]
         sim_time = cached["simulation"]["sim_time"]
         sol = cached["simulation"]["sol"]
+        simulation_cache.move_to_end(sim_key)  # обновляем порядок – данный элемент теперь самый последний
     else:
         # Выбор параметров по материалу
         t_index = np.abs(T_vals - T).argmin()
@@ -212,6 +213,9 @@ def update_graphs(H, T, material):
         time_end_point = 0.3e-9 if material=='1' else 3e-9
         sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa, time_end_point)
         simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}
+        # Если кэш превышает 4 элемента, удаляем самый старый:
+        if len(simulation_cache) > 4:
+            simulation_cache.popitem(last=False)
 
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
