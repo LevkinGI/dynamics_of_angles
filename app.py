@@ -318,7 +318,7 @@ def update_graphs(H, T, material):
     
     approx_freqs = sorted([f1_GHz_opt, f2_GHz_opt], reverse=True)
     approx_freqs_GHz = [np.round(f, 1) for f in approx_freqs]
-    theor_freqs_GHz = sorted(np.round([f1_GHz[t_index, h_index], f2_GHz[t_index, h_index]], 1), reverse=True)
+    theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
     
     # Далее строим графики
     phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz)
@@ -326,8 +326,8 @@ def update_graphs(H, T, material):
     yz_fig = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
                            np.cos(np.pi/2 + np.radians(theta)),
                            time_ns)
-    H_fix_freqs = (f1_GHz[t_index, :], f2_GHz[t_index, :])
-    T_fix_freqs = (f1_GHz[:, h_index], f2_GHz[:, h_index])
+    H_fix_freqs = (freq_array1[t_index, :], freq_array2[t_index, :])
+    T_fix_freqs = (freq_array1[:, h_index], freq_array2[:, h_index])
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_freqs, H)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_freqs, T)
     if material_changed:
