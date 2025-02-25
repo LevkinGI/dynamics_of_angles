@@ -64,7 +64,7 @@ app.layout = html.Div([
             value='1',
             style={'width': '300px'}
         ),
-        html.Button("Сохранить", id="save-button", n_clicks=0, style={'margin-left': '20px'})
+        html.Button("Запомнить", id="save-button", n_clicks=0, style={'margin-left': '20px'})
     ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '20px'}),
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
