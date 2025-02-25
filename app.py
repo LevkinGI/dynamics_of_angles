@@ -54,15 +54,18 @@ app.layout = html.Div([
         marks={i: str(i) for i in range(290, 351, 10)}
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
-    dcc.Dropdown(
-        id='material-dropdown',
-        options=[
-            {'label': 'Материал 1', 'value': '1'},
-            {'label': 'Материал 2', 'value': '2'}
-        ],
-        value='1',
-        style={'width': '300px', 'margin-bottom': '20px'}
-    ),
+    html.Div([
+        dcc.Dropdown(
+            id='material-dropdown',
+            options=[
+                {'label': 'Материал 1', 'value': '1'},
+                {'label': 'Материал 2', 'value': '2'}
+            ],
+            value='1',
+            style={'width': '300px'}
+        ),
+        html.Button("Сохранить", id="save-button", n_clicks=0, style={'margin-left': '20px'})
+    ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '20px'}),
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
         dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'})
@@ -153,13 +156,15 @@ def update_slider_values(H, T):
      Output('frequency-surface-graph', 'figure')],
     [Input('H-slider', 'value'),
      Input('T-slider', 'value'),
-     Input('material-dropdown', 'value')]
+     Input('material-dropdown', 'value'),
+     Input('save-button', 'n_clicks')]
 )
 def update_graphs(H, T, material):
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
+    save_triggered = any('save-button' in ti for ti in triggered_inputs)
   
     t_index = np.abs(T_vals - T).argmin()
     h_index = np.abs(H_vals - H).argmin()
@@ -193,7 +198,6 @@ def update_graphs(H, T, material):
         cached = simulation_cache[sim_key]
         sim_time = cached["simulation"]["sim_time"]
         sol = cached["simulation"]["sol"]
-        simulation_cache.move_to_end(sim_key)  # обновляем порядок – данный элемент теперь самый последний
     else:
         # Выбор параметров по материалу
         t_index = np.abs(T_vals - T).argmin()
@@ -210,12 +214,8 @@ def update_graphs(H, T, material):
             K_val = K_const
         kappa = m_val / gamma
 
-        time_end_point = 0.3e-9 if material=='1' else 3e-9
+        time_end_point = 0.3e-9 if material=='1' else 1e-9
         sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa, time_end_point)
-        simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}
-        # Если кэш превышает 4 элемента, удаляем самый старый:
-        if len(simulation_cache) > 4:
-            simulation_cache.popitem(last=False)
 
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
@@ -295,24 +295,6 @@ def update_graphs(H, T, material):
          A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
          f1_GHz_opt, f2_GHz_opt) = opt_params
 
-        # Сохраняем результаты аппроксимации в кэш
-        simulation_cache[sim_key]["approximation"] = {
-            "A1_theta_opt": A1_theta_opt,
-            "f1_theta_opt": f1_theta_opt,
-            "n1_theta_opt": n1_theta_opt,
-            "A2_theta_opt": A2_theta_opt,
-            "f2_theta_opt": f2_theta_opt,
-            "n2_theta_opt": n2_theta_opt,
-            "A1_phi_opt": A1_phi_opt,
-            "f1_phi_opt": f1_phi_opt,
-            "n1_phi_opt": n1_phi_opt,
-            "A2_phi_opt": A2_phi_opt,
-            "f2_phi_opt": f2_phi_opt,
-            "n2_phi_opt": n2_phi_opt,
-            "f1_GHz_opt": f1_GHz_opt,
-            "f2_GHz_opt": f2_GHz_opt
-        }
-
     theta_fit = fit_function_theta(sim_time, A1_theta_opt, f1_theta_opt, n1_theta_opt,
                                A2_theta_opt, f2_theta_opt, n2_theta_opt,
                                f1_GHz_opt, f2_GHz_opt)
@@ -342,6 +324,32 @@ def update_graphs(H, T, material):
         phi_amp_fig = no_update
         theta_amp_fig = no_update
         freq_fig = no_update
+
+    # Если пользователь нажал "Сохранить", добавляем текущие данные в saved_cache
+    if save_triggered:
+        if sim_key not in saved_cache:
+            simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}=
+            simulation_cache[sim_key]["approximation"] = {
+                "A1_theta_opt": A1_theta_opt,
+                "f1_theta_opt": f1_theta_opt,
+                "n1_theta_opt": n1_theta_opt,
+                "A2_theta_opt": A2_theta_opt,
+                "f2_theta_opt": f2_theta_opt,
+                "n2_theta_opt": n2_theta_opt,
+                "A1_phi_opt": A1_phi_opt,
+                "f1_phi_opt": f1_phi_opt,
+                "n1_phi_opt": n1_phi_opt,
+                "A2_phi_opt": A2_phi_opt,
+                "f2_phi_opt": f2_phi_opt,
+                "n2_phi_opt": n2_phi_opt,
+                "f1_GHz_opt": f1_GHz_opt,
+                "f2_GHz_opt": f2_GHz_opt
+            }
+            # Если кэш превышает 4 элемента, удаляем самый старый:
+            if len(simulation_cache) > 4:
+                simulation_cache.popitem(last=False)
+        else:
+            simulation_cache.move_to_end(sim_key)  # обновляем порядок – данный элемент теперь самый последний
     return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig, freq_fig
 
 if __name__ == '__main__':
