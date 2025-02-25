@@ -328,7 +328,7 @@ def update_graphs(H, T, material):
     # Если пользователь нажал "Сохранить", добавляем текущие данные в saved_cache
     if save_triggered:
         if sim_key not in saved_cache:
-            simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}=
+            simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}
             simulation_cache[sim_key]["approximation"] = {
                 "A1_theta_opt": A1_theta_opt,
                 "f1_theta_opt": f1_theta_opt,
