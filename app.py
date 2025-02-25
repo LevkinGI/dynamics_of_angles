@@ -328,22 +328,23 @@ def update_graphs(H, T, material, n_clicks_save):
     # Если пользователь нажал "Сохранить", добавляем текущие данные в saved_cache
     if save_triggered:
         if sim_key not in saved_cache:
-            simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}
-            simulation_cache[sim_key]["approximation"] = {
-                "A1_theta_opt": A1_theta_opt,
-                "f1_theta_opt": f1_theta_opt,
-                "n1_theta_opt": n1_theta_opt,
-                "A2_theta_opt": A2_theta_opt,
-                "f2_theta_opt": f2_theta_opt,
-                "n2_theta_opt": n2_theta_opt,
-                "A1_phi_opt": A1_phi_opt,
-                "f1_phi_opt": f1_phi_opt,
-                "n1_phi_opt": n1_phi_opt,
-                "A2_phi_opt": A2_phi_opt,
-                "f2_phi_opt": f2_phi_opt,
-                "n2_phi_opt": n2_phi_opt,
-                "f1_GHz_opt": f1_GHz_opt,
-                "f2_GHz_opt": f2_GHz_opt
+            simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol},
+                                         "approximation": {
+                                             "A1_theta_opt": A1_theta_opt,
+                                             "f1_theta_opt": f1_theta_opt,
+                                             "n1_theta_opt": n1_theta_opt,
+                                             "A2_theta_opt": A2_theta_opt,
+                                             "f2_theta_opt": f2_theta_opt,
+                                             "n2_theta_opt": n2_theta_opt,
+                                             "A1_phi_opt": A1_phi_opt,
+                                             "f1_phi_opt": f1_phi_opt,
+                                             "n1_phi_opt": n1_phi_opt,
+                                             "A2_phi_opt": A2_phi_opt,
+                                             "f2_phi_opt": f2_phi_opt,
+                                             "n2_phi_opt": n2_phi_opt,
+                                             "f1_GHz_opt": f1_GHz_opt,
+                                             "f2_GHz_opt": f2_GHz_opt
+                                         }
             }
             # Если кэш превышает 4 элемента, удаляем самый старый:
             if len(simulation_cache) > 4:
