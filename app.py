@@ -159,7 +159,7 @@ def update_slider_values(H, T):
      Input('material-dropdown', 'value'),
      Input('save-button', 'n_clicks')]
 )
-def update_graphs(H, T, material):
+def update_graphs(H, T, material, n_clicks_save):
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
