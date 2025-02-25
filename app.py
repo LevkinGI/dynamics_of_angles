@@ -209,7 +209,7 @@ def update_graphs(H, T, material):
             K_val = K_const
         kappa = m_val / gamma
 
-        sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa)
+        sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa, 0.3e-9 if material=='1' else 3e-9)
         simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol}}
 
     time_ns = sim_time * 1e9
