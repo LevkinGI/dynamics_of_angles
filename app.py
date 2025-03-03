@@ -374,8 +374,8 @@ def save_simulation(n_clicks, H, T, material):
             simulation_cache.move_to_end(sim_key)  # обновляем порядок – данный элемент теперь самый последний
         else:
             simulation_cache[sim_key]["persistent"] = True
-        if len(saved_cache) > 4:
-            saved_cache.popitem(last=False)
+        if len(simulation_cache) > 4:
+            simulation_cache.popitem(last=False)
         return "Сохранено"
     else:
         # Если данных еще нет, ничего не сохраняем
