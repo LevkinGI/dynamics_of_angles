@@ -182,6 +182,8 @@ def update_graphs(H, T, material):
     kappa = m_val / gamma
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
+    sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa)
+
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
     phi = np.degrees(sol[1])
