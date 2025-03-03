@@ -6,7 +6,7 @@ import numpy as np
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
-from dash import dcc, html, no_update, callback_context
+from dash import dcc, html, no_update, callback_context, State
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
@@ -66,6 +66,7 @@ app.layout = html.Div([
         ),
         html.Button("Запомнить", id="save-button", n_clicks=0, style={'margin-left': '20px'})
     ], style={'display': 'flex', 'align-items': 'center', 'margin-bottom': '20px'}),
+    html.Div(id='save-status', style={'display': 'none'}),
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
         dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'})
@@ -156,10 +157,15 @@ def update_slider_values(H, T):
      Output('frequency-surface-graph', 'figure')],
     [Input('H-slider', 'value'),
      Input('T-slider', 'value'),
-     Input('material-dropdown', 'value'),
-     Input('save-button', 'n_clicks')]
+     Input('material-dropdown', 'value')]
 )
 def update_graphs(H, T, material, n_clicks_save):
+    global simulation_cache
+    # При каждом запуске очищаем кэш от несохранённых (persistent==False) записей
+    for key in list(simulation_cache.keys()):
+        if simulation_cache[key].get("persistent") is False:
+            del simulation_cache[key]
+    
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
@@ -216,13 +222,18 @@ def update_graphs(H, T, material, n_clicks_save):
 
         time_end_point = 0.3e-9 if material=='1' else 1e-9
         sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa, time_end_point)
+        simulation_cache[sim_key] = {
+            "simulation": {"sim_time": sim_time, "sol": sol},
+            "approximation": None,
+            "persistent": False
+        }
 
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
     phi = np.degrees(sol[1])
 
     # Если кэш уже содержит аппроксимацию, используем ее
-    if "approximation" in simulation_cache[sim_key]:
+    if simulation_cache[sim_key]["approximation"] is not None:
         approx = simulation_cache[sim_key]["approximation"]
         A1_theta_opt = approx["A1_theta_opt"]
         f1_theta_opt = approx["f1_theta_opt"]
@@ -295,6 +306,25 @@ def update_graphs(H, T, material, n_clicks_save):
          A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
          f1_GHz_opt, f2_GHz_opt) = opt_params
 
+        # Сохраняем результаты аппроксимации в кэше
+        saved_data = {
+            "A1_theta_opt": A1_theta_opt,
+            "f1_theta_opt": f1_theta_opt,
+            "n1_theta_opt": n1_theta_opt,
+            "A2_theta_opt": A2_theta_opt,
+            "f2_theta_opt": f2_theta_opt,
+            "n2_theta_opt": n2_theta_opt,
+            "A1_phi_opt": A1_phi_opt,
+            "f1_phi_opt": f1_phi_opt,
+            "n1_phi_opt": n1_phi_opt,
+            "A2_phi_opt": A2_phi_opt,
+            "f2_phi_opt": f2_phi_opt,
+            "n2_phi_opt": n2_phi_opt,
+            "f1_GHz_opt": f1_GHz_opt,
+            "f2_GHz_opt": f2_GHz_opt
+        }
+        simulation_cache[sim_key]["approximation"] = saved_data
+
     theta_fit = fit_function_theta(sim_time, A1_theta_opt, f1_theta_opt, n1_theta_opt,
                                A2_theta_opt, f2_theta_opt, n2_theta_opt,
                                f1_GHz_opt, f2_GHz_opt)
@@ -325,33 +355,31 @@ def update_graphs(H, T, material, n_clicks_save):
         theta_amp_fig = no_update
         freq_fig = no_update
 
-    # Если пользователь нажал "Сохранить", добавляем текущие данные в saved_cache
-    if save_triggered:
-        if sim_key not in saved_cache:
-            simulation_cache[sim_key] = {"simulation": {"sim_time": sim_time, "sol": sol},
-                                         "approximation": {
-                                             "A1_theta_opt": A1_theta_opt,
-                                             "f1_theta_opt": f1_theta_opt,
-                                             "n1_theta_opt": n1_theta_opt,
-                                             "A2_theta_opt": A2_theta_opt,
-                                             "f2_theta_opt": f2_theta_opt,
-                                             "n2_theta_opt": n2_theta_opt,
-                                             "A1_phi_opt": A1_phi_opt,
-                                             "f1_phi_opt": f1_phi_opt,
-                                             "n1_phi_opt": n1_phi_opt,
-                                             "A2_phi_opt": A2_phi_opt,
-                                             "f2_phi_opt": f2_phi_opt,
-                                             "n2_phi_opt": n2_phi_opt,
-                                             "f1_GHz_opt": f1_GHz_opt,
-                                             "f2_GHz_opt": f2_GHz_opt
-                                         }
-            }
-            # Если кэш превышает 4 элемента, удаляем самый старый:
-            if len(simulation_cache) > 4:
-                simulation_cache.popitem(last=False)
-        else:
-            simulation_cache.move_to_end(sim_key)  # обновляем порядок – данный элемент теперь самый последний
     return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig, freq_fig
+
+@app.callback(
+    Output('save-status', 'children'),
+    [Input('save-button', 'n_clicks')],
+    [State('H-slider', 'value'),
+     State('T-slider', 'value'),
+     State('material-dropdown', 'value')]
+)
+def save_simulation(n_clicks, H, T, material):
+    if n_clicks is None or n_clicks == 0:
+        return no_update
+    sim_key = (H, T, material)
+    # Если для данного набора параметров уже вычислены данные в кэше, устанавливаем persistent в True.
+    if sim_key in simulation_cache:
+        if simulation_cache[sim_key]["persistent"] == True:
+            simulation_cache.move_to_end(sim_key)  # обновляем порядок – данный элемент теперь самый последний
+        else:
+            simulation_cache[sim_key]["persistent"] = True
+        if len(saved_cache) > 4:
+            saved_cache.popitem(last=False)
+        return "Сохранено"
+    else:
+        # Если данных еще нет, ничего не сохраняем (или можно инициировать их вычисление, если нужно)
+        return no_update
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
