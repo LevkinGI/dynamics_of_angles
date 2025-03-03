@@ -50,16 +50,15 @@ app.layout = html.Div([
         marks={i: str(i) for i in range(290, 351, 10)}
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
-    html.Div([
-        dcc.Dropdown(
-            id='material-dropdown',
-            options=[
-                {'label': 'Материал 1', 'value': '1'},
-                {'label': 'Материал 2', 'value': '2'}
-            ],
-            value='1',
-            style={'width': '300px'}
-        ),
+    dcc.Dropdown(
+        id='material-dropdown',
+        options=[
+            {'label': 'Материал 1', 'value': '1'},
+            {'label': 'Материал 2', 'value': '2'}
+        ],
+        value='1',
+        style={'width': '300px'}
+    ),
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
         dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'})
@@ -180,25 +179,9 @@ def update_graphs(H, T, material):
         amplitude_theta_static = theta_amplitude_2
         freq_array1 = f1_GHz_2
         freq_array2 = f2_GHz_2
-    
     kappa = m_val / gamma
-
-    # Выбор параметров по материалу
-    t_index = np.abs(T_vals - T).argmin()
-    h_index = np.abs(H_vals - H).argmin()
-    if material == '1':
-        m_val = m_array[t_index]
-        M_val = M_array[t_index]
-        chi_val = chi_T(T)
-        K_val = K_T(T)
-    else:
-        m_val = m_array_2[t_index]
-        M_val = M_array_2[t_index]
-        chi_val = chi_const
-        K_val = K_const
-    kappa = m_val / gamma
-
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
+
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
     phi = np.degrees(sol[1])
