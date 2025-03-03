@@ -159,7 +159,7 @@ def update_slider_values(H, T):
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value')]
 )
-def update_graphs(H, T, material, n_clicks_save):
+def update_graphs(H, T, material):
     global simulation_cache
     # При каждом запуске очищаем кэш от несохранённых (persistent==False) записей
     for key in list(simulation_cache.keys()):
@@ -378,7 +378,7 @@ def save_simulation(n_clicks, H, T, material):
             saved_cache.popitem(last=False)
         return "Сохранено"
     else:
-        # Если данных еще нет, ничего не сохраняем (или можно инициировать их вычисление, если нужно)
+        # Если данных еще нет, ничего не сохраняем
         return no_update
 
 if __name__ == '__main__':
