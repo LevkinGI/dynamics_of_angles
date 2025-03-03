@@ -228,6 +228,7 @@ def update_graphs(H, T, material):
             "persistent": False
         }
 
+    theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
     phi = np.degrees(sol[1])
@@ -256,7 +257,7 @@ def update_graphs(H, T, material):
         A1_phi = np.max(phi) / 2
         A2_phi = A1_phi
 
-        initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, 50, 10]
+        initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, theor_freqs_GHz[0], theor_freqs_GHz[1]]
         lower_bounds_stage1 = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
         upper_bounds_stage1 = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 100, 100]
 
@@ -333,7 +334,6 @@ def update_graphs(H, T, material):
                                f1_GHz_opt, f2_GHz_opt)
     
     approx_freqs_GHz = sorted(np.round([f1_GHz_opt, f2_GHz_opt], 1), reverse=True)
-    theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
     
     # Далее строим графики
     phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz)
