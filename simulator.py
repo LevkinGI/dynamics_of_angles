@@ -25,8 +25,8 @@ def run_simulation(H, T, m, M, chi, K, kappa, simulation_time=0.3e-9, num_points
     theta_initial = 0.0
     phi_initial = 0.0
     dtheta_initial = 0.0
-    # Для повышения точности используем уточнённое значение dphi_initial
     dphi_initial = gamma**2 * (H + np.abs(m)/chi) * h_IFE * delta_t
+                       
     y0 = [theta_initial, phi_initial, dtheta_initial, dphi_initial]
     t_eval = np.linspace(0, simulation_time, num_points)
     solution = solve_ivp(
