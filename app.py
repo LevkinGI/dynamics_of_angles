@@ -7,7 +7,7 @@ pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=
 
 import dash
 from dash import dcc, html, no_update, callback_context
-from dash.dependencies import Input, Output
+from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
