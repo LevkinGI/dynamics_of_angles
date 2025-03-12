@@ -41,7 +41,14 @@ app.layout = html.Div([
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
-    html.Div(id='T-slider-container'),
+    dcc.Slider(
+        id='T-slider',
+        min=T_vals_1[0],
+        max=T_vals_1[-1],
+        step=T_vals_1[1] - T_vals_1[0],
+        value=300,
+        marks={float(val): str(val) for val in T_vals_1 if val % 10 == 0}
+    ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
     dcc.Dropdown(
         id='material-dropdown',
@@ -123,7 +130,20 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    Output('T-slider-container', 'children'),
+    [Output('H-label', 'children'),
+     Output('T-label', 'children')],
+    [Input('H-slider', 'value'),
+     Input('T-slider', 'value')]
+)
+def update_slider_values(H, T):
+    return f'Магнитное поле H = {H} Oe:', f'Температура T = {T} K:'
+
+@app.callback(
+    [Output('T-slider', 'min'),
+     Output('T-slider', 'max'),
+     Output('T-slider', 'step'),
+     Output('T-slider', 'value'),
+     Output('T-slider', 'marks')],
     [Input('material-dropdown', 'value')],
     [State('T-slider', 'value')]
 )
@@ -136,29 +156,12 @@ def update_T_slider(material, T):
         T = 300
     t_index = np.abs(t_vals - T).argmin()
     
-    min_val = float(t_vals[0])
-    max_val = float(t_vals[-1])
+    min_val = t_vals[0]
+    max_val = t_vals[-1]
     step = t_vals[1] - t_vals[0]
     value = t_vals[t_index]
-    # Генерируем метки только для тех значений, где значение кратно 10
-    marks = {float(val): val for val in t_vals if val % 10 == 0}
-    return dcc.Slider(
-        id='T-slider',
-        min=min_val,
-        max=max_val,
-        step=step,
-        value=value,
-        marks=marks
-    )
-
-@app.callback(
-    [Output('H-label', 'children'),
-     Output('T-label', 'children')],
-    [Input('H-slider', 'value'),
-     Input('T-slider', 'value')]
-)
-def update_slider_values(H, T):
-    return f'Магнитное поле H = {H} Oe:', f'Температура T = {T} K:'
+    marks = {val: str(val) for val in t_vals if val % 10 == 0}
+    return min_val, max_val, step, value, marks
 
 @app.callback(
     [Output('phi-graph', 'figure'),
