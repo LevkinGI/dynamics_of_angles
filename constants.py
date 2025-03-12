@@ -3,16 +3,13 @@ import numpy as np
 from numba import njit
 
 # Исходные параметры (Материал 1)
-N = 601
 H_step = 10
 H_lim = 4000
 H_vals = np.arange(0, H_lim + 1, H_step)
-T_vals = np.linspace(290, 350, N)
+T_vals_1 = np.linspace(290, 350, 601)
+T_vals_2 = np.linspace(300, 400, 61)
 
 gamma = 1.76e7       # рад/(с·Oe)
-alpha = 3e-4
-h_IFE = 7500         # Oe
-delta_t = 250e-15    # с
 
 # Загрузка данных для материала 1
 m_array = np.load('m_array.npy')
@@ -39,13 +36,14 @@ theta_amplitude_2 = np.load('theta_amplitude_2.npy')
 K_const = 13500
 chi_const = 3.7e-4
 
-H_mesh, T_mesh = np.meshgrid(H_vals, T_vals)
+H_mesh_1, T_mesh_1 = np.meshgrid(H_vals, T_vals_1)
+H_mesh_2, T_mesh_2 = np.meshgrid(H_vals, T_vals_2)
 
 # Предвычисление meshgrid’ов и частот для материала 1
-_, m_mesh = np.meshgrid(H_vals, m_array)
-_, M_mesh = np.meshgrid(H_vals, M_array)
-chi_mesh = chi_T(T_mesh)
-K_mesh = K_T(T_mesh)
+_, m_mesh_1 = np.meshgrid(H_vals, m_array)
+_, M_mesh_1 = np.meshgrid(H_vals, M_array)
+chi_mesh_1 = chi_T(T_mesh)
+K_mesh_1 = K_T(T_mesh)
 
 # Предвычисление meshgrid’ов и частот для материала 2
 _, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
@@ -96,5 +94,5 @@ def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     return f1_GHz, f2_GHz
 
 # Вычисление частот с использованием оптимизированной функции
-f1_GHz, f2_GHz = compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
-f1_GHz_2, f2_GHz_2 = compute_frequencies_numba(H_mesh, T_mesh, m_mesh_2, chi_mesh_2, K_mesh_2, gamma)
+f1_GHz_1, f2_GHz_1 = compute_frequencies_numba(H_mesh_1, T_mesh_1, m_mesh_1, chi_mesh_1, K_mesh_1, gamma)
+f1_GHz_2, f2_GHz_2 = compute_frequencies_numba(H_mesh_2, T_mesh_2, m_mesh_2, chi_mesh_2, K_mesh_2, gamma)
