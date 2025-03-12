@@ -123,15 +123,6 @@ app.layout = html.Div([
 ])
 
 @app.callback(
-    [Output('H-label', 'children'),
-     Output('T-label', 'children')],
-    [Input('H-slider', 'value'),
-     Input('T-slider', 'value')]
-)
-def update_slider_values(H, T):
-    return f'Магнитное поле H = {H} Oe:', f'Температура T = {T} K:'
-
-@app.callback(
     Output('T-slider-container', 'children'),
     [Input('material-dropdown', 'value')],
     [State('T-slider', 'value')]
@@ -159,6 +150,15 @@ def update_T_slider(material, T):
         value=value,
         marks=marks
     )
+
+@app.callback(
+    [Output('H-label', 'children'),
+     Output('T-label', 'children')],
+    [Input('H-slider', 'value'),
+     Input('T-slider', 'value')]
+)
+def update_slider_values(H, T):
+    return f'Магнитное поле H = {H} Oe:', f'Температура T = {T} K:'
 
 @app.callback(
     [Output('phi-graph', 'figure'),
