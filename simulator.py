@@ -19,7 +19,7 @@ def dynamics(t, y, H, T, m, M, chi, K, kappa, gamma, alpha):
         ddphi = -a * dphi - b * phi - c * dtheta
     return [dtheta, dphi, ddtheta, ddphi]
 
-def run_simulation(H, T, m, M, chi, K, kappa, simulation_time=0.3e-9, num_points=1001,
+def run_simulation(H, T, m, M, chi, K, kappa, alpha, simulation_time=0.3e-9, num_points=1001,
                    method='DOP853', rtol=1e-10, atol=1e-12):
     # Начальные условия (в радианах и рад/с)
     theta_initial = 0.0
