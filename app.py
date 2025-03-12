@@ -46,8 +46,8 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='material-dropdown',
         options=[
-            {'label': 'Материал 1', 'value': '1'},
-            {'label': 'Материал 2', 'value': '2'}
+            {'label': 'FeFe', 'value': '1'},
+            {'label': 'GdFe', 'value': '2'}
         ],
         value='1',
         style={'width': '300px'}
