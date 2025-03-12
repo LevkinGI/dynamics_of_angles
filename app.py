@@ -13,7 +13,7 @@ from scipy.optimize import least_squares
 
 from constants import (
     H_vals, T_vals_1, T_vals_2, m_array, M_array, f1_GHz_1, f2_GHz_1, f1_GHz_2, f2_GHz_2,
-    phi_amplitude, theta_amplitude, chi_T, K_T, gamma, 
+    phi_amplitude, theta_amplitude, chi_T, K_T, gamma, alpha_1, alpha_2,
     m_array_2, M_array_2, phi_amplitude_2, theta_amplitude_2, K_const, chi_const
 )
 from simulator import run_simulation
@@ -189,6 +189,7 @@ def update_graphs(H, T, material):
         M_val = M_array[t_index]
         chi_val = chi_T(T)
         K_val = K_T(T)
+        alpha = alpha_1
         amplitude_phi_static = phi_amplitude
         amplitude_theta_static = theta_amplitude
         freq_array1 = f1_GHz_1
@@ -200,6 +201,7 @@ def update_graphs(H, T, material):
         M_val = M_array_2[t_index]
         chi_val = chi_const
         K_val = K_const
+        alpha = alpha_2
         amplitude_phi_static = phi_amplitude_2
         amplitude_theta_static = theta_amplitude_2
         freq_array1 = f1_GHz_2
@@ -207,7 +209,7 @@ def update_graphs(H, T, material):
     kappa = m_val / gamma
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
-    sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa)
+    sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa, alpha)
 
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
