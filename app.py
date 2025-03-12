@@ -160,7 +160,7 @@ def update_T_slider(material, T):
     max_val = t_vals[-1]
     step = np.round(t_vals[1] - t_vals[0], decimals=1) 
     value = t_vals[t_index]
-    marks = {val: str(val) for val in np.round(t_vals, decimals=1) if val % 10 == 0}
+    marks = {float(val): str(val) for val in t_vals if val % 10 == 0}
     return min_val, max_val, step, value, marks
 
 @app.callback(
