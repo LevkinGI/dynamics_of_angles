@@ -133,21 +133,22 @@ def update_slider_values(H, T):
 
 @app.callback(
     Output('T-slider-container', 'children'),
-    [Input('material-dropdown', 'value'),
-     Input('T-slider', 'value')]
+    [Input('material-dropdown', 'value')],
+    [State('T-slider', 'value')]
 )
 def update_T_slider(material, T):
     if material == '1':
         t_vals = T_vals_1
     else:
         t_vals = T_vals_2
+    if T is None:
+        T = 300
     t_index = np.abs(T_vals - T).argmin()
     
     min_val = float(t_vals[0])
     max_val = float(t_vals[-1])
     step = t_vals[1] - t_vals[0]
     value = t_vals[t_index]
-    # Генерируем метки – например, каждые 2-3 элемента
     rounds_indexs = np.where(t_vals % 10 == 0)[0]
     step_mark = rounds_indexs[1] - rounds_indexs[0]
     marks = {float(t_vals[i]): str(np.decimals(t_vals[i], 1)) for i in range(0, len(t_vals), step_mark)}
