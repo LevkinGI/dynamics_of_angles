@@ -7,7 +7,7 @@ H_step = 10
 H_lim = 4000
 H_vals = np.arange(0, H_lim + 1, H_step)
 T_vals_1 = np.linspace(290, 350, 601)
-T_vals_2 = np.linspace(300, 400, 61)
+T_vals_2 = np.linspace(290, 350, 61)
 
 gamma = 1.76e7       # рад/(с·Oe)
 alpha_1 = 3e-4
