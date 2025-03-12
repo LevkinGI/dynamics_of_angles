@@ -43,9 +43,9 @@ app.layout = html.Div([
     html.Label(id='T-label'),
     dcc.Slider(
         id='T-slider',
-        min=T_vals_1[0],
-        max=T_vals_1[-1],
-        step=T_vals_1[1] - T_vals_1[0],
+        min=290,
+        max=350,
+        step=0.1,
         value=300,
         marks={float(val): str(val) for val in T_vals_1 if val % 10 == 0}
     ),
@@ -160,7 +160,7 @@ def update_T_slider(material, T):
     max_val = t_vals[-1]
     step = t_vals[1] - t_vals[0]
     value = t_vals[t_index]
-    marks = {val: str(val) for val in t_vals if val % 10 == 0}
+    marks = {np.round(val, decimals=0): str(np.round(val, decimals=0)) for val in t_vals if val % 10 == 0}
     return min_val, max_val, step, value, marks
 
 @app.callback(
