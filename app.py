@@ -149,9 +149,8 @@ def update_T_slider(material, T):
     max_val = float(t_vals[-1])
     step = t_vals[1] - t_vals[0]
     value = t_vals[t_index]
-    rounds_indexs = np.where(t_vals % 10 == 0)[0]
-    step_mark = rounds_indexs[1] - rounds_indexs[0]
-    marks = {float(t_vals[i]): str(np.round(t_vals[i], decimals=1)) for i in range(0, len(t_vals), step_mark)}
+    # Генерируем метки только для тех значений, где значение кратно 10
+    marks = {float(val): val for val in t_vals if val % 10 == 0}
     return dcc.Slider(
         id='T-slider',
         min=min_val,
