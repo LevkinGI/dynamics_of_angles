@@ -47,7 +47,7 @@ app.layout = html.Div([
         max=350,
         step=0.1,
         value=300,
-        marks={float(val): str(val) for val in T_vals_1 if val % 10 == 0}
+        marks={i: str(i) for i in range(290, 351, 10)}
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
     dcc.Dropdown(
@@ -158,9 +158,9 @@ def update_T_slider(material, T):
     
     min_val = t_vals[0]
     max_val = t_vals[-1]
-    step = t_vals[1] - t_vals[0]
+    step = np.round(t_vals[1] - t_vals[0], decimals=1) 
     value = t_vals[t_index]
-    marks = {np.round(val, decimals=0): str(np.round(val, decimals=0)) for val in t_vals if val % 10 == 0}
+    marks = {val: str(val) for val in np.round(t_vals, decimals=1) if val % 10 == 0}
     return min_val, max_val, step, value, marks
 
 @app.callback(
