@@ -10,6 +10,10 @@ T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(300, 400, 61)
 
 gamma = 1.76e7       # рад/(с·Oe)
+alpha_1 = 3e-4
+alpha_2 = 1.7e-2
+h_IFE = 7500         # Ое
+delta_t = 250e-15    # с
 
 # Загрузка данных для материала 1
 m_array = np.load('m_array.npy')
@@ -42,8 +46,8 @@ H_mesh_2, T_mesh_2 = np.meshgrid(H_vals, T_vals_2)
 # Предвычисление meshgrid’ов и частот для материала 1
 _, m_mesh_1 = np.meshgrid(H_vals, m_array)
 _, M_mesh_1 = np.meshgrid(H_vals, M_array)
-chi_mesh_1 = chi_T(T_mesh)
-K_mesh_1 = K_T(T_mesh)
+chi_mesh_1 = chi_T(T_mesh_1)
+K_mesh_1 = K_T(T_mesh_1)
 
 # Предвычисление meshgrid’ов и частот для материала 2
 _, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
