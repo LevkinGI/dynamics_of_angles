@@ -12,7 +12,7 @@ import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
 from constants import (
-    H_vals, T_vals, m_array, M_array, f1_GHz, f2_GHz, f1_GHz_2, f2_GHz_2,
+    H_vals, T_vals_1, T_vals_2, m_array, M_array, f1_GHz_1, f2_GHz_1, f1_GHz_2, f2_GHz_2,
     phi_amplitude, theta_amplitude, chi_T, K_T, gamma, 
     m_array_2, M_array_2, phi_amplitude_2, theta_amplitude_2, K_const, chi_const
 )
@@ -41,14 +41,7 @@ app.layout = html.Div([
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
-    dcc.Slider(
-        id='T-slider',
-        min=290,
-        max=350,
-        step=0.1,
-        value=300,
-        marks={i: str(i) for i in range(290, 351, 10)}
-    ),
+    html.Div(id='T-slider-container'),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
     dcc.Dropdown(
         id='material-dropdown',
@@ -68,7 +61,7 @@ app.layout = html.Div([
             id='phi-amplitude-graph',
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
-                data=[go.Surface(z=phi_amplitude, x=H_vals, y=T_vals,
+                data=[go.Surface(z=phi_amplitude, x=H_vals, y=T_vals_1,
                                  colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                  showscale=False, name='LF')],
                 layout=go.Layout(
@@ -85,7 +78,7 @@ app.layout = html.Div([
             id='theta-amplitude-graph',
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
-                data=[go.Surface(z=theta_amplitude, x=H_vals, y=T_vals,
+                data=[go.Surface(z=theta_amplitude, x=H_vals, y=T_vals_1,
                                  colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                  showscale=False, name='HF')],
                 layout=go.Layout(
@@ -106,10 +99,10 @@ app.layout = html.Div([
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
                 data=[
-                    go.Surface(z=f1_GHz, x=H_vals, y=T_vals,
+                    go.Surface(z=f1_GHz_1, x=H_vals, y=T_vals_1,
                                colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                showscale=False, name='HF'),
-                    go.Surface(z=f2_GHz, x=H_vals, y=T_vals,
+                    go.Surface(z=f2_GHz_1, x=H_vals, y=T_vals_1,
                                colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                showscale=False, name='LF')
                 ],
@@ -139,6 +132,35 @@ def update_slider_values(H, T):
     return f'Магнитное поле H = {H} Oe:', f'Температура T = {T} K:'
 
 @app.callback(
+    Output('T-slider-container', 'children'),
+    [Input('material-dropdown', 'value'),
+     Input('T-slider', 'value')]
+)
+def update_T_slider(material, T):
+    if material == '1':
+        t_vals = T_vals_1
+    else:
+        t_vals = T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
+    
+    min_val = float(t_vals[0])
+    max_val = float(t_vals[-1])
+    step = t_vals[1] - t_vals[0]
+    value = t_vals[t_index]
+    # Генерируем метки – например, каждые 2-3 элемента
+    rounds_indexs = np.where(t_vals % 10 == 0)[0]
+    step_mark = rounds_indexs[1] - rounds_indexs[0]
+    marks = {float(t_vals[i]): str(np.decimals(t_vals[i], 1)) for i in range(0, len(t_vals), step_mark)}
+    return dcc.Slider(
+        id='T-slider',
+        min=min_val,
+        max=max_val,
+        step=step,
+        value=value,
+        marks=marks
+    )
+
+@app.callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
@@ -157,20 +179,23 @@ def update_graphs(H, T, material):
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
   
-    t_index = np.abs(T_vals - T).argmin()
     h_index = np.abs(H_vals - H).argmin()
     
     # Выбор данных в зависимости от материала
     if material == '1':
+        T_vals = T_vals_1
+        t_index = np.abs(T_vals - T).argmin()
         m_val = m_array[t_index]
         M_val = M_array[t_index]
         chi_val = chi_T(T)
         K_val = K_T(T)
         amplitude_phi_static = phi_amplitude
         amplitude_theta_static = theta_amplitude
-        freq_array1 = f1_GHz
-        freq_array2 = f2_GHz
+        freq_array1 = f1_GHz_1
+        freq_array2 = f2_GHz_1
     else:  # материал 2
+        T_vals = T_vals_2
+        t_index = np.abs(T_vals - T).argmin()
         m_val = m_array_2[t_index]
         M_val = M_array_2[t_index]
         chi_val = chi_const
