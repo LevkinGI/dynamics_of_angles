@@ -84,8 +84,8 @@ def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
                 common = (gamma**2 * H_val**2 +
                           2 * K_val * gamma**2 / chi_val +
                           np.abs(m_val) * H_val * gamma**2 / chi_val +
-                          kappa_val * gamma**3 * H_val / chi_val +
-                          (kappa_val**2 * gamma**4) / (4 * chi_val**2))
+                          2 * kappa_val * gamma**3 * H_val / chi_val +
+                          (kappa_val**2 * gamma**4) / (2 * chi_val**2))
                 term = np.abs(2 * gamma * H_val + kappa_val * gamma**2 / chi_val)
                 sqrt_term = np.sqrt((2 * K_val * gamma**2 / chi_val) +
                                     (np.abs(m_val) * H_val * gamma**2 / chi_val) +
