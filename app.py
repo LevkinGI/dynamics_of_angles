@@ -226,7 +226,7 @@ def update_graphs(H, T, material):
 
     initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, theor_freqs_GHz[0], theor_freqs_GHz[1]]
     lower_bounds_stage1 = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
-    upper_bounds_stage1 = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 100, 100]
+    upper_bounds_stage1 = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 120, 120]
 
     result_stage1 = least_squares(
         residuals_stage1,
@@ -260,7 +260,7 @@ def update_graphs(H, T, material):
     ]
     upper_bounds_stage3 = [
         np.inf, np.pi, 100, np.inf, np.pi, 100,
-        np.inf, np.pi, 100, np.inf, np.pi, 100, 100, 100
+        np.inf, np.pi, 100, np.inf, np.pi, 100, 120, 120
     ]
     result_stage3 = least_squares(
         combined_residuals,
