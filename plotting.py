@@ -64,8 +64,8 @@ def create_yz_fig(y, z, time, anim_speed=5):
     limits = (-1.1 * lim, 1.1 * lim)
     fig.update_layout(
         title="Проекция траектории на плоскость yz",
-        xaxis_title="Координата y (норм.)",
-        yaxis_title="Координата z (норм.)",
+        xaxis_title="Координата y (ед. L)",
+        yaxis_title="Координата z (ед. L)",
         xaxis=dict(range=limits),
         yaxis=dict(range=limits),
         template="plotly_white",
