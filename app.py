@@ -73,7 +73,7 @@ app.layout = html.Div([
                                  showscale=False, name='LF')],
                 layout=go.Layout(
                     scene=dict(
-                        xaxis_title='Магнитное поле (Oe)',
+                        xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
                         zaxis_title='Амплитуда φ (°)'
                     ),
@@ -90,7 +90,7 @@ app.layout = html.Div([
                                  showscale=False, name='HF')],
                 layout=go.Layout(
                     scene=dict(
-                        xaxis_title='Магнитное поле (Oe)',
+                        xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
                         zaxis_title='Амплитуда θ (°)'
                     ),
@@ -116,7 +116,7 @@ app.layout = html.Div([
                 layout=go.Layout(
                     title="Частоты LF и HF в зависимости от H и T",
                     scene=dict(
-                        xaxis_title='Магнитное поле (Oe)',
+                        xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
                         zaxis_title='Частота (ГГц)'
                     ),
@@ -136,7 +136,7 @@ app.layout = html.Div([
      Input('T-slider', 'value')]
 )
 def update_slider_values(H, T):
-    return f'Магнитное поле H = {H} Oe:', f'Температура T = {T} K:'
+    return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
 
 @app.callback(
     [Output('T-slider', 'min'),
@@ -284,7 +284,7 @@ def update_graphs(H, T, material):
     approx_freqs_GHz = sorted(np.round([f1_GHz_opt, f2_GHz_opt], 1), reverse=True)
     
     # Далее строим графики
-    phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz)
+    phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
     theta_fig = create_theta_fig(time_ns, theta, theta_fit)
     yz_fig = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
                            np.cos(np.pi/2 + np.radians(theta)),
