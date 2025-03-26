@@ -92,7 +92,7 @@ def create_H_fix_fig(T_vals, H_fix_freqs, H):
     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
     fig.update_layout(
-        title=f"Зависимость частот от температуры при H = {H} Oe",
+        title=f"Зависимость частот от температуры при H = {H} Э",
         xaxis_title="Температура (K)",
         yaxis_title="Частота (ГГц)",
         template="plotly_white"
@@ -105,7 +105,7 @@ def create_T_fix_fig(H_vals, T_fix_freqs, T):
     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
     fig.update_layout(
         title=f"Зависимость частот от магнитного поля при T = {T} K",
-        xaxis_title="Магнитное поле (Oe)",
+        xaxis_title="Магнитное поле (Э)",
         yaxis_title="Частота (ГГц)",
         template="plotly_white"
     )
@@ -123,7 +123,7 @@ def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
         )],
         layout=go.Layout(
             scene=dict(
-                xaxis_title='Магнитное поле (Oe)',
+                xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
                 zaxis_title='Амплитуда φ (°)'
             ),
@@ -144,7 +144,7 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
         )],
         layout=go.Layout(
             scene=dict(
-                xaxis_title='Магнитное поле (Oe)',
+                xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
                 zaxis_title='Амплитуда θ (°)'
             ),
@@ -166,7 +166,7 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
         layout=go.Layout(
             title="Частоты LF и HF в зависимости от H и T",
             scene=dict(
-                xaxis_title='Магнитное поле (Oe)',
+                xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
                 zaxis_title='Частота (ГГц)'
             ),
