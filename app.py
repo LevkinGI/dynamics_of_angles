@@ -75,9 +75,9 @@ app.layout = html.Div([
                     scene=dict(
                         xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
-                        zaxis_title='Амплитуда φ (°)',
-                        font=dict(size=18)
+                        zaxis_title='Амплитуда φ (°)'
                     ),
+                    font=dict(size=18),
                     template="plotly_white"
                 )
             )
@@ -93,9 +93,9 @@ app.layout = html.Div([
                     scene=dict(
                         xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
-                        zaxis_title='Амплитуда θ (°)',
-                        font=dict(size=18)
+                        zaxis_title='Амплитуда θ (°)'
                     ),
+                    font=dict(size=18),
                     template="plotly_white"
                 )
             )
@@ -120,9 +120,9 @@ app.layout = html.Div([
                     scene=dict(
                         xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
-                        zaxis_title='Частота (ГГц)',
-                        font=dict(size=18)
+                        zaxis_title='Частота (ГГц)'
                     ),
+                    font=dict(size=18),
                     template="plotly_white"
                 )
             )
