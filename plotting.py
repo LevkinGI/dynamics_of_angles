@@ -29,7 +29,8 @@ def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, 
             "borderwidth": 1,
             "borderpad": 10,
             "bgcolor": "white"
-        }]
+        }],
+        font=dict(size=18)
     )
     return fig
 
@@ -42,7 +43,8 @@ def create_theta_fig(time, theta, theta_fit):
         title="Динамика угла θ",
         xaxis_title="Время (нс)",
         yaxis_title="Отклонение угла θ (градусы)",
-        template="plotly_white"
+        template="plotly_white",
+        font=dict(size=18)
     )
     return fig
 
@@ -86,7 +88,8 @@ def create_yz_fig(y, z, time, anim_speed=5):
                 "args": [None, {"frame": {"duration": 50, "redraw": True},
                                 "fromcurrent": False, "mode": "immediate"}]
             }]
-        }]
+        }],
+        font=dict(size=18)
     )
     return fig
 
@@ -152,7 +155,8 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Амплитуда θ (°)'
+                zaxis_title='Амплитуда θ (°)',
+                font=dict(size=18)
             ),
             template="plotly_white"
         )
@@ -174,7 +178,8 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Частота (ГГц)'
+                zaxis_title='Частота (ГГц)',
+                font=dict(size=18)
             ),
             template="plotly_white"
         )
