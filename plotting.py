@@ -133,8 +133,7 @@ def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Амплитуда φ (°)',
-                font=dict(size=18)
+                zaxis_title='Амплитуда φ (°)'
             ),
             template="plotly_white"
         )
@@ -155,9 +154,9 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Амплитуда θ (°)',
-                font=dict(size=18)
+                zaxis_title='Амплитуда θ (°)'
             ),
+            font=dict(size=18),
             template="plotly_white"
         )
     )
@@ -178,9 +177,9 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Частота (ГГц)',
-                font=dict(size=18)
+                zaxis_title='Частота (ГГц)'
             ),
+            font=dict(size=18),
             template="plotly_white"
         )
     )
