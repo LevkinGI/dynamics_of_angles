@@ -10,7 +10,7 @@ T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
 
 gamma = 1.76e7       # рад/(с·Oe)
-alpha_1 = 1e-3
+alpha_1 = 7e-5
 alpha_2 = 1.7e-2
 h_IFE = 7500         # Ое
 delta_t = 250e-15    # с
