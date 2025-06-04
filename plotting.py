@@ -160,10 +160,10 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
     fig = go.Figure(
         data=[
             go.Surface(z=freq_array1, x=H_vals, y=T_vals,
-                       colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
+                       colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                        showscale=False, name='HF'),
             go.Surface(z=freq_array2, x=H_vals, y=T_vals,
-                       colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
+                       colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                        showscale=False, name='LF')
         ],
         layout=go.Layout(
