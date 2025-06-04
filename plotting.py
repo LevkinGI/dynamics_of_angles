@@ -98,6 +98,7 @@ def create_H_fix_fig(T_vals, H_fix_freqs, H):
         title=f"Зависимость частот от температуры при H = {H} Э",
         xaxis_title="Температура (K)",
         yaxis_title="Частота (ГГц)",
+        font=dict(size=16),
         template="plotly_white"
     )
     return fig
@@ -110,6 +111,7 @@ def create_T_fix_fig(H_vals, T_fix_freqs, T):
         title=f"Зависимость частот от магнитного поля при T = {T} K",
         xaxis_title="Магнитное поле (Э)",
         yaxis_title="Частота (ГГц)",
+        font=dict(size=16),
         template="plotly_white"
     )
     return fig
@@ -128,7 +130,8 @@ def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Амплитуда φ (°)'
+                zaxis_title='Амплитуда φ (°)',
+                font=dict(size=16)
             ),
             template="plotly_white"
         )
