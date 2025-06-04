@@ -135,6 +135,7 @@ def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
                 yaxis_title='Температура (K)',
                 zaxis_title='Амплитуда φ (°)'
             ),
+            font=dict(size=14),
             template="plotly_white"
         )
     )
@@ -156,7 +157,7 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
                 yaxis_title='Температура (K)',
                 zaxis_title='Амплитуда θ (°)'
             ),
-            font=dict(size=18),
+            font=dict(size=14),
             template="plotly_white"
         )
     )
@@ -179,7 +180,7 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
                 yaxis_title='Температура (K)',
                 zaxis_title='Частота (ГГц)'
             ),
-            font=dict(size=18),
+            font=dict(size=14),
             template="plotly_white"
         )
     )
