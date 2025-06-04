@@ -77,7 +77,7 @@ app.layout = html.Div([
                         yaxis_title='Температура (K)',
                         zaxis_title='Амплитуда φ (°)'
                     ),
-                    font=dict(size=18),
+                    font=dict(size=14),
                     template="plotly_white"
                 )
             )
@@ -95,7 +95,7 @@ app.layout = html.Div([
                         yaxis_title='Температура (K)',
                         zaxis_title='Амплитуда θ (°)'
                     ),
-                    font=dict(size=18),
+                    font=dict(size=14),
                     template="plotly_white"
                 )
             )
@@ -122,7 +122,7 @@ app.layout = html.Div([
                         yaxis_title='Температура (K)',
                         zaxis_title='Частота (ГГц)'
                     ),
-                    font=dict(size=18),
+                    font=dict(size=14),
                     template="plotly_white"
                 )
             )
