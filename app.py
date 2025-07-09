@@ -286,9 +286,9 @@ def update_graphs(store, H, T, material):
 
     H_mesh = H_mesh_1 if material=='1' else H_mesh_2
     T_mesh = T_mesh_1 if material=='1' else T_mesh_2
-    m_mesh = p.m_scale * (m_mesh_1 if material=='1' else m_mesh_2)
-    K_mesh = p.k_scale * (K_mesh_1 if material=='1' else K_mesh_2)
-    chi_mesh = p.chi_scale * (chi_mesh_1 if material=='1' else chi_mesh_2)
+    m_mesh = p.m_scale * (m_mesh_1 if material=='1' else m_mesh_2).copy()
+    K_mesh = p.k_scale * (K_mesh_1 if material=='1' else K_mesh_2).copy()
+    chi_mesh = p.chi_scale * (chi_mesh_1 if material=='1' else chi_mesh_2).copy()
 
     freq_array1, freq_array2 = compute_frequencies_numba(
         H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
