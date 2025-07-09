@@ -26,11 +26,6 @@ from plotting import (
 app = dash.Dash(__name__)
 server = app.server
 
-slider_style = {
-    "display": "inline-block",   # позволяет поставить div-ы в одну строку
-    "marginRight": "30px"        # зазор между слайдерами
-}
-
 app.layout = html.Div([
     dcc.Store(
         id='param-store',
@@ -70,7 +65,7 @@ app.layout = html.Div([
                        marks={i/100: str(i/100) for i in range(80, 120, 5)},
                        vertical=True, verticalHeight=180),
             ],
-            style=slider_style,
+            style={"marginRight": "24px"}
         ),
         html.Div([
             html.Label("k × χ"),
@@ -79,7 +74,7 @@ app.layout = html.Div([
                        marks={i/100: str(i/100) for i in range(80, 120, 5)},
                        vertical=True, verticalHeight=180),),
             ],
-            style=slider_style,
+            style={"marginRight": "24px"}
         ),
         html.Div([
             html.Label("k × K(T)"),
@@ -88,7 +83,7 @@ app.layout = html.Div([
                        marks={i/100: str(i/100) for i in range(80, 120, 5)},
                        vertical=True, verticalHeight=180),
             ],
-            style=slider_style,
+            style={"marginRight": "24px"}
         ),
         html.Div([
             html.Label("k × m"),
@@ -97,7 +92,7 @@ app.layout = html.Div([
                        marks={i/100: str(i/100) for i in range(80, 120, 5)},
                        vertical=True, verticalHeight=180),
             ],
-            style=slider_style,
+            style={"marginRight": "24px"}
         ),
         html.Div([
             html.Label("k × M"),
@@ -105,8 +100,7 @@ app.layout = html.Div([
                        min=0.8, max=1.2, step=0.005, value=1.0,
                        marks={i/100: str(i/100) for i in range(80, 120, 5)},
                        vertical=True, verticalHeight=180),
-            ],
-            style=slider_style,
+            ]
         ),],
         style={
             "display":   "flex",
