@@ -26,6 +26,11 @@ from plotting import (
 app = dash.Dash(__name__)
 server = app.server
 
+slider_style = {
+    "display": "inline-block",   # позволяет поставить div-ы в одну строку
+    "marginRight": "30px"        # зазор между слайдерами
+}
+
 app.layout = html.Div([
     dcc.Store(
         id='param-store',
@@ -57,16 +62,51 @@ app.layout = html.Div([
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
-    html.Label("k × α"),
-    dcc.Slider(id='alpha-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
-    html.Label("k × χ"),
-    dcc.Slider(id='chi-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
-    html.Label("k × K(T)"),
-    dcc.Slider(id='k-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
-    html.Label("k × m"),
-    dcc.Slider(id='m-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
-    html.Label("k × M"),
-    dcc.Slider(id='M-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
+    html.Div([
+        html.Label("k × α"),
+        dcc.Slider(id='alpha-slider',
+                   min=0.8, max=1.2, step=0.005, value=1.0,
+                   marks={i/100: str(i/100) for i in range(80, 120, 5)},
+                   vertical=True, verticalHeight=180),
+        ],
+        style=slider_style,
+    ),
+    html.Div([
+        html.Label("k × χ"),
+        dcc.Slider(id='chi-slider',
+                   min=0.8, max=1.2, step=0.005, value=1.0,
+                   marks={i/100: str(i/100) for i in range(80, 120, 5)},
+                   vertical=True, verticalHeight=180),),
+        ],
+        style=slider_style,
+    ),
+    html.Div([
+        html.Label("k × K(T)"),
+        dcc.Slider(id='k-scale-slider',
+                   min=0.8, max=1.2, step=0.005, value=1.0,
+                   marks={i/100: str(i/100) for i in range(80, 120, 5)},
+                   vertical=True, verticalHeight=180),
+        ],
+        style=slider_style,
+    ),
+    html.Div([
+        html.Label("k × m"),
+        dcc.Slider(id='m-scale-slider',
+                   min=0.8, max=1.2, step=0.005, value=1.0,
+                   marks={i/100: str(i/100) for i in range(80, 120, 5)},
+                   vertical=True, verticalHeight=180),
+        ],
+        style=slider_style,
+    ),
+    html.Div([
+        html.Label("k × M"),
+        dcc.Slider(id='M-scale-slider',
+                   min=0.8, max=1.2, step=0.005, value=1.0,
+                   marks={i/100: str(i/100) for i in range(80, 120, 5)},
+                   vertical=True, verticalHeight=180),
+        ],
+        style=slider_style,
+    ),
 
     dcc.Dropdown(
         id='material-dropdown',
