@@ -72,7 +72,7 @@ app.layout = html.Div([
             dcc.Slider(id='chi-slider',
                        min=0.8, max=1.2, step=0.005, value=1.0,
                        marks={i/100: str(i/100) for i in range(80, 120, 5)},
-                       vertical=True, verticalHeight=180),),
+                       vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
         ),
