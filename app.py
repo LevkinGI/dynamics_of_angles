@@ -27,7 +27,6 @@ app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div([
-    T_init = 300
     dcc.Store(
         id='param-store',
         data={
