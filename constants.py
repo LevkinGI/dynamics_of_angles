@@ -119,9 +119,9 @@ __all__ = [
     # сетки и оси
     'H_vals', 'T_vals_1', 'T_vals_2', 'T_init',
     'H_mesh_1', 'H_mesh_2', 'T_mesh_1', 'T_mesh_2',
-    # массивы m, M, K
+    # массивы m, M, K, chi
     'm_mesh_1', 'm_mesh_2', 'M_mesh_1', 'M_mesh_2',
-    'K_mesh_1', 'K_mesh_2',
+    'K_mesh_1', 'K_mesh_2', 'chi_mesh_1', 'chi_mesh_2',
     # исходные одномерные массивы (нужны графикам)
     'm_array', 'M_array', 'm_array_2', 'M_array_2',
     # физические константы
