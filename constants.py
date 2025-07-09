@@ -102,8 +102,8 @@ def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
 # --- FeFe ---
 f1_GHz_1, f2_GHz_1 = compute_frequencies_numba(
         H_mesh_1, T_mesh_1,
-        m_mesh_1,          # вместо m_array
-        np.full_like(m_mesh_1, chi_T(T_mesh_1)),  # χ_скаляр → 2D
+        m_mesh_1,
+        chi_mesh_1,
         K_mesh_1,
         gamma)
 
@@ -111,7 +111,7 @@ f1_GHz_1, f2_GHz_1 = compute_frequencies_numba(
 f1_GHz_2, f2_GHz_2 = compute_frequencies_numba(
         H_mesh_2, T_mesh_2,
         m_mesh_2,
-        np.full_like(m_mesh_2, chi_const),
+        chi_mesh_2,
         K_mesh_2,
         gamma)
 
