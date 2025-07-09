@@ -8,6 +8,7 @@ H_lim = 4000
 H_vals = np.arange(0, H_lim + 1, H_step)
 T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
+T_init = 300
 
 gamma = 1.76e7              # рад/(с·Oe)
 alpha_1 = 1e-4
@@ -100,7 +101,7 @@ def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
 
 __all__ = [
     # сетки и оси
-    'H_vals', 'T_vals_1', 'T_vals_2',
+    'H_vals', 'T_vals_1', 'T_vals_2', 'T_init',
     'H_mesh_1', 'H_mesh_2', 'T_mesh_1', 'T_mesh_2',
     # массивы m, M, K
     'm_mesh_1', 'm_mesh_2', 'M_mesh_1', 'M_mesh_2',
