@@ -31,7 +31,7 @@ app.layout = html.Div([
         id='param-store',
         data={
             "1": asdict(SimParams(alpha_1, float(chi_T(T_init)), 1.0, 1.0, 1.0)),
-            "2": asdict(SimParams(alpha_2, chi_const,                 1.0, 1.0, 1.0)),
+            "2": asdict(SimParams(alpha_2, chi_const,            1.0, 1.0, 1.0)),
         }
     ),
 
@@ -57,16 +57,16 @@ app.layout = html.Div([
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
-    html.Label("α (±15 %)"),
-    dcc.Slider(id='alpha-slider', min=0.85, max=1.15, step=0.005, value=1.0),
-    html.Label("χ (±15 %)"),
-    dcc.Slider(id='chi-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+    html.Label("k × α"),
+    dcc.Slider(id='alpha-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i) for i in range(0.8, 1.2, 0.5)}),
+    html.Label("k × χ"),
+    dcc.Slider(id='chi-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i) for i in range(0.8, 1.2, 0.5)}),
     html.Label("k × K(T)"),
-    dcc.Slider(id='k-scale-slider', min=0.85, max=1.15, step=0.005, value=1.0),
-    html.Label("m scale"),
-    dcc.Slider(id='m-scale-slider', min=0.85, max=1.15, step=0.005, value=1.0),
-    html.Label("M scale"),
-    dcc.Slider(id='M-scale-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+    dcc.Slider(id='k-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i) for i in range(0.8, 1.2, 0.5)}),
+    html.Label("k × m"),
+    dcc.Slider(id='m-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i) for i in range(0.8, 1.2, 0.5)}),
+    html.Label("k × M"),
+    dcc.Slider(id='M-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i) for i in range(0.8, 1.2, 0.5)}),
 
     dcc.Dropdown(
         id='material-dropdown',
@@ -175,7 +175,7 @@ def update_T_slider(material, T):
     else:
         t_vals = T_vals_2
     if T is None:
-        T = 300
+        T = T_init
     t_index = np.abs(t_vals - T).argmin()
     
     min_val = t_vals[0]
@@ -234,11 +234,11 @@ def update_graphs(store, H, T, material):
     # Выбор данных в зависимости от материала
     T_vals = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
-    m_val = (m_array if material=='1' else m_array_2)[t_index] * p.m_scale
-    M_val = (M_array if material=='1' else M_array_2)[t_index] * p.M_scale
-    chi_val = p.chi
-    K_val = (K_T(T) if material=='1' else K_const) * p.k_scale
-    alpha = p.alpha
+    m_val = p.m_scale * (m_array if material=='1' else m_array_2)[t_index]
+    M_val = p.M_scale * (M_array if material=='1' else M_array_2)[t_index]
+    chi_val = p.chi * (float(chi_T(T_init)) if material=='1' else chi_const)
+    K_val = p.k_scale * (K_T(T) if material=='1' else K_const)
+    alpha = p.alpha * (alpha_1 if material=='1' else alpha_2)
     amplitude_phi_static = phi_amplitude if material=='1' else phi_amplitude_2
     amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
