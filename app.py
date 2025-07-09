@@ -30,8 +30,8 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(alpha_1, float(chi_T(T_init)), 1.0, 1.0, 1.0)),
-            "2": asdict(SimParams(alpha_2, chi_const,            1.0, 1.0, 1.0)),
+            "1": asdict(SimParams(1,0, 1,0, 1.0, 1.0, 1.0)),
+            "2": asdict(SimParams(1,0, 1,0, 1.0, 1.0, 1.0)),
         }
     ),
 
