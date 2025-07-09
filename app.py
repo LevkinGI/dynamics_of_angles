@@ -277,7 +277,7 @@ def update_graphs(store, H, T, material):
     t_index = np.abs(T_vals - T).argmin()
     m_val = p.m_scale * (m_array if material=='1' else m_array_2)[t_index]
     M_val = p.M_scale * (M_array if material=='1' else M_array_2)[t_index]
-    chi_val = p.chi_scale * (float(chi_T(T_init)) if material=='1' else chi_const)
+    chi_val = p.chi_scale * (chi_T(T) if material=='1' else chi_const)
     K_val = p.k_scale * (K_T(T) if material=='1' else K_const)
     alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
     amplitude_phi_static = phi_amplitude if material=='1' else phi_amplitude_2
