@@ -60,7 +60,7 @@ def run_simulation(
     y0 = [theta_initial, phi_initial, dtheta_initial, dphi_initial]
     t_eval = np.linspace(0, simulation_time, num_points)
     solution = solve_ivp(
-        DYNAMICS_PY,
+        dynamics,
         (0.0, simulation_time),
         y0,
         t_eval=t_eval,
