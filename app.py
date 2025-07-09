@@ -253,7 +253,7 @@ def update_graphs(H, T, material):
         H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
-    sim_time, sol = run_simulation(H, T, m_val, M_val, K_val, chi_val, alpha)
+    sim_time, sol = run_simulation(H, T, m_val, M_val, K_val, chi_val, alpha, kappa)
 
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
