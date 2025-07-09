@@ -3,7 +3,6 @@ import numpy as np
 from scipy.integrate import solve_ivp
 from numba import njit
 from constants import gamma, h_IFE, delta_t
-from config import SimParams
 
 @njit(fastmath=True)
 def dynamics(t, y, H, m, M, K, chi, alpha, kappa):
