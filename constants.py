@@ -15,7 +15,6 @@ alpha_1 = 1e-4
 alpha_2 = 1.7e-2
 h_IFE = 7500                # Ое
 delta_t = 250e-15           # с
-simulation_time = 0.3e-9    # с
 
 # Загрузка данных для материала 1
 m_array = np.load('m_array.npy')
@@ -110,7 +109,7 @@ __all__ = [
     'm_array', 'M_array', 'm_array_2', 'M_array_2',
     # физические константы
     'gamma', 'alpha_1', 'alpha_2', 'K_const', 'chi_const',
-    'h_IFE', 'delta_t', 'simulation_time',
+    'h_IFE', 'delta_t',
     # температурные функции
     'K_T', 'chi_T',
     # JIT-функция для частот
