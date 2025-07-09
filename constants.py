@@ -114,4 +114,6 @@ __all__ = [
     'K_T', 'chi_T',
     # JIT-функция для частот
     'compute_frequencies_numba',
+    # амплитуды
+    'phi_amplitude', 'theta_amplitude', 'phi_amplitude_2', 'theta_amplitude_2',
 ]
