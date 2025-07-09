@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from numba import njit
-from constants import gamma, h_IFE, delta_t, simulation_time
+from constants import gamma, h_IFE, delta_t
 
 @njit(fastmath=True)
 def dynamics(t, y, H, m, M, K, chi, alpha, kappa):
@@ -28,7 +28,7 @@ def run_simulation(
         chi_val: float,
         alpha: float,
         kappa: float,
-        t_max: float = simulation_time,
+        simulation_time: float = 0.3e-9,
         num_points: int = 1001,
         method: str = 'DOP853',
         rtol: float = 1e-10,
@@ -44,7 +44,7 @@ def run_simulation(
     t_eval = np.linspace(0, simulation_time, num_points)
     solution = solve_ivp(
         dynamics,
-        (0.0, t_max),
+        (0.0, simulation_time),
         y0,
         t_eval=t_eval,
         args=(H_val, m_val, M_val, K_val, chi_val, alpha, kappa),
