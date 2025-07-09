@@ -239,8 +239,8 @@ def update_T_slider(material, T):
 )
 def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
     p = SimParams(**store[material])
-    p.alpha_scale   = a_k
-    p.chi_scale     = hi_k
+    p.alpha_scale = a_k
+    p.chi_scale = сhi_k
     p.k_scale = k_k
     p.m_scale = m_k
     p.M_scale = M_k
