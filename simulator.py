@@ -23,22 +23,17 @@ def dynamics(t, y, H, kappa, K, chi, m, M, alpha):
 def run_simulation(
         H_val: float,
         T_val: float,
-        base_m: float,
-        base_M: float,
-        base_K: float,
-        params: SimParams,
+        m_val: float,
+        M_val: float,
+        K_val: float,
+        chi_val: float,
+        alpha: float
         t_max: float = simulation_time,
         num_points: int = 1001,
         method: str = 'DOP853',
         rtol: float = 1e-10,
         atol: float = 1e-12,
 ):
-    # Применяем коэффициенты для подгона теории
-    m_val   = params.m_scale * base_m
-    M_val   = params.M_scale * base_M
-    K_val   = params.k_scale * base_K
-    chi_val = params.chi
-    alpha   = params.alpha
     kappa   = m_val / gamma
 
     # Начальные условия (в радианах и рад/с)
