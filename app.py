@@ -221,13 +221,14 @@ def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value')]
 )
-def update_graphs(H, T, material):
+def update_graphs(store, H, T, material):
     p = SimParams(**store[material])
     
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
+    theoretical_cosntant_changed = any('param-store' in ti for ti in triggered_inputs)
   
     h_index = np.abs(H_vals - H).argmin()
     
@@ -346,6 +347,10 @@ def update_graphs(H, T, material):
     if material_changed:
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
+        freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
+    elif theoretical_cosntant_changed:
+        phi_amp_fig = no_update
+        theta_amp_fig = no_update
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
     else:
         phi_amp_fig = no_update
