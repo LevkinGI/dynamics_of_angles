@@ -11,11 +11,9 @@ from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
-from constants import (
-    H_vals, T_vals_1, T_vals_2, m_array, M_array, f1_GHz_1, f2_GHz_1, f1_GHz_2, f2_GHz_2,
-    phi_amplitude, theta_amplitude, chi_T, K_T, gamma, alpha_1, alpha_2,
-    m_array_2, M_array_2, phi_amplitude_2, theta_amplitude_2, K_const, chi_const
-)
+from dataclasses import asdict
+from config import SimParams
+from constants import *
 from simulator import run_simulation
 # Функции аппроксимации из Cython-модуля:
 from fitting_cy import fit_function_theta, fit_function_phi
@@ -29,6 +27,15 @@ app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div([
+    T_init = 300
+    dcc.Store(
+        id='param-store',
+        data={
+            "1": asdict(SimParams(alpha_1, float(chi_T(T_init)), 1.0, 1.0, 1.0)),
+            "2": asdict(SimParams(alpha_2, chi_const,                 1.0, 1.0, 1.0)),
+        }
+    ),
+
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
     dcc.Slider(
@@ -46,10 +53,22 @@ app.layout = html.Div([
         min=290,
         max=350,
         step=0.1,
-        value=300,
+        value=T_init,
         marks={i: str(i) for i in range(290, 351, 10)}
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
+
+    html.Label("α (±15 %)"),
+    dcc.Slider(id='alpha-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+    html.Label("χ (±15 %)"),
+    dcc.Slider(id='chi-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+    html.Label("k × K(T)"),
+    dcc.Slider(id='k-scale-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+    html.Label("m scale"),
+    dcc.Slider(id='m-scale-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+    html.Label("M scale"),
+    dcc.Slider(id='M-scale-slider', min=0.85, max=1.15, step=0.005, value=1.0),
+
     dcc.Dropdown(
         id='material-dropdown',
         options=[
@@ -59,6 +78,7 @@ app.layout = html.Div([
         value='1',
         style={'width': '300px'}
     ),
+
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
         dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'})
@@ -167,6 +187,27 @@ def update_T_slider(material, T):
     return min_val, max_val, step, value, marks
 
 @app.callback(
+    Output('param-store', 'data'),
+    Input('material-dropdown', 'value'),
+    Input('alpha-slider',      'value'),
+    Input('chi-slider',        'value'),
+    Input('k-scale-slider',    'value'),
+    Input('m-scale-slider',    'value'),
+    Input('M-scale-slider',    'value'),
+    State('param-store',       'data'),
+)
+def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
+    base_alpha = alpha_1 if material == '1' else alpha_2
+    p = SimParams(**store[material])
+    p.alpha   = base_alpha * a_k
+    p.chi     = p.chi * chi_k
+    p.k_scale = k_k
+    p.m_scale = m_k
+    p.M_scale = M_k
+    store[material] = asdict(p)
+    return store
+
+@app.callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
@@ -175,11 +216,14 @@ def update_T_slider(material, T):
      Output('phi-amplitude-graph', 'figure'),
      Output('theta-amplitude-graph', 'figure'),
      Output('frequency-surface-graph', 'figure')],
-    [Input('H-slider', 'value'),
+    [Input('param-store', 'data'),
+     Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value')]
 )
 def update_graphs(H, T, material):
+    p = SimParams(**store[material])
+    
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
@@ -188,34 +232,28 @@ def update_graphs(H, T, material):
     h_index = np.abs(H_vals - H).argmin()
     
     # Выбор данных в зависимости от материала
-    if material == '1':
-        T_vals = T_vals_1
-        t_index = np.abs(T_vals - T).argmin()
-        m_val = m_array[t_index]
-        M_val = M_array[t_index]
-        chi_val = chi_T(T)
-        K_val = K_T(T)
-        alpha = alpha_1
-        amplitude_phi_static = phi_amplitude
-        amplitude_theta_static = theta_amplitude
-        freq_array1 = f1_GHz_1
-        freq_array2 = f2_GHz_1
-    else:  # материал 2
-        T_vals = T_vals_2
-        t_index = np.abs(T_vals - T).argmin()
-        m_val = m_array_2[t_index]
-        M_val = M_array_2[t_index]
-        chi_val = chi_const
-        K_val = K_const
-        alpha = alpha_2
-        amplitude_phi_static = phi_amplitude_2
-        amplitude_theta_static = theta_amplitude_2
-        freq_array1 = f1_GHz_2
-        freq_array2 = f2_GHz_2
+    T_vals = T_vals_1 if material=='1' else T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
+    m_val = (m_array if material=='1' else m_array_2)[t_index] * p.m_scale
+    M_val = (M_array if material=='1' else M_array_2)[t_index] * p.M_scale
+    chi_val = p.chi
+    K_val = (K_T(T) if material=='1' else K_const) * p.k_scale
+    alpha = p.alpha
+    amplitude_phi_static = phi_amplitude if material=='1' else phi_amplitude_2
+    amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
+
+    H_mesh = H_mesh_1 if material=='1' else H_mesh_2
+    T_mesh = T_mesh_1 if material=='1' else T_mesh_2
+    m_mesh = p.m_scale * m_mesh_1 if material=='1' else p.m_scale * m_mesh_2
+    K_mesh = p.k_scale * K_mesh_1 if material=='1' else p.k_scale * K_mesh_2
+    chi_mesh = np.full_like(m_mesh, p.chi)
+
+    freq_array1, freq_array2 = compute_frequencies_numba(
+        H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
-    sim_time, sol = run_simulation(H, T, m_val, M_val, chi_val, K_val, kappa, alpha)
+    sim_time, sol = run_simulation(H, T, m_val, M_val, K_val, chi_val, alpha)
 
     time_ns = sim_time * 1e9
     theta = np.degrees(sol[0])
