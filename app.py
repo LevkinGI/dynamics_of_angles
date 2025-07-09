@@ -238,10 +238,9 @@ def update_T_slider(material, T):
     State('param-store',       'data'),
 )
 def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
-    base_alpha = alpha_1 if material == '1' else alpha_2
     p = SimParams(**store[material])
-    p.alpha   = base_alpha * a_k
-    p.chi     = p.chi * chi_k
+    p.alpha   = a_k
+    p.chi     = hi_k
     p.k_scale = k_k
     p.m_scale = m_k
     p.M_scale = M_k
@@ -287,8 +286,8 @@ def update_graphs(store, H, T, material):
 
     H_mesh = H_mesh_1 if material=='1' else H_mesh_2
     T_mesh = T_mesh_1 if material=='1' else T_mesh_2
-    m_mesh = p.m_scale * m_mesh_1 if material=='1' else p.m_scale * m_mesh_2
-    K_mesh = p.k_scale * K_mesh_1 if material=='1' else p.k_scale * K_mesh_2
+    m_mesh = p.m_scale * (m_mesh_1 if material=='1' else m_mesh_2)
+    K_mesh = p.k_scale * (K_mesh_1 if material=='1' else K_mesh_2)
     chi_mesh = np.full_like(m_mesh, chi_val)
 
     freq_array1, freq_array2 = compute_frequencies_numba(
