@@ -43,11 +43,11 @@ def run_simulation(
     y0 = [theta_initial, phi_initial, dtheta_initial, dphi_initial]
     t_eval = np.linspace(0, simulation_time, num_points)
     solution = solve_ivp(
-        dynamics,
+        lambda t, y: dynamics.py_func(t, y, H_val, m_val, M_val, K_val,
+                                  chi_val, alpha, kappa),
         (0.0, simulation_time),
         y0,
         t_eval=t_eval,
-        args=(H_val, m_val, M_val, K_val, chi_val, alpha, kappa),
         method=method,
         rtol=rtol,
         atol=atol,
