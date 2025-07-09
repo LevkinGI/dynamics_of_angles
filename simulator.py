@@ -6,7 +6,7 @@ from constants import gamma, h_IFE, delta_t
 from config import SimParams
 
 @njit(fastmath=True)
-def dynamics(t, y, H, kappa, K, chi, m, M, alpha):
+def dynamics(t, y, H, m, M, K, chi, alpha, kappa):
     theta, phi, dtheta, dphi = y
     a = alpha * M * gamma / chi
     b = (np.abs(m) * gamma**2 * H / chi - gamma**2 * H**2 + 2 * K * gamma**2 / chi)
@@ -27,15 +27,14 @@ def run_simulation(
         M_val: float,
         K_val: float,
         chi_val: float,
-        alpha: float
+        alpha: float,
+        kappa: float,
         t_max: float = simulation_time,
         num_points: int = 1001,
         method: str = 'DOP853',
         rtol: float = 1e-10,
         atol: float = 1e-12,
 ):
-    kappa   = m_val / gamma
-
     # Начальные условия (в радианах и рад/с)
     theta_initial = 0.0
     phi_initial = 0.0
@@ -49,7 +48,7 @@ def run_simulation(
         (0.0, t_max),
         y0,
         t_eval=t_eval,
-        args=(H_val, kappa, K_val, chi_val, m_val, M_val, alpha),
+        args=(H_val, m_val, M_val, K_val, chi_val, alpha, kappa),
         method=method,
         rtol=rtol,
         atol=atol,
