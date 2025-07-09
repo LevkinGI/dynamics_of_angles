@@ -58,15 +58,15 @@ app.layout = html.Div([
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
     html.Label("k × α"),
-    dcc.Slider(id='alpha-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i/100) for i in range(80, 120, 5)}),
+    dcc.Slider(id='alpha-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
     html.Label("k × χ"),
-    dcc.Slider(id='chi-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i/100) for i in range(80, 120, 5)}),
+    dcc.Slider(id='chi-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
     html.Label("k × K(T)"),
-    dcc.Slider(id='k-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i/100) for i in range(80, 120, 5)}),
+    dcc.Slider(id='k-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
     html.Label("k × m"),
-    dcc.Slider(id='m-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i/100) for i in range(80, 120, 5)}),
+    dcc.Slider(id='m-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
     html.Label("k × M"),
-    dcc.Slider(id='M-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i: str(i/100) for i in range(80, 120, 5)}),
+    dcc.Slider(id='M-scale-slider', min=0.8, max=1.2, step=0.005, value=1.0, marks={i/100: str(i/100) for i in range(80, 120, 5)}),
 
     dcc.Dropdown(
         id='material-dropdown',
