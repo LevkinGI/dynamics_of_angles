@@ -17,7 +17,7 @@ def dynamics(t, y, H, m, M, K, chi, alpha, kappa):
         c = 2 * gamma * H + kappa * gamma**2 / chi
         ddtheta = -a * dtheta - b * theta + c * dphi
         ddphi = -a * dphi - b * phi - c * dtheta
-    return [dtheta, dphi, ddtheta, ddphi]
+    return (dtheta, dphi, ddtheta, ddphi)
 
 def run_simulation(
         H_val: float,
