@@ -239,8 +239,8 @@ def update_T_slider(material, T):
 )
 def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
     p = SimParams(**store[material])
-    p.alpha   = a_k
-    p.chi     = hi_k
+    p.alpha_scale   = a_k
+    p.chi_scale     = hi_k
     p.k_scale = k_k
     p.m_scale = m_k
     p.M_scale = M_k
@@ -277,9 +277,9 @@ def update_graphs(store, H, T, material):
     t_index = np.abs(T_vals - T).argmin()
     m_val = p.m_scale * (m_array if material=='1' else m_array_2)[t_index]
     M_val = p.M_scale * (M_array if material=='1' else M_array_2)[t_index]
-    chi_val = p.chi * (float(chi_T(T_init)) if material=='1' else chi_const)
+    chi_val = p.chi_scale * (float(chi_T(T_init)) if material=='1' else chi_const)
     K_val = p.k_scale * (K_T(T) if material=='1' else K_const)
-    alpha = p.alpha * (alpha_1 if material=='1' else alpha_2)
+    alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
     amplitude_phi_static = phi_amplitude if material=='1' else phi_amplitude_2
     amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
