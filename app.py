@@ -307,7 +307,7 @@ def update_T_slider(material, T):
 def update_alpha_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
     top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
     style = {"position": "absolute",
              "transform": "translateY(-50%)",      # центрируем по высоте
@@ -323,7 +323,7 @@ def update_alpha_tooltip(logk):
 def update_chi_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
     top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
     style = {"position": "absolute",
              "transform": "translateY(-50%)",      # центрируем по высоте
@@ -339,7 +339,7 @@ def update_chi_tooltip(logk):
 def update_K_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
     top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
     style = {"position": "absolute",
              "transform": "translateY(-50%)",      # центрируем по высоте
@@ -355,7 +355,7 @@ def update_K_tooltip(logk):
 def update_m_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
     top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
     style = {"position": "absolute",
              "transform": "translateY(-50%)",      # центрируем по высоте
@@ -371,7 +371,7 @@ def update_m_tooltip(logk):
 def update_M_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
     top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
     style = {"position": "absolute",
              "transform": "translateY(-50%)",      # центрируем по высоте
