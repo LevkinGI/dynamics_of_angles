@@ -6,6 +6,7 @@ import numpy as np
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
+import dash_bootstrap_components as dbc
 from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
@@ -22,6 +23,17 @@ from plotting import *
 
 app = dash.Dash(__name__)
 server = app.server
+log_marks = {
+    -np.log10(5):  "1/5",
+    -np.log10(4):  "1/4",
+    -np.log10(3):  "1/3",
+    -np.log10(2):  "1/2",
+     0.0:          "1",
+     np.log10(2):  "2",
+     np.log10(3):  "3",
+     np.log10(4):  "4",
+     np.log10(5):  "5",
+}
 
 app.layout = html.Div([
     dcc.Store(
@@ -41,7 +53,8 @@ app.layout = html.Div([
         max=H_vals[-1],
         step=10,
         value=1000,
-        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)}
+        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
+        tooltip={"placement": "bottom", "always_visible": True},
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
@@ -51,61 +64,100 @@ app.layout = html.Div([
         max=350,
         step=0.1,
         value=T_init,
-        marks={i: str(i) for i in range(290, 351, 10)}
+        marks={i: str(i) for i in range(290, 351, 10)},
+        tooltip={"placement": "bottom", "always_visible": True},
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
+
+
+
+    
     html.Div([
         html.Div([
-            html.Label("k × α"),
+            html.Label(id='alpha-scale-label'),
             dcc.Slider(id='alpha-scale-slider',
-                       min=0.8, max=1.2, step=0.005, value=1.0,
-                       marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
         ),
+        dbc.Tooltip(id="alpha-tt",
+                    target="alpha-scale-slider",
+                    placement="left",
+                    trigger="hover focus"), 
+        
         html.Div([
-            html.Label("k × χ"),
+            html.Label(id='chi-scale-label'),
             dcc.Slider(id='chi-scale-slider',
-                       min=0.8, max=1.2, step=0.005, value=1.0,
-                       marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
         ),
+        dbc.Tooltip(id="chi-tt",
+                    target="chi-scale-slider",
+                    placement="left",
+                    trigger="hover focus"), 
+        
         html.Div([
-            html.Label("k × K(T)"),
+            html.Label(id='k-scale-label'),
             dcc.Slider(id='k-scale-slider',
-                       min=0.8, max=1.2, step=0.005, value=1.0,
-                       marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
         ),
+        dbc.Tooltip(id="k-tt",
+                    target="k-scale-slider",
+                    placement="left",
+                    trigger="hover focus"), 
+        
         html.Div([
-            html.Label("k × m"),
+            html.Label(id='m-scale-label'),
             dcc.Slider(id='m-scale-slider',
-                       min=0.8, max=1.2, step=0.005, value=1.0,
-                       marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
         ),
+        dbc.Tooltip(id="m-tt",
+                    target="m-scale-slider",
+                    placement="left",
+                    trigger="hover focus"), 
+        
         html.Div([
-            html.Label("k × M"),
+            html.Label(id='M-scale-label'),
             dcc.Slider(id='M-scale-slider',
-                       min=0.8, max=1.2, step=0.005, value=1.0,
-                       marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ]
-        ),],
+        ),
+        dbc.Tooltip(id="M-tt",
+                    target="M-scale-slider",
+                    placement="left",
+                    trigger="hover focus"), 
+        ],
         style={
             "display":   "flex",
             "alignItems": "flex-start",   # вершины всех ползунков выровнены
             "flexWrap":  "nowrap"         # гарантирует одну строку
         },
     ),
+
+
+
+
     
     dcc.Dropdown(
         id='material-dropdown',
@@ -118,6 +170,8 @@ app.layout = html.Div([
     ),
                       
 
+
+    
     html.Div([
         dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}),
         dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'})
@@ -226,6 +280,56 @@ def update_T_slider(material, T):
     return min_val, max_val, step, value, marks
 
 @app.callback(
+    [Output("alpha-tt", "children"),
+     Output("alpha-scale-label", "children")],
+    Input("alpha-scale-slider", "value")
+)
+def update_alpha_tooltip(logk):
+    k = 10 ** logk
+    txt = f"{k:.2f}"
+    return txt, f"{txt} × α"
+
+@app.callback(
+    [Output("chi-tt", "children"),
+     Output("chi-scale-label", "children")],
+    Input("chi-scale-slider", "value")
+)
+def update_alpha_tooltip(logk):
+    k = 10 ** logk
+    txt = f"{k:.2f}"
+    return txt, f"{txt} × χ"
+
+@app.callback(
+    [Output("k-tt", "children"),
+     Output("k-scale-label", "children")],
+    Input("k-scale-slider", "value")
+)
+def update_alpha_tooltip(logk):
+    k = 10 ** logk
+    txt = f"{k:.2f}"
+    return txt, f"{txt} × K(T)"
+
+@app.callback(
+    [Output("m-tt", "children"),
+     Output("m-scale-label", "children")],
+    Input("m-scale-slider", "value")
+)
+def update_alpha_tooltip(logk):
+    k = 10 ** logk
+    txt = f"{k:.2f}"
+    return txt, f"{txt} × m"
+
+@app.callback(
+    [Output("M-tt", "children"),
+     Output("M-scale-label", "children")],
+    Input("M-scale-slider", "value")
+)
+def update_alpha_tooltip(logk):
+    k = 10 ** logk
+    txt = f"{k:.2f}"
+    return txt, f"{txt} × M"
+
+@app.callback(
     [Output('alpha-scale-slider',      'value'),
     Output('chi-scale-slider',      'value'),
     Output('k-scale-slider',      'value'),
@@ -236,8 +340,8 @@ def update_T_slider(material, T):
 )
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
-    return (p.alpha_scale, p.chi_scale,
-            p.k_scale, p.m_scale, p.M_scale)
+    return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
+            np.log10(p.k_scale), np.log10(p.m_scale), np.log10(p.M_scale))
 
 @app.callback(
     Output('param-store', 'data'),
@@ -251,11 +355,11 @@ def sync_sliders_with_material(material, store):
 )
 def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
     p = SimParams(**store[material])
-    p.alpha_scale = a_k
-    p.chi_scale = chi_k
-    p.k_scale = k_k
-    p.m_scale = m_k
-    p.M_scale = M_k
+    p.alpha_scale = 10 ** a_k
+    p.chi_scale = 10 ** chi_k
+    p.k_scale = 10 ** k_k
+    p.m_scale = 10 ** m_k
+    p.M_scale = 10 ** M_k
     store[material] = asdict(p)
     return store
 
@@ -278,29 +382,6 @@ def update_freq_cache(store, material):
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
 
     f1, f2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
-
-    # 1) Что лежит в подготовленных сетках, которые ты
-    #    передаёшь в compute_frequencies_numba из update_graphs?
-    print("m_mesh:",   np.any(m_mesh - m_mesh_1 > 1e-8))
-    print("K_mesh:",   np.any(K_mesh - K_mesh_1 > 1e-8))
-    print("chi_mesh:", np.any(chi_mesh - chi_mesh_1 > 1e-12))
-    print("H_mesh:",   np.any(H_mesh - H_mesh_1 != 0))
-    print("T_mesh:",   np.any(T_mesh - T_mesh_1 != 0))
-    print("m_mesh_1:",   m_mesh_1[t_index, h_index])
-    print("K_mesh_1:",   K_mesh_1[t_index, h_index])
-    print("chi_mesh_1:", chi_mesh_1[t_index, h_index])
-    print("H_mesh_1:",   H_mesh_1[t_index, h_index])
-    print("T_mesh_1:",   T_mesh_1[t_index, h_index])
-    print("gamma:",    gamma)
-    
-    # 2) А теперь – ровно те же индексы (t_index, h_index)
-    #    в уже посчитанном «хорошем» массиве, который создаётся в constants.py:
-    print("f1_good:", f1_GHz[t_index, h_index])
-    print("f2_good:", f2_GHz[t_index, h_index])
-    
-    # 3) А теперь – ровно те же индексы (t_index, h_index)
-    print("f1_changed:", f1[t_index, h_index])
-    print("f2_changed:", f2[t_index, h_index])
     
     return {
         "freq_array1": f1.tolist(),
