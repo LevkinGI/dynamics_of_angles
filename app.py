@@ -259,6 +259,7 @@ def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
      Input('material-dropdown', 'value')]
 )
 def update_graphs(store, H, T, material):
+    global freq_array1, freq_array2
     p = SimParams(**store[material])
     
     # Определяем, какой input вызвал callback
