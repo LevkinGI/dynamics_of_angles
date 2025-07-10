@@ -122,7 +122,7 @@ __all__ = [
     # температурные функции
     'K_T', 'chi_T',
     # JIT-функция для частот
-    'compute_frequencies_numba',
+    'compute_frequencies',
     # частоты
     'freq_array1', 'freq_array2',
     # амплитуды
