@@ -294,6 +294,12 @@ def update_graphs(store, H, T, material):
         print("K_mesh:",   K_mesh[t_index, h_index])
         print("chi_mesh:", chi_mesh[t_index, h_index])
         print("H_mesh:",   H_mesh[t_index, h_index])      # должен быть 1000
+        print("T_mesh:",   T_mesh[t_index, h_index])
+        print("m_mesh_1:",   m_mesh_1[t_index, h_index])
+        print("K_mesh_1:",   K_mesh_1[t_index, h_index])
+        print("chi_mesh_1:", chi_mesh_1[t_index, h_index])
+        print("H_mesh_1:",   H_mesh_1[t_index, h_index])
+        print("T_mesh_1:",   T_mesh_1[t_index, h_index])
         print("gamma:",    gamma)
         
         # 2) А теперь – ровно те же индексы (t_index, h_index)
