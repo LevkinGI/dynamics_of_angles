@@ -98,7 +98,7 @@ def compute_frequencies(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
 
 # Вычисление частот с использованием оптимизированной функции
 # --- FeFe ---
-freq_array1, freq_array2 = compute_frequencies(
+f1_GHz, f2_GHz = compute_frequencies(
         H_mesh_1, T_mesh_1,
         m_mesh_1,
         chi_mesh_1,
@@ -122,7 +122,7 @@ __all__ = [
     # JIT-функция для частот
     'compute_frequencies',
     # частоты
-    'freq_array1', 'freq_array2',
+    'f1_GHz', 'f2_GHz',
     # амплитуды
     'phi_amplitude', 'theta_amplitude', 'phi_amplitude_2', 'theta_amplitude_2',
 ]
