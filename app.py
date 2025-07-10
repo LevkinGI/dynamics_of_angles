@@ -87,16 +87,16 @@ app.layout = html.Div([
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       updatemode="mouseup",
                        vertical=True, verticalHeight=180),
+            dbc.Tooltip(id="alpha-tt",
+                        target="alpha-scale-slider",
+                        placement="left",
+                        trigger="hover focus",
+                        style={"position": "absolute"},), 
             ],
-            style={"marginRight": "24px"}
+            style={"marginLeft": "30px", "marginRight": "30", "position": "relative"}
         ),
-        dbc.Tooltip(id="alpha-tt",
-                    target="alpha-scale-slider",
-                    placement="left",
-                    trigger="hover focus",
-                    style={"position": "absolute"},), 
         
         html.Div([
             html.Label(id='chi-scale-label'),
@@ -105,14 +105,14 @@ app.layout = html.Div([
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
+            dbc.Tooltip(id="chi-tt",
+                        target="chi-scale-slider",
+                        placement="left",
+                        trigger="hover focus",
+                        style={"position": "absolute"}), 
             ],
-            style={"marginRight": "24px"}
+            style={"marginRight": "30px", "position": "relative"}
         ),
-        dbc.Tooltip(id="chi-tt",
-                    target="chi-scale-slider",
-                    placement="left",
-                    trigger="hover focus",
-                    style={"position": "absolute"}), 
         
         html.Div([
             html.Label(id='k-scale-label'),
@@ -121,14 +121,14 @@ app.layout = html.Div([
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
+            dbc.Tooltip(id="k-tt",
+                        target="k-scale-slider",
+                        placement="left",
+                        trigger="hover focus",
+                        style={"position": "absolute"}), 
             ],
-            style={"marginRight": "24px"}
+            style={"marginRight": "30px", "position": "relative"}
         ),
-        dbc.Tooltip(id="k-tt",
-                    target="k-scale-slider",
-                    placement="left",
-                    trigger="hover focus",
-                    style={"position": "absolute"}), 
         
         html.Div([
             html.Label(id='m-scale-label'),
@@ -137,14 +137,14 @@ app.layout = html.Div([
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
+            dbc.Tooltip(id="m-tt",
+                        target="m-scale-slider",
+                        placement="left",
+                        trigger="hover focus",
+                        style={"position": "absolute"}), 
             ],
-            style={"marginRight": "24px"}
+            style={"marginRight": "30px", "position": "relative"}
         ),
-        dbc.Tooltip(id="m-tt",
-                    target="m-scale-slider",
-                    placement="left",
-                    trigger="hover focus",
-                    style={"position": "absolute"}), 
         
         html.Div([
             html.Label(id='M-scale-label'),
@@ -153,18 +153,19 @@ app.layout = html.Div([
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
-            ]
+            dbc.Tooltip(id="M-tt",
+                        target="M-scale-slider",
+                        placement="left",
+                        trigger="hover focus",
+                        style={"position": "absolute"}), 
+            ],
+            style={"position": "relative"}
         ),
-        dbc.Tooltip(id="M-tt",
-                    target="M-scale-slider",
-                    placement="left",
-                    trigger="hover focus",
-                    style={"position": "absolute"}), 
         ],
         style={
             "display":   "flex",
             "alignItems": "flex-start",   # вершины всех ползунков выровнены
-            "flexWrap":  "nowrap"         # гарантирует одну строку
+            "flexWrap":  "nowrap",         # гарантирует одну строку
         },
     ),
 
