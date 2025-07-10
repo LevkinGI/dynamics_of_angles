@@ -123,7 +123,7 @@ _, chi_mesh_1 = np.meshgrid(H_vals, chi_array_1)
 _, K_mesh_1 = np.meshgrid(H_vals, K_array_1)
 
 f1_GHz, f2_GHz = compute_frequencies(
-        H_mesh,
+        H_mesh_1,
         m_mesh_1,
         chi_mesh_1,
         K_mesh_1,
