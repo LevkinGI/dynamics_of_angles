@@ -46,41 +46,7 @@ app.layout = html.Div([
     dcc.Store(id='freq-cache',  data=None),
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
-    html.Label(id='H-label'),
-    dcc.Slider(
-        id='H-slider',
-        min=0,
-        max=H_vals[-1],
-        step=10,
-        value=1000,
-        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
-    ),
-    dbc.Tooltip(id="H-tt",
-                target="H-slider",
-                placement="bottom",
-                trigger="hover focus"), 
-    html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
-    html.Label(id='T-label'),
-    dcc.Slider(
-        id='T-slider',
-        min=290,
-        max=350,
-        step=0.1,
-        value=T_init,
-        marks={i: str(i) for i in range(290, 351, 10)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
-    ),
-    dbc.Tooltip(id="T-tt",
-                target="T-slider",
-                placement="bottom",
-                trigger="hover focus"), 
-    html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
-
-
-
-
-    
+        
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
@@ -250,7 +216,42 @@ app.layout = html.Div([
         ),
         dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'}),
         dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'})
-    ])
+    ]),
+
+
+
+    
+
+    html.Label(id='H-label'),
+    dcc.Slider(
+        id='H-slider',
+        min=0,
+        max=H_vals[-1],
+        step=10,
+        value=1000,
+        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+    ),
+    dbc.Tooltip(id="H-tt",
+                target="H-slider",
+                placement="bottom",
+                trigger="hover focus"), 
+    html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
+    html.Label(id='T-label'),
+    dcc.Slider(
+        id='T-slider',
+        min=290,
+        max=350,
+        step=0.1,
+        value=T_init,
+        marks={i: str(i) for i in range(290, 351, 10)},
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+    ),
+    dbc.Tooltip(id="T-tt",
+                target="T-slider",
+                placement="bottom",
+                trigger="hover focus"), 
+    html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 ])
 
 @app.callback(
