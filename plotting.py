@@ -186,3 +186,7 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
     )
     return fig
     
+__all__ = [
+    'create_phi_fig', 'create_theta_fig', 'create_yz_fig', 'create_H_fix_fig',
+    'create_T_fix_fig', 'create_phi_amp_fig', 'create_theta_amp_fig', 'create_freq_fig',
+]
