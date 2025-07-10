@@ -45,51 +45,51 @@ K_const = 13500
 chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
-@njit(parallel=True, fastmath=True)
-def compute_frequencies(H_array, T_array, m_array, chi_array, K_array, gamma):
-    # Предвычисление meshgrid’ов и частот для материала 1
-    H_mesh, T_mesh = np.meshgrid(H_array, T_array)
-    _, m_mesh = np.meshgrid(H_array, m_array)
-    _, chi_mesh = np.meshgrid(H_array, chi_array)
-    _, K_mesh = np.meshgrid(H_array, K_array)
+# @njit(parallel=True, fastmath=True)
+# def compute_frequencies(H_array, T_array, m_array, chi_array, K_array, gamma):
+#     # Предвычисление meshgrid’ов и частот для материала 1
+#     H_mesh, T_mesh = np.meshgrid(H_array, T_array)
+#     _, m_mesh = np.meshgrid(H_array, m_array)
+#     _, chi_mesh = np.meshgrid(H_array, chi_array)
+#     _, K_mesh = np.meshgrid(H_array, K_array)
     
-    rows, cols = H_mesh.shape
-    f1_GHz = np.empty((rows, cols), dtype=np.float64)
-    f2_GHz = np.empty((rows, cols), dtype=np.float64)
-    for i in prange(rows):
-        for j in range(cols):
-            H_val = H_mesh[i, j]
-            m_val = m_mesh[i, j]
-            chi_val = chi_mesh[i, j]
-            K_val = K_mesh[i, j]
-            kappa_val = m_val / gamma
-            if m_val > 0:
-                common = (gamma**2 * H_val**2 +
-                          2 * K_val * gamma**2 / chi_val +
-                          np.abs(m_val) * H_val * gamma**2 / chi_val -
-                          2 * kappa_val * gamma**3 * H_val / chi_val +
-                          (kappa_val**2 * gamma**4) / (2 * chi_val**2))
-                term = np.abs(2 * gamma * H_val - kappa_val * gamma**2 / chi_val)
-                sqrt_term = np.sqrt(2 * K_val * gamma**2 / chi_val +
-                                    np.abs(m_val) * H_val * gamma**2 / chi_val -
-                                    kappa_val * gamma**3 * H_val / chi_val +
-                                    (kappa_val**2 * gamma**4) / (4 * chi_val**2))
-            else:
-                common = (gamma**2 * H_val**2 +
-                          2 * K_val * gamma**2 / chi_val +
-                          np.abs(m_val) * H_val * gamma**2 / chi_val +
-                          2 * kappa_val * gamma**3 * H_val / chi_val +
-                          (kappa_val**2 * gamma**4) / (2 * chi_val**2))
-                term = np.abs(2 * gamma * H_val + kappa_val * gamma**2 / chi_val)
-                sqrt_term = np.sqrt((2 * K_val * gamma**2 / chi_val) +
-                                    (np.abs(m_val) * H_val * gamma**2 / chi_val) +
-                                    (kappa_val * gamma**3 * H_val / chi_val) +
-                                    (kappa_val**2 * gamma**4) / (4 * chi_val**2))
-            f1_sq = common + term * sqrt_term
-            f2_sq = common - term * sqrt_term
-            f1_GHz[i, j] = np.sqrt(f1_sq) / (2 * np.pi * 1e9)
-            f2_GHz[i, j] = np.sqrt(f2_sq) / (2 * np.pi * 1e9)
-    return f1_GHz, f2_GHz
+#     rows, cols = H_mesh.shape
+#     f1_GHz = np.empty((rows, cols), dtype=np.float64)
+#     f2_GHz = np.empty((rows, cols), dtype=np.float64)
+#     for i in prange(rows):
+#         for j in range(cols):
+#             H_val = H_mesh[i, j]
+#             m_val = m_mesh[i, j]
+#             chi_val = chi_mesh[i, j]
+#             K_val = K_mesh[i, j]
+#             kappa_val = m_val / gamma
+#             if m_val > 0:
+#                 common = (gamma**2 * H_val**2 +
+#                           2 * K_val * gamma**2 / chi_val +
+#                           np.abs(m_val) * H_val * gamma**2 / chi_val -
+#                           2 * kappa_val * gamma**3 * H_val / chi_val +
+#                           (kappa_val**2 * gamma**4) / (2 * chi_val**2))
+#                 term = np.abs(2 * gamma * H_val - kappa_val * gamma**2 / chi_val)
+#                 sqrt_term = np.sqrt(2 * K_val * gamma**2 / chi_val +
+#                                     np.abs(m_val) * H_val * gamma**2 / chi_val -
+#                                     kappa_val * gamma**3 * H_val / chi_val +
+#                                     (kappa_val**2 * gamma**4) / (4 * chi_val**2))
+#             else:
+#                 common = (gamma**2 * H_val**2 +
+#                           2 * K_val * gamma**2 / chi_val +
+#                           np.abs(m_val) * H_val * gamma**2 / chi_val +
+#                           2 * kappa_val * gamma**3 * H_val / chi_val +
+#                           (kappa_val**2 * gamma**4) / (2 * chi_val**2))
+#                 term = np.abs(2 * gamma * H_val + kappa_val * gamma**2 / chi_val)
+#                 sqrt_term = np.sqrt((2 * K_val * gamma**2 / chi_val) +
+#                                     (np.abs(m_val) * H_val * gamma**2 / chi_val) +
+#                                     (kappa_val * gamma**3 * H_val / chi_val) +
+#                                     (kappa_val**2 * gamma**4) / (4 * chi_val**2))
+#             f1_sq = common + term * sqrt_term
+#             f2_sq = common - term * sqrt_term
+#             f1_GHz[i, j] = np.sqrt(f1_sq) / (2 * np.pi * 1e9)
+#             f2_GHz[i, j] = np.sqrt(f2_sq) / (2 * np.pi * 1e9)
+#     return f1_GHz, f2_GHz
 
 @njit(fastmath=True, parallel=False)
 def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
