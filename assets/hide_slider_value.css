@@ -1,0 +1,4 @@
+/* прячем встроенный tooltip всех слайдеров */
+.dash-slider-value {
+    display: none !important;
+}
