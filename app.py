@@ -284,7 +284,7 @@ def update_freq_cache(store, material):
     print("m_mesh:",   np.any(m_mesh - m_mesh_1 > 1e-8))
     print("K_mesh:",   np.any(K_mesh - K_mesh_1 > 1e-8))
     print("chi_mesh:", np.any(chi_mesh - chi_mesh_1 > 1e-12))
-    print("H_mesh:",   np.any(H_mesh - H_mesh_1 != 0)
+    print("H_mesh:",   np.any(H_mesh - H_mesh_1 != 0))
     print("T_mesh:",   np.any(T_mesh - T_mesh_1 != 0))
     print("m_mesh_1:",   m_mesh_1[t_index, h_index])
     print("K_mesh_1:",   K_mesh_1[t_index, h_index])
