@@ -31,6 +31,7 @@ app.layout = html.Div([
             "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
+    dcc.Store(id='freq-cache',  data=None),
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
@@ -166,10 +167,10 @@ app.layout = html.Div([
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
                 data=[
-                    go.Surface(z=freq_array1, x=H_vals, y=T_vals_1,
+                    go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
                                colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                showscale=False, name='HF'),
-                    go.Surface(z=freq_array2, x=H_vals, y=T_vals_1,
+                    go.Surface(z=f2_GHz, x=H_vals, y=T_vals_1,
                                colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                showscale=False, name='LF')
                 ],
@@ -225,13 +226,27 @@ def update_T_slider(material, T):
     return min_val, max_val, step, value, marks
 
 @app.callback(
-    Output('param-store', 'data'),
+    [Output('alpha-slider',      'value'),
+    Output('chi-slider',      'value'),
+    Output('k-scale-slider',      'value'),
+    Output('m-scale-slider',      'value'),
+    Output('M-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
+    State('param-store',       'data'),    
+)
+def sync_sliders_with_material(material, store):
+    p = SimParams(**store[material])
+    return (p.alpha_scale, p.chi_scale,
+            p.k_scale,    p.m_scale, p.M_scale)
+
+@app.callback(
+    Output('param-store', 'data'),
+    [Input('material-dropdown', 'value'),
     Input('alpha-slider',      'value'),
     Input('chi-slider',        'value'),
     Input('k-scale-slider',    'value'),
     Input('m-scale-slider',    'value'),
-    Input('M-scale-slider',    'value'),
+    Input('M-scale-slider',    'value')],
     State('param-store',       'data'),
 )
 def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
@@ -245,6 +260,55 @@ def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
     return store
 
 @app.callback(
+    Output('freq-cache', 'data'),
+    [Input('param-store',       'data'),
+     Input('material-dropdown', 'value')],
+)
+def update_freq_cache(store, material):
+    p = SimParams(**store[material])
+
+    h_index = np.abs(H_vals - H).argmin()
+    T_vals = T_vals_1 if material=='1' else T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
+
+    H_mesh = H_mesh_1 if material == '1' else H_mesh_2
+    T_mesh = T_mesh_1 if material == '1' else T_mesh_2
+    m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
+    K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
+    chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
+
+    f1, f2 = compute_frequencies(H_mesh, T_mesh,
+                                 m_mesh, chi_mesh, K_mesh, gamma)
+
+    # 1) Что лежит в подготовленных сетках, которые ты
+    #    передаёшь в compute_frequencies_numba из update_graphs?
+    print("m_mesh:",   m_mesh[t_index, h_index])
+    print("K_mesh:",   K_mesh[t_index, h_index])
+    print("chi_mesh:", chi_mesh[t_index, h_index])
+    print("H_mesh:",   H_mesh[t_index, h_index])
+    print("T_mesh:",   T_mesh[t_index, h_index])
+    print("m_mesh_1:",   m_mesh_1[t_index, h_index])
+    print("K_mesh_1:",   K_mesh_1[t_index, h_index])
+    print("chi_mesh_1:", chi_mesh_1[t_index, h_index])
+    print("H_mesh_1:",   H_mesh_1[t_index, h_index])
+    print("T_mesh_1:",   T_mesh_1[t_index, h_index])
+    print("gamma:",    gamma)
+    
+    # 2) А теперь – ровно те же индексы (t_index, h_index)
+    #    в уже посчитанном «хорошем» массиве, который создаётся в constants.py:
+    print("f1_good:", f1_GHz[t_index, h_index])
+    print("f2_good:", f2_GHz[t_index, h_index])
+    
+    # 3) А теперь – ровно те же индексы (t_index, h_index)
+    print("f1_changed:", f1[t_index, h_index])
+    print("f2_changed:", f2[t_index, h_index])
+    
+    return {
+        "freq_array1": f1.tolist(),
+        "freq_array2": f2.tolist()
+    }
+
+@app.callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
@@ -254,19 +318,25 @@ def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
      Output('theta-amplitude-graph', 'figure'),
      Output('frequency-surface-graph', 'figure')],
     [Input('param-store', 'data'),
+     Input('freq-cache', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value')]
 )
-def update_graphs(store, H, T, material):
-    global freq_array1, freq_array2
+def update_graphs(store, freqs, H, T, material):
     p = SimParams(**store[material])
+
+    if freqs is None:
+        freq_array1, freq_array2 = f1_GHz, f2_GHz
+    else:
+        freq_array1 = np.array(freqs["freq_array1"])
+        freq_array2 = np.array(freqs["freq_array2"])
     
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
-    theoretical_constant_changed = any('param-store' in ti for ti in triggered_inputs)
+    freqs_changed  = any('freq-cache' in ti for ti in triggered_inputs)
   
     h_index = np.abs(H_vals - H).argmin()
     
@@ -281,41 +351,7 @@ def update_graphs(store, H, T, material):
     amplitude_phi_static = phi_amplitude if material=='1' else phi_amplitude_2
     amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
-
-    if theoretical_constant_changed:
-        H_mesh = H_mesh_1 if material=='1' else H_mesh_2
-        T_mesh = T_mesh_1 if material=='1' else T_mesh_2
-        m_mesh = p.m_scale * (m_mesh_1 if material=='1' else m_mesh_2).copy()
-        K_mesh = p.k_scale * (K_mesh_1 if material=='1' else K_mesh_2).copy()
-        chi_mesh = p.chi_scale * (chi_mesh_1 if material=='1' else chi_mesh_2).copy()
-
-        # 1) Что лежит в подготовленных сетках, которые ты
-        #    передаёшь в compute_frequencies_numba из update_graphs?
-        print("m_mesh:",   m_mesh[t_index, h_index])
-        print("K_mesh:",   K_mesh[t_index, h_index])
-        print("chi_mesh:", chi_mesh[t_index, h_index])
-        print("H_mesh:",   H_mesh[t_index, h_index])      # должен быть 1000
-        print("T_mesh:",   T_mesh[t_index, h_index])
-        print("m_mesh_1:",   m_mesh_1[t_index, h_index])
-        print("K_mesh_1:",   K_mesh_1[t_index, h_index])
-        print("chi_mesh_1:", chi_mesh_1[t_index, h_index])
-        print("H_mesh_1:",   H_mesh_1[t_index, h_index])
-        print("T_mesh_1:",   T_mesh_1[t_index, h_index])
-        print("gamma:",    gamma)
-        
-        # 2) А теперь – ровно те же индексы (t_index, h_index)
-        #    в уже посчитанном «хорошем» массиве, который создаётся в constants.py:
-        print("f1_good:", freq_array1[t_index, h_index])
-        print("f2_good:", freq_array2[t_index, h_index])
     
-        freq_array1, freq_array2 = compute_frequencies(
-            H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
-
-        # 3) А теперь – ровно те же индексы (t_index, h_index)
-        #    в уже посчитанном «хорошем» массиве, который создаётся в constants.py:
-        print("f1_changed:", freq_array1[t_index, h_index])
-        print("f2_changed:", freq_array2[t_index, h_index])
-
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, T, m_val, M_val, K_val, chi_val, alpha, kappa)
@@ -412,7 +448,7 @@ def update_graphs(store, H, T, material):
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
-    elif theoretical_constant_changed:
+    elif freqs_changed:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
