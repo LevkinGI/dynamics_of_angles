@@ -316,6 +316,7 @@ def update_alpha_tooltip(logk):
 
 @app.callback(
     [Output("chi-tt", "children"),
+     Output("chi-tt", "style"),
      Output("chi-scale-label", "children")],
     Input("chi-scale-slider", "drag_value")
 )
@@ -331,6 +332,7 @@ def update_chi_tooltip(logk):
 
 @app.callback(
     [Output("k-tt", "children"),
+     Output("k-tt", "style"),
      Output("k-scale-label", "children")],
     Input("k-scale-slider", "drag_value")
 )
@@ -346,6 +348,7 @@ def update_K_tooltip(logk):
 
 @app.callback(
     [Output("m-tt", "children"),
+     Output("m-tt", "style"),
      Output("m-scale-label", "children")],
     Input("m-scale-slider", "drag_value")
 )
@@ -361,6 +364,7 @@ def update_m_tooltip(logk):
 
 @app.callback(
     [Output("M-tt", "children"),
+     Output("M-tt", "style"),
      Output("M-scale-label", "children")],
     Input("M-scale-slider", "drag_value")
 )
