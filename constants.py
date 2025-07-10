@@ -117,8 +117,7 @@ def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
 
 # Вычисление частот с использованием оптимизированной функции
 # --- FeFe ---
-H_mesh_1, T_mesh_1 = np.meshgrid(H_vals, T_vals_1)
-_, m_mesh_1 = np.meshgrid(H_vals, m_array_1)
+H_mesh_1, m_mesh_1 = np.meshgrid(H_vals, m_array_1)
 _, chi_mesh_1 = np.meshgrid(H_vals, chi_array_1)
 _, K_mesh_1 = np.meshgrid(H_vals, K_array_1)
 
@@ -130,8 +129,7 @@ f1_GHz, f2_GHz = compute_frequencies(
         gamma)
 
 # --- GdFe ---
-H_mesh_2, T_mesh_2 = np.meshgrid(H_vals, T_vals_2)
-_, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
+H_mesh_2, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
 _, chi_mesh_2 = np.meshgrid(H_vals, chi_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
@@ -142,7 +140,7 @@ __all__ = [
     'm_array_1', 'M_array_1', 'm_array_2', 'M_array_2',
     'chi_array_1', 'K_array_1', 'chi_array_2', 'K_array_2',
     # mesh
-    'H_mesh_1', 'H_mesh_2', 'T_mesh_1', 'T_mesh_2',
+    'H_mesh_1', 'H_mesh_2',
     'm_mesh_1', 'chi_mesh_1', 'K_mesh_1',
     'm_mesh_2', 'chi_mesh_2', 'K_mesh_2',
     # физические константы
