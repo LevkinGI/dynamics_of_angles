@@ -46,7 +46,41 @@ app.layout = html.Div([
     dcc.Store(id='freq-cache',  data=None),
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
-        
+    html.Label(id='H-label'),
+    dcc.Slider(
+        id='H-slider',
+        min=0,
+        max=H_vals[-1],
+        step=10,
+        value=1000,
+        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+    ),
+    dbc.Tooltip(id="H-tt",
+                target="H-slider",
+                placement="bottom",
+                trigger="hover focus"), 
+    html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
+    html.Label(id='T-label'),
+    dcc.Slider(
+        id='T-slider',
+        min=290,
+        max=350,
+        step=0.1,
+        value=T_init,
+        marks={i: str(i) for i in range(290, 351, 10)},
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+    ),
+    dbc.Tooltip(id="T-tt",
+                target="T-slider",
+                placement="bottom",
+                trigger="hover focus"), 
+    html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
+
+
+
+
+    
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
@@ -61,7 +95,8 @@ app.layout = html.Div([
         dbc.Tooltip(id="alpha-tt",
                     target="alpha-scale-slider",
                     placement="left",
-                    trigger="hover focus"), 
+                    trigger="hover focus",
+                    style={"position": "absolute"},), 
         
         html.Div([
             html.Label(id='chi-scale-label'),
@@ -76,7 +111,8 @@ app.layout = html.Div([
         dbc.Tooltip(id="chi-tt",
                     target="chi-scale-slider",
                     placement="left",
-                    trigger="hover focus"), 
+                    trigger="hover focus",
+                    style={"position": "absolute"}), 
         
         html.Div([
             html.Label(id='k-scale-label'),
@@ -91,7 +127,8 @@ app.layout = html.Div([
         dbc.Tooltip(id="k-tt",
                     target="k-scale-slider",
                     placement="left",
-                    trigger="hover focus"), 
+                    trigger="hover focus",
+                    style={"position": "absolute"}), 
         
         html.Div([
             html.Label(id='m-scale-label'),
@@ -106,7 +143,8 @@ app.layout = html.Div([
         dbc.Tooltip(id="m-tt",
                     target="m-scale-slider",
                     placement="left",
-                    trigger="hover focus"), 
+                    trigger="hover focus",
+                    style={"position": "absolute"}), 
         
         html.Div([
             html.Label(id='M-scale-label'),
@@ -120,7 +158,8 @@ app.layout = html.Div([
         dbc.Tooltip(id="M-tt",
                     target="M-scale-slider",
                     placement="left",
-                    trigger="hover focus"), 
+                    trigger="hover focus",
+                    style={"position": "absolute"}), 
         ],
         style={
             "display":   "flex",
@@ -142,7 +181,41 @@ app.layout = html.Div([
         value='1',
         style={'width': '300px'}
     ),
+
+
+
+
+    
+    html.Div([
+        dcc.Graph(
+            id='frequency-surface-graph',
+            style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
+            figure=go.Figure(
+                data=[
+                    go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
+                               colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
+                               showscale=False, name='HF'),
+                    go.Surface(z=f2_GHz, x=H_vals, y=T_vals_1,
+                               colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
+                               showscale=False, name='LF')
+                ],
+                layout=go.Layout(
+                    title="Частоты LF и HF в зависимости от H и T",
+                    scene=dict(
+                        xaxis_title='Магнитное поле (Э)',
+                        yaxis_title='Температура (K)',
+                        zaxis_title='Частота (ГГц)'
+                    ),
+                    font=dict(size=14),
+                    template="plotly_white"
+                )
+            )
+        ),
+        dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'}),
+        dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'})
+    ]),
                       
+
 
 
     
@@ -189,69 +262,6 @@ app.layout = html.Div([
         ),
         dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'})
     ]),
-    html.Div([
-        dcc.Graph(
-            id='frequency-surface-graph',
-            style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
-            figure=go.Figure(
-                data=[
-                    go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
-                               colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
-                               showscale=False, name='HF'),
-                    go.Surface(z=f2_GHz, x=H_vals, y=T_vals_1,
-                               colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
-                               showscale=False, name='LF')
-                ],
-                layout=go.Layout(
-                    title="Частоты LF и HF в зависимости от H и T",
-                    scene=dict(
-                        xaxis_title='Магнитное поле (Э)',
-                        yaxis_title='Температура (K)',
-                        zaxis_title='Частота (ГГц)'
-                    ),
-                    font=dict(size=14),
-                    template="plotly_white"
-                )
-            )
-        ),
-        dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'}),
-        dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'})
-    ]),
-
-
-
-    
-
-    html.Label(id='H-label'),
-    dcc.Slider(
-        id='H-slider',
-        min=0,
-        max=H_vals[-1],
-        step=10,
-        value=1000,
-        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
-    ),
-    dbc.Tooltip(id="H-tt",
-                target="H-slider",
-                placement="bottom",
-                trigger="hover focus"), 
-    html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
-    html.Label(id='T-label'),
-    dcc.Slider(
-        id='T-slider',
-        min=290,
-        max=350,
-        step=0.1,
-        value=T_init,
-        marks={i: str(i) for i in range(290, 351, 10)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
-    ),
-    dbc.Tooltip(id="T-tt",
-                target="T-slider",
-                placement="bottom",
-                trigger="hover focus"), 
-    html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 ])
 
 @app.callback(
@@ -290,13 +300,19 @@ def update_T_slider(material, T):
 
 @app.callback(
     [Output("alpha-tt", "children"),
+     Output("alpha-tt", "style"),
      Output("alpha-scale-label", "children")],
     Input("alpha-scale-slider", "value")
 )
 def update_alpha_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    return txt, f"{txt} × α"
+    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
+    style = {"position": "absolute",
+             "transform": "translateY(-50%)",      # центрируем по высоте
+             "top": f"{top:.1f}%"}
+    return txt, style, f"{txt} × α"
 
 @app.callback(
     [Output("chi-tt", "children"),
@@ -306,7 +322,12 @@ def update_alpha_tooltip(logk):
 def update_chi_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    return txt, f"{txt} × χ"
+    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
+    style = {"position": "absolute",
+             "transform": "translateY(-50%)",      # центрируем по высоте
+             "top": f"{top:.1f}%"}
+    return txt, style, f"{txt} × χ"
 
 @app.callback(
     [Output("k-tt", "children"),
@@ -316,7 +337,12 @@ def update_chi_tooltip(logk):
 def update_K_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    return txt, f"{txt} × K(T)"
+    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
+    style = {"position": "absolute",
+             "transform": "translateY(-50%)",      # центрируем по высоте
+             "top": f"{top:.1f}%"}
+    return txt, style, f"{txt} × K(T)"
 
 @app.callback(
     [Output("m-tt", "children"),
@@ -326,7 +352,12 @@ def update_K_tooltip(logk):
 def update_m_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    return txt, f"{txt} × m"
+    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
+    style = {"position": "absolute",
+             "transform": "translateY(-50%)",      # центрируем по высоте
+             "top": f"{top:.1f}%"}
+    return txt, style, f"{txt} × m"
 
 @app.callback(
     [Output("M-tt", "children"),
@@ -336,7 +367,12 @@ def update_m_tooltip(logk):
 def update_M_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
-    return txt, f"{txt} × M"
+    frac = (logk - np.log10(-5)) / (np.log10(5) - np.log10(-5))           # 0 → низ, 1 → верх
+    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
+    style = {"position": "absolute",
+             "transform": "translateY(-50%)",      # центрируем по высоте
+             "top": f"{top:.1f}%"}
+    return txt, style, f"{txt} × M"
 
 @app.callback(
     [Output('alpha-scale-slider',      'value'),
