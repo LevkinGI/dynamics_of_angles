@@ -304,6 +304,11 @@ def update_graphs(store, H, T, material):
         freq_array1, freq_array2 = compute_frequencies(
             H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
 
+        # 3) А теперь – ровно те же индексы (t_index, h_index)
+        #    в уже посчитанном «хорошем» массиве, который создаётся в constants.py:
+        print("f1_changed:", freq_array1[t_index, h_index])
+        print("f2_changed:", freq_array2[t_index, h_index])
+
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, T, m_val, M_val, K_val, chi_val, alpha, kappa)
