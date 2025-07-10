@@ -262,9 +262,11 @@ def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
 @app.callback(
     Output('freq-cache', 'data'),
     [Input('param-store',       'data'),
-     Input('material-dropdown', 'value')],
+     Input('material-dropdown', 'value'),
+     Input('H-slider', 'value'),
+     Input('T-slider', 'value'),],
 )
-def update_freq_cache(store, material):
+def update_freq_cache(store, material, H, T):
     p = SimParams(**store[material])
 
     h_index = np.abs(H_vals - H).argmin()
