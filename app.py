@@ -277,16 +277,15 @@ def update_freq_cache(store, material):
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
 
-    f1, f2 = compute_frequencies(H_mesh, T_mesh,
-                                 m_mesh, chi_mesh, K_mesh, gamma)
+    f1, f2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
 
     # 1) Что лежит в подготовленных сетках, которые ты
     #    передаёшь в compute_frequencies_numba из update_graphs?
-    print("m_mesh:",   m_mesh[t_index, h_index])
-    print("K_mesh:",   K_mesh[t_index, h_index])
-    print("chi_mesh:", chi_mesh[t_index, h_index])
-    print("H_mesh:",   H_mesh[t_index, h_index])
-    print("T_mesh:",   T_mesh[t_index, h_index])
+    print("m_mesh:",   np.any(m_mesh - m_mesh_1 > 1e-8))
+    print("K_mesh:",   np.any(K_mesh - K_mesh_1 > 1e-8))
+    print("chi_mesh:", np.any(chi_mesh - chi_mesh_1 > 1e-12))
+    print("H_mesh:",   np.any(H_mesh - H_mesh_1 != 0)
+    print("T_mesh:",   np.any(T_mesh - T_mesh_1 != 0))
     print("m_mesh_1:",   m_mesh_1[t_index, h_index])
     print("K_mesh_1:",   K_mesh_1[t_index, h_index])
     print("chi_mesh_1:", chi_mesh_1[t_index, h_index])
