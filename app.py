@@ -54,7 +54,7 @@ app.layout = html.Div([
         step=10,
         value=1000,
         marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        tooltip={"placement": "bottom", "always_visible": True},
+        tooltip={"placement": "bottom", "always_visible": False},
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
@@ -65,7 +65,7 @@ app.layout = html.Div([
         step=0.1,
         value=T_init,
         marks={i: str(i) for i in range(290, 351, 10)},
-        tooltip={"placement": "bottom", "always_visible": True},
+        tooltip={"placement": "bottom", "always_visible": False},
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
@@ -294,7 +294,7 @@ def update_alpha_tooltip(logk):
      Output("chi-scale-label", "children")],
     Input("chi-scale-slider", "value")
 )
-def update_alpha_tooltip(logk):
+def update_chi_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
     return txt, f"{txt} × χ"
@@ -304,7 +304,7 @@ def update_alpha_tooltip(logk):
      Output("k-scale-label", "children")],
     Input("k-scale-slider", "value")
 )
-def update_alpha_tooltip(logk):
+def update_K_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
     return txt, f"{txt} × K(T)"
@@ -314,7 +314,7 @@ def update_alpha_tooltip(logk):
      Output("m-scale-label", "children")],
     Input("m-scale-slider", "value")
 )
-def update_alpha_tooltip(logk):
+def update_m_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
     return txt, f"{txt} × m"
@@ -324,7 +324,7 @@ def update_alpha_tooltip(logk):
      Output("M-scale-label", "children")],
     Input("M-scale-slider", "value")
 )
-def update_alpha_tooltip(logk):
+def update_M_tooltip(logk):
     k = 10 ** logk
     txt = f"{k:.2f}"
     return txt, f"{txt} × M"
