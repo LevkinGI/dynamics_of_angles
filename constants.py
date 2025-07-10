@@ -59,7 +59,7 @@ K_mesh_2 = K_const * np.ones(m_mesh_2.shape)
 from numba import njit, prange
 
 @njit(parallel=True, fastmath=True)
-def compute_frequencies_numba(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
+def compute_frequencies(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     rows, cols = H_mesh.shape
     f1_GHz = np.empty((rows, cols), dtype=np.float64)
     f2_GHz = np.empty((rows, cols), dtype=np.float64)
