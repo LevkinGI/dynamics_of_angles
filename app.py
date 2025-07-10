@@ -88,12 +88,13 @@ app.layout = html.Div([
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180),
+                       vertical=True, verticalHeight=180,
+                      ),
             dbc.Tooltip(id="alpha-tt",
                         target="alpha-scale-slider-handle",
                         placement="left",
                         trigger="hover focus",
-                        style={"position": "absolute"},), 
+                       ), 
             ],
             style={"marginLeft": "30px", "marginRight": "30", "position": "relative"}
         ),
@@ -104,12 +105,13 @@ app.layout = html.Div([
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
-                       vertical=True, verticalHeight=180),
+                       vertical=True, verticalHeight=180,
+                      ),
             dbc.Tooltip(id="chi-tt",
                         target="chi-scale-slider-handle",
                         placement="left",
                         trigger="hover focus",
-                        style={"position": "absolute"}), 
+                       ), 
             ],
             style={"marginRight": "30px", "position": "relative"}
         ),
@@ -120,12 +122,13 @@ app.layout = html.Div([
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
-                       vertical=True, verticalHeight=180),
+                       vertical=True, verticalHeight=180,
+                      ),
             dbc.Tooltip(id="k-tt",
                         target="k-scale-slider-handle",
                         placement="left",
                         trigger="hover focus",
-                        style={"position": "absolute"}), 
+                       ), 
             ],
             style={"marginRight": "30px", "position": "relative"}
         ),
@@ -136,12 +139,13 @@ app.layout = html.Div([
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
-                       vertical=True, verticalHeight=180),
+                       vertical=True, verticalHeight=180,
+                      ),
             dbc.Tooltip(id="m-tt",
                         target="m-scale-slider-handle",
                         placement="left",
                         trigger="hover focus",
-                        style={"position": "absolute"}), 
+                       ), 
             ],
             style={"marginRight": "30px", "position": "relative"}
         ),
@@ -152,12 +156,13 @@ app.layout = html.Div([
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
-                       vertical=True, verticalHeight=180),
+                       vertical=True, verticalHeight=180,
+                      ),
             dbc.Tooltip(id="M-tt",
                         target="M-scale-slider-handle",
                         placement="left",
                         trigger="hover focus",
-                        style={"position": "absolute"}), 
+                       ), 
             ],
             style={"position": "relative"}
         ),
@@ -301,7 +306,6 @@ def update_T_slider(material, T):
 
 @app.callback(
     [Output("alpha-tt", "children"),
-     Output("alpha-tt", "style"),
      Output("alpha-scale-label", "children")],
     Input("alpha-scale-slider", "drag_value")
 )
@@ -310,16 +314,10 @@ def update_alpha_tooltip(logk):
         raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
-    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
-    style = {"position": "absolute",
-             "transform": "translateY(-50%)",      # центрируем по высоте
-             "top": f"{top:.1f}%"}
-    return txt, style, f"{txt} × α"
+    return txt, f"{txt} × α"
 
 @app.callback(
     [Output("chi-tt", "children"),
-     Output("chi-tt", "style"),
      Output("chi-scale-label", "children")],
     Input("chi-scale-slider", "drag_value")
 )
@@ -328,16 +326,10 @@ def update_chi_tooltip(logk):
         raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
-    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
-    style = {"position": "absolute",
-             "transform": "translateY(-50%)",      # центрируем по высоте
-             "top": f"{top:.1f}%"}
-    return txt, style, f"{txt} × χ"
+    return txt, f"{txt} × χ"
 
 @app.callback(
     [Output("k-tt", "children"),
-     Output("k-tt", "style"),
      Output("k-scale-label", "children")],
     Input("k-scale-slider", "drag_value")
 )
@@ -346,16 +338,10 @@ def update_K_tooltip(logk):
         raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
-    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
-    style = {"position": "absolute",
-             "transform": "translateY(-50%)",      # центрируем по высоте
-             "top": f"{top:.1f}%"}
-    return txt, style, f"{txt} × K(T)"
+    return txt, f"{txt} × K(T)"
 
 @app.callback(
     [Output("m-tt", "children"),
-     Output("m-tt", "style"),
      Output("m-scale-label", "children")],
     Input("m-scale-slider", "drag_value")
 )
@@ -364,16 +350,10 @@ def update_m_tooltip(logk):
         raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
-    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
-    style = {"position": "absolute",
-             "transform": "translateY(-50%)",      # центрируем по высоте
-             "top": f"{top:.1f}%"}
-    return txt, style, f"{txt} × m"
+    return txt, f"{txt} × m"
 
 @app.callback(
     [Output("M-tt", "children"),
-     Output("M-tt", "style"),
      Output("M-scale-label", "children")],
     Input("M-scale-slider", "drag_value")
 )
@@ -382,12 +362,7 @@ def update_M_tooltip(logk):
         raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
-    frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
-    top  = (1 - frac) * 100                        # инвертируем, т.к. ось Y идёт вниз
-    style = {"position": "absolute",
-             "transform": "translateY(-50%)",      # центрируем по высоте
-             "top": f"{top:.1f}%"}
-    return txt, style, f"{txt} × M"
+    return txt, f"{txt} × M"
 
 @app.callback(
     [Output('alpha-scale-slider',      'value'),
