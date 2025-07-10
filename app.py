@@ -87,7 +87,7 @@ app.layout = html.Div([
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -103,7 +103,7 @@ app.layout = html.Div([
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -119,7 +119,7 @@ app.layout = html.Div([
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -135,7 +135,7 @@ app.layout = html.Div([
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -151,7 +151,7 @@ app.layout = html.Div([
             dcc.Slider(id='M-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180),
             ]
         ),
@@ -302,7 +302,7 @@ def update_T_slider(material, T):
     [Output("alpha-tt", "children"),
      Output("alpha-tt", "style"),
      Output("alpha-scale-label", "children")],
-    Input("alpha-scale-slider", "value")
+    Input("alpha-scale-slider", "drag_value")
 )
 def update_alpha_tooltip(logk):
     k = 10 ** logk
@@ -317,7 +317,7 @@ def update_alpha_tooltip(logk):
 @app.callback(
     [Output("chi-tt", "children"),
      Output("chi-scale-label", "children")],
-    Input("chi-scale-slider", "value")
+    Input("chi-scale-slider", "drag_value")
 )
 def update_chi_tooltip(logk):
     k = 10 ** logk
@@ -332,7 +332,7 @@ def update_chi_tooltip(logk):
 @app.callback(
     [Output("k-tt", "children"),
      Output("k-scale-label", "children")],
-    Input("k-scale-slider", "value")
+    Input("k-scale-slider", "drag_value")
 )
 def update_K_tooltip(logk):
     k = 10 ** logk
@@ -347,7 +347,7 @@ def update_K_tooltip(logk):
 @app.callback(
     [Output("m-tt", "children"),
      Output("m-scale-label", "children")],
-    Input("m-scale-slider", "value")
+    Input("m-scale-slider", "drag_value")
 )
 def update_m_tooltip(logk):
     k = 10 ** logk
@@ -362,7 +362,7 @@ def update_m_tooltip(logk):
 @app.callback(
     [Output("M-tt", "children"),
      Output("M-scale-label", "children")],
-    Input("M-scale-slider", "value")
+    Input("M-scale-slider", "drag_value")
 )
 def update_M_tooltip(logk):
     k = 10 ** logk
