@@ -305,6 +305,8 @@ def update_T_slider(material, T):
     Input("alpha-scale-slider", "drag_value")
 )
 def update_alpha_tooltip(logk):
+    if logk is None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
     frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
@@ -321,6 +323,8 @@ def update_alpha_tooltip(logk):
     Input("chi-scale-slider", "drag_value")
 )
 def update_chi_tooltip(logk):
+    if logk is None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
     frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
@@ -337,6 +341,8 @@ def update_chi_tooltip(logk):
     Input("k-scale-slider", "drag_value")
 )
 def update_K_tooltip(logk):
+    if logk is None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
     frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
@@ -353,6 +359,8 @@ def update_K_tooltip(logk):
     Input("m-scale-slider", "drag_value")
 )
 def update_m_tooltip(logk):
+    if logk is None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
     frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
@@ -369,6 +377,8 @@ def update_m_tooltip(logk):
     Input("M-scale-slider", "drag_value")
 )
 def update_M_tooltip(logk):
+    if logk is None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     k = 10 ** logk
     txt = f"{k:.2f}"
     frac = (logk - np.log10(1/5)) / (np.log10(5) - np.log10(1/5))  # 0 → низ, 1 → верх
