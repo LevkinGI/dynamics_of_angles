@@ -1,6 +1,6 @@
 # constants.py
 import numpy as np
-from numba import njit
+from numba import njit, prange
 
 # Исходные параметры (Материал 1)
 H_step = 10
@@ -55,8 +55,6 @@ _, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
 _, M_mesh_2 = np.meshgrid(H_vals, M_array_2)
 chi_mesh_2 = chi_const * np.ones(m_mesh_2.shape)
 K_mesh_2 = K_const * np.ones(m_mesh_2.shape)
-
-from numba import njit, prange
 
 @njit(parallel=True, fastmath=True)
 def compute_frequencies(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
