@@ -237,7 +237,7 @@ def update_T_slider(material, T):
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
     return (p.alpha_scale, p.chi_scale,
-            p.k_scale,    p.m_scale, p.M_scale)
+            p.k_scale, p.m_scale, p.M_scale)
 
 @app.callback(
     Output('param-store', 'data'),
