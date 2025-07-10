@@ -265,7 +265,7 @@ def update_graphs(store, H, T, material):
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
-    theoretical_cosntant_changed = any('param-store' in ti for ti in triggered_inputs)
+    theoretical_constant_changed = any('param-store' in ti for ti in triggered_inputs)
   
     h_index = np.abs(H_vals - H).argmin()
     
@@ -405,7 +405,7 @@ def update_graphs(store, H, T, material):
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
-    elif theoretical_cosntant_changed:
+    elif theoretical_constant_changed:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
