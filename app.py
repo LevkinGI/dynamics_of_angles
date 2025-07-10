@@ -54,8 +54,12 @@ app.layout = html.Div([
         step=10,
         value=1000,
         marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        tooltip={"placement": "bottom", "always_visible": False},
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
+    dbc.Tooltip(id="H-tt",
+                target="H-slider",
+                placement="bottom",
+                trigger="hover focus"), 
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
     dcc.Slider(
@@ -65,8 +69,12 @@ app.layout = html.Div([
         step=0.1,
         value=T_init,
         marks={i: str(i) for i in range(290, 351, 10)},
-        tooltip={"placement": "bottom", "always_visible": False},
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
+    dbc.Tooltip(id="T-tt",
+                target="T-slider",
+                placement="bottom",
+                trigger="hover focus"), 
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
 
@@ -79,7 +87,7 @@ app.layout = html.Div([
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -94,7 +102,7 @@ app.layout = html.Div([
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -109,7 +117,7 @@ app.layout = html.Div([
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -124,7 +132,7 @@ app.layout = html.Div([
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -139,7 +147,7 @@ app.layout = html.Div([
             dcc.Slider(id='M-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ]
         ),
@@ -376,7 +384,6 @@ def update_freq_cache(store, material):
     t_index = np.abs(T_vals - 293).argmin()
 
     H_mesh = H_mesh_1 if material == '1' else H_mesh_2
-    T_mesh = T_mesh_1 if material == '1' else T_mesh_2
     m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
