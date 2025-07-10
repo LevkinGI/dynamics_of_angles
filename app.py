@@ -169,10 +169,10 @@ app.layout = html.Div([
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
                 data=[
-                    go.Surface(z=f1_GHz_1, x=H_vals, y=T_vals_1,
+                    go.Surface(z=freq_array1, x=H_vals, y=T_vals_1,
                                colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                showscale=False, name='HF'),
-                    go.Surface(z=f2_GHz_1, x=H_vals, y=T_vals_1,
+                    go.Surface(z=freq_array2, x=H_vals, y=T_vals_1,
                                colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                showscale=False, name='LF')
                 ],
@@ -284,14 +284,29 @@ def update_graphs(store, H, T, material):
     amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
 
-    H_mesh = H_mesh_1 if material=='1' else H_mesh_2
-    T_mesh = T_mesh_1 if material=='1' else T_mesh_2
-    m_mesh = p.m_scale * (m_mesh_1 if material=='1' else m_mesh_2).copy()
-    K_mesh = p.k_scale * (K_mesh_1 if material=='1' else K_mesh_2).copy()
-    chi_mesh = p.chi_scale * (chi_mesh_1 if material=='1' else chi_mesh_2).copy()
+    if theoretical_constant_changed:
+        H_mesh = H_mesh_1 if material=='1' else H_mesh_2
+        T_mesh = T_mesh_1 if material=='1' else T_mesh_2
+        m_mesh = p.m_scale * (m_mesh_1 if material=='1' else m_mesh_2).copy()
+        K_mesh = p.k_scale * (K_mesh_1 if material=='1' else K_mesh_2).copy()
+        chi_mesh = p.chi_scale * (chi_mesh_1 if material=='1' else chi_mesh_2).copy()
 
-    freq_array1, freq_array2 = compute_frequencies_numba(
-        H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+        # 1) Что лежит в подготовленных сетках, которые ты
+        #    передаёшь в compute_frequencies_numba из update_graphs?
+        print("m_mesh:",   m_mesh[t_index, h_index])
+        print("K_mesh:",   K_mesh[t_index, h_index])
+        print("chi_mesh:", chi_mesh[t_index, h_index])
+        print("H_mesh:",   H_mesh[t_index, h_index])      # должен быть 1000
+        print("gamma:",    gamma)
+        
+        # 2) А теперь – ровно те же индексы (t_index, h_index)
+        #    в уже посчитанном «хорошем» массиве, который создаётся в constants.py:
+        print("f1_good:", freq_array1[t_index, h_index])
+        print("f2_good:", freq_array2[t_index, h_index])
+    
+        freq_array1, freq_array2 = compute_frequencies(
+            H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, T, m_val, M_val, K_val, chi_val, alpha, kappa)
