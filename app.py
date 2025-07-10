@@ -262,16 +262,14 @@ def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
 @app.callback(
     Output('freq-cache', 'data'),
     [Input('param-store',       'data'),
-     Input('material-dropdown', 'value'),
-     Input('H-slider', 'value'),
-     Input('T-slider', 'value'),],
+     Input('material-dropdown', 'value')],
 )
-def update_freq_cache(store, material, H, T):
+def update_freq_cache(store, material):
     p = SimParams(**store[material])
 
-    h_index = np.abs(H_vals - H).argmin()
+    h_index = np.abs(H_vals - 1000).argmin()
     T_vals = T_vals_1 if material=='1' else T_vals_2
-    t_index = np.abs(T_vals - T).argmin()
+    t_index = np.abs(T_vals - 293).argmin()
 
     H_mesh = H_mesh_1 if material == '1' else H_mesh_2
     T_mesh = T_mesh_1 if material == '1' else T_mesh_2
