@@ -18,10 +18,7 @@ from simulator import run_simulation
 # Функции аппроксимации из Cython-модуля:
 from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
-from plotting import (
-    create_phi_fig, create_theta_fig, create_yz_fig, create_H_fix_fig,
-    create_T_fix_fig, create_phi_amp_fig, create_theta_amp_fig, create_freq_fig
-)
+from plotting import *
 
 app = dash.Dash(__name__)
 server = app.server
