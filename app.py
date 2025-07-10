@@ -343,8 +343,8 @@ def update_graphs(store, freqs, H, T, material):
     # Выбор данных в зависимости от материала
     T_vals = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
-    m_val = p.m_scale * (m_array if material=='1' else m_array_2)[t_index]
-    M_val = p.M_scale * (M_array if material=='1' else M_array_2)[t_index]
+    m_val = p.m_scale * (m_array_1 if material=='1' else m_array_2)[t_index]
+    M_val = p.M_scale * (M_array_1 if material=='1' else M_array_2)[t_index]
     chi_val = p.chi_scale * (chi_T(T) if material=='1' else chi_const)
     K_val = p.k_scale * (K_T(T) if material=='1' else K_const)
     alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
