@@ -87,7 +87,7 @@ app.layout = html.Div([
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -103,7 +103,7 @@ app.layout = html.Div([
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -119,7 +119,7 @@ app.layout = html.Div([
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -135,7 +135,7 @@ app.layout = html.Div([
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ],
             style={"marginRight": "24px"}
@@ -151,7 +151,7 @@ app.layout = html.Div([
             dcc.Slider(id='M-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       tooltip={"placement": "left", "always_visible": False}, updatemode="drag",
                        vertical=True, verticalHeight=180),
             ]
         ),
