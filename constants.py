@@ -100,7 +100,7 @@ def compute_frequencies(H_mesh, T_mesh, m_mesh, chi_mesh, K_mesh, gamma):
 
 # Вычисление частот с использованием оптимизированной функции
 # --- FeFe ---
-freq_array1, freq_array2 = compute_frequencies_numba(
+freq_array1, freq_array2 = compute_frequencies(
         H_mesh_1, T_mesh_1,
         m_mesh_1,
         chi_mesh_1,
