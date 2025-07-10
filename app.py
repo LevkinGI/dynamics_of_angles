@@ -58,7 +58,7 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.Label("k × α"),
-            dcc.Slider(id='alpha-slider',
+            dcc.Slider(id='alpha-scale-slider',
                        min=0.8, max=1.2, step=0.005, value=1.0,
                        marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
                        vertical=True, verticalHeight=180),
@@ -67,7 +67,7 @@ app.layout = html.Div([
         ),
         html.Div([
             html.Label("k × χ"),
-            dcc.Slider(id='chi-slider',
+            dcc.Slider(id='chi-scale-slider',
                        min=0.8, max=1.2, step=0.005, value=1.0,
                        marks={round(i/100, 2): f"{i/100:.2f}" for i in range(80, 121, 5)},
                        vertical=True, verticalHeight=180),
@@ -226,8 +226,8 @@ def update_T_slider(material, T):
     return min_val, max_val, step, value, marks
 
 @app.callback(
-    [Output('alpha-slider',      'value'),
-    Output('chi-slider',      'value'),
+    [Output('alpha-scale-slider',      'value'),
+    Output('chi-scale-slider',      'value'),
     Output('k-scale-slider',      'value'),
     Output('m-scale-slider',      'value'),
     Output('M-scale-slider',      'value')],
@@ -242,8 +242,8 @@ def sync_sliders_with_material(material, store):
 @app.callback(
     Output('param-store', 'data'),
     [Input('material-dropdown', 'value'),
-    Input('alpha-slider',      'value'),
-    Input('chi-slider',        'value'),
+    Input('alpha-scale-slider',      'value'),
+    Input('chi-scale-slider',        'value'),
     Input('k-scale-slider',    'value'),
     Input('m-scale-slider',    'value'),
     Input('M-scale-slider',    'value')],
