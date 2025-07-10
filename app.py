@@ -96,7 +96,7 @@ app.layout = html.Div([
                         trigger="hover focus",
                        ), 
             ],
-            style={"marginLeft": "30px","position": "relative"}
+            style={"marginLeft": "50px","position": "relative"}
         ),
         
         html.Div([
@@ -113,7 +113,7 @@ app.layout = html.Div([
                         trigger="hover focus",
                        ), 
             ],
-            style={"marginLeft": "30px", "position": "relative"}
+            style={"marginLeft": "50px", "position": "relative"}
         ),
         
         html.Div([
@@ -130,7 +130,7 @@ app.layout = html.Div([
                         trigger="hover focus",
                        ), 
             ],
-            style={"marginLeft": "30px", "position": "relative"}
+            style={"marginLeft": "50px", "position": "relative"}
         ),
         
         html.Div([
@@ -147,7 +147,7 @@ app.layout = html.Div([
                         trigger="hover focus",
                        ), 
             ],
-            style={"marginLeft": "30px", "position": "relative"}
+            style={"marginLeft": "50px", "position": "relative"}
         ),
         
         html.Div([
@@ -164,7 +164,7 @@ app.layout = html.Div([
                         trigger="hover focus",
                        ), 
             ],
-            style={"marginLeft": "30px", "position": "relative"}
+            style={"marginLeft": "50px", "position": "relative"}
         ),
         ],
         style={
