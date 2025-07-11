@@ -143,7 +143,6 @@ app.layout = html.Div([
                 {'label': 'GdFe', 'value': '2'}
             ],
             value='1',
-            style={'width': '300px'}
         ),
         daq.BooleanSwitch(
             id='auto-calc-switch',
