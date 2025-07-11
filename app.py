@@ -122,6 +122,14 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
+        daq.BooleanSwitch(
+            id='auto-calc-switch',
+            on=True,
+            label='Моделирование при изменении параметров',
+            labelPosition='top',
+            color='#119DFF',
+            style={"marginLeft": "60px"}
+        ),
         ],
         style={
             "display":   "flex",
@@ -134,28 +142,18 @@ app.layout = html.Div([
 
 
     
+    dcc.Dropdown(
+        id='material-dropdown',
+        options=[
+            {'label': 'FeFe', 'value': '1'},
+            {'label': 'GdFe', 'value': '2'}
+        ],
+        value='1',
+        style={'width': '300px'}
+    ),
+
+
     
-    html.Div([
-        dcc.Dropdown(
-            id='material-dropdown',
-            options=[
-                {'label': 'FeFe', 'value': '1'},
-                {'label': 'GdFe', 'value': '2'}
-            ],
-            value='1',
-        ),
-        daq.BooleanSwitch(
-            id='auto-calc-switch',
-            on=True,
-            label='Расчёт при изменении параметров',
-            labelPosition='right',
-            color='#119DFF',
-            style={"marginLeft": "30px"}
-        ),
-    ]),
-
-
-
 
     
     html.Div([
