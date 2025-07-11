@@ -439,7 +439,7 @@ def update_graphs(store, freqs, H, T, material, calc_on):
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
     freqs_changed  = any('freq-cache' in ti for ti in triggered_inputs)
-    if not auto_on and not material_changed:
+    if not calc_on and not material_changed:
         raise PreventUpdate
         
     p = SimParams(**store[material])
