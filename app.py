@@ -9,6 +9,7 @@ import dash
 from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from dash_extensions import DebounceSlider
 import dash_daq as daq
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
@@ -48,7 +49,7 @@ app.layout = html.Div([
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
-    dcc.Slider(
+    DebounceSlider(
         id='H-slider',
         min=0,
         max=H_vals[-1],
@@ -56,10 +57,11 @@ app.layout = html.Div([
         value=1000,
         marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+        debounce=300,
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
-    dcc.Slider(
+    DebounceSlider(
         id='T-slider',
         min=290,
         max=350,
@@ -67,6 +69,7 @@ app.layout = html.Div([
         value=T_init,
         marks={i: str(i) for i in range(290, 351, 10)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+        debounce=300,
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
@@ -77,11 +80,11 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
-            dcc.Slider(id='alpha-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                       marks=log_marks,
-                       updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+            DebounceSlider(id='alpha-scale-slider',
+                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                           updatemode="mouseup",
+                           debounce=300,
+                           vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px","position": "relative"}
@@ -89,11 +92,11 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='chi-scale-label'),
-            dcc.Slider(id='chi-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                       marks=log_marks,
-                       updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+            DebounceSlider(id='chi-scale-slider',
+                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                           updatemode="mouseup",
+                           debounce=300,
+                           vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -101,11 +104,11 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='k-scale-label'),
-            dcc.Slider(id='k-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                       marks=log_marks,
-                       updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+            DebounceSlider(id='k-scale-slider',
+                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                           updatemode="mouseup",
+                           debounce=300,
+                           vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -113,11 +116,11 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='m-scale-label'),
-            dcc.Slider(id='m-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                       marks=log_marks,
-                       updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+            DebounceSlider(id='m-scale-slider',
+                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                           updatemode="mouseup",
+                           debounce=300,
+                           vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
