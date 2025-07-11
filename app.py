@@ -120,18 +120,6 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
-        
-        html.Div([
-            html.Label(id='M-scale-label'),
-            dcc.Slider(id='M-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                       marks=log_marks,
-                       updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
-                      ),
-            ],
-            style={"marginLeft": "30px", "position": "relative"}
-        ),
         ],
         style={
             "display":   "flex",
@@ -311,28 +299,64 @@ def move_m_bubble(logk):
     return f"{k:.2f} × m"
 
 @app.callback(
-    Output("M-scale-label", "children"),
-    Input("M-scale-slider", "drag_value"),
+    [Output('H_fix-graph', 'figure'),
+     Output('T_fix-graph', 'figure')],
+    [
+        Input('H-slider',  'drag_value'),
+        Input('T-slider',  'drag_value'),
+        Input('alpha-scale-slider', 'drag_value'),
+        Input('chi-scale-slider',   'drag_value'),
+        Input('k-scale-slider',     'drag_value'),
+        Input('m-scale-slider',     'drag_value'),
+        Input('H-slider',  'value'),       # H финальное
+        Input('T-slider',  'value'),       # T финальное
+        Input('material-dropdown', 'value')
+    ],
+    State('param-store', 'data'),
+    prevent_initial_call=True,
 )
-def move_M_bubble(logk):
-    if logk is None:
-        raise dash.exceptions.PreventUpdate
-    k = 10**logk
-    return f"{k:.2f} × M"
+def live_fix_graphs(H_d, T_d,
+                    a_d, chi_d, k_d, m_d, M_d,
+                    H_v, T_v, material, store):
+    H = H_d if H_d is not None else H_v
+    T = T_d if T_d is not None else T_v
+
+    p0 = SimParams(**store[material])
+    alpha_scale = 10**a_d  if a_d  is not None else p0.alpha_scale
+    chi_scale   = 10**chi_d if chi_d is not None else p0.chi_scale
+    k_scale     = 10**k_d   if k_d   is not None else p0.k_scale
+    m_scale     = 10**m_d   if m_d   is not None else p0.m_scale
+
+    T_vals    = T_vals_1 if material == '1' else T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
+    m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
+    K_vec_T   = k_scale * (K_array_1 if material == '1' else K_array_2)
+    chi_vec_T = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+
+    m_T      = m_vec_T[t_index]
+    K_T     = K_vec_T
+    chi_T   = chi_vec_T
+
+    f1_T, f2_T = compute_frequencies_H_fix(H, m_vec_T, chi_vec_T, K_vec_T, gamma)
+    f1_H, f2_H = compute_frequencies_T_fix(H_vals, m_T, chi_T, K_T, gamma)
+
+    H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H)
+    T_fix_fig = create_T_fix_fig(H_vals, (f1_H, f2_H), T)
+
+    return H_fix_fig, T_fix_fig
 
 @app.callback(
     [Output('alpha-scale-slider',      'value'),
     Output('chi-scale-slider',      'value'),
     Output('k-scale-slider',      'value'),
-    Output('m-scale-slider',      'value'),
-    Output('M-scale-slider',      'value')],
+    Output('m-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
     State('param-store',       'data'),    
 )
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
     return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
-            np.log10(p.k_scale), np.log10(p.m_scale), np.log10(p.M_scale))
+            np.log10(p.k_scale), np.log10(p.m_scale))
 
 @app.callback(
     Output('param-store', 'data'),
@@ -340,17 +364,15 @@ def sync_sliders_with_material(material, store):
     Input('alpha-scale-slider',      'value'),
     Input('chi-scale-slider',        'value'),
     Input('k-scale-slider',    'value'),
-    Input('m-scale-slider',    'value'),
-    Input('M-scale-slider',    'value')],
+    Input('m-scale-slider',    'value')],
     State('param-store',       'data'),
 )
-def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
+def update_params(material, a_k, chi_k, k_k, m_k, store):
     p = SimParams(**store[material])
     p.alpha_scale = 10 ** a_k
     p.chi_scale = 10 ** chi_k
     p.k_scale = 10 ** k_k
     p.m_scale = 10 ** m_k
-    p.M_scale = 10 ** M_k
     store[material] = asdict(p)
     return store
 
@@ -414,7 +436,7 @@ def update_graphs(store, freqs, H, T, material):
     T_vals = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
     m_val = p.m_scale * (m_array_1 if material=='1' else m_array_2)[t_index]
-    M_val = p.M_scale * (M_array_1 if material=='1' else M_array_2)[t_index]
+    M_val = (M_array_1 if material=='1' else M_array_2)[t_index]
     chi_val = p.chi_scale * (chi_T(T) if material=='1' else chi_const)
     K_val = p.k_scale * (K_T(T) if material=='1' else K_const)
     alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
