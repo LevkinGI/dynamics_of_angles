@@ -15,6 +15,16 @@ def _dynamics_factory(a: float, b: float, c: float, sign: int):
     # ➜ вернём Python-обёртку — она вызывает уже скомпилированный код
     return dynamics_const.py_func
 
+@njit(fastmath=True)
+def calc_coef(H: float, m: float, M: float, K: float,
+              chi: float, alpha: float, kappa: float):
+    a = alpha * M * gamma / chi
+    b = (np.abs(m) * gamma**2 * H / chi - gamma**2 * H**2 + 2 * K * gamma**2 / chi)
+    sign = 1 if m > 0 else -1
+    c = 2 * gamma * H - sign * kappa * gamma**2 / chi
+
+    return (a, b, c, sign)
+
 # @njit(fastmath=True)
 # def dynamics(t, y, H, m, M, K, chi, alpha, kappa):
 #     theta, phi, dtheta, dphi = y
@@ -51,10 +61,7 @@ def run_simulation(
     dtheta_initial = 0.0
     dphi_initial = (gamma**2) * (H_val + abs(m_val) / chi_val) * h_IFE * delta_t
 
-    a = alpha * M_val * gamma / chi_val
-    b = (np.abs(m_val) * gamma**2 * H_val / chi_val - gamma**2 * H_val**2 + 2 * K_val * gamma**2 / chi_val)
-    sign = 1 if m_val > 0 else -1
-    c = 2 * gamma * H_val - sign * kappa * gamma**2 / chi_val
+    a, b, c, sign = calc_coef(H_val, m_val, M_val, K_val, chi_val, alpha, kappa)
     dynamics = _dynamics_factory(a, b, c, sign)
                        
     y0 = [theta_initial, phi_initial, dtheta_initial, dphi_initial]
