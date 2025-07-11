@@ -1,7 +1,0 @@
-/* прячем tooltip старой и новой версий Slider-а */
-.dash-slider-value {
-    display: none !important;
-},
-.rc-slider-tooltip {
-    display: none !important;
-}
