@@ -54,12 +54,8 @@ app.layout = html.Div([
         step=10,
         value=1000,
         marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+        updatemode="mouseup",
     ),
-    dbc.Tooltip(id="H-tt",
-                target="H-slider-handle",
-                placement="bottom",
-                trigger="hover focus"), 
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
     dcc.Slider(
@@ -69,12 +65,8 @@ app.layout = html.Div([
         step=0.1,
         value=T_init,
         marks={i: str(i) for i in range(290, 351, 10)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+        updatemode="mouseup",
     ),
-    dbc.Tooltip(id="T-tt",
-                target="T-slider-handle",
-                placement="bottom",
-                trigger="hover focus"), 
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
 
@@ -90,20 +82,6 @@ app.layout = html.Div([
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
-            html.Div(id="alpha-bubble",
-                     style={"position":"absolute",
-                            "left":"98%",
-                            "background":"#343a40","color":"#fff",
-                            "fontSize":"10px","borderRadius":"4px",
-                            "transform":"translateY(-50%)",
-                            "pointerEvents":"none",
-                            "display":"none"}
-                    ),
-            # dbc.Tooltip(id="alpha-tt",
-            #             target="alpha-scale-slider-handle",
-            #             placement="left",
-            #             trigger="hover focus",
-            #            ), 
             ],
             style={"marginLeft": "50px","position": "relative"}
         ),
@@ -116,21 +94,6 @@ app.layout = html.Div([
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
-            html.Div(id="chi-bubble",
-                     style={"position":"absolute",
-                            "left":"105%",
-                            "padding":"2px 4px",
-                            "background":"#343a40","color":"#fff",
-                            "fontSize":"11px","borderRadius":"4px",
-                            "transform":"translateY(-50%)",
-                            "pointerEvents":"none",
-                            "display":"none"}
-                    ),
-            # dbc.Tooltip(id="chi-tt",
-            #             target="chi-scale-slider-handle",
-            #             placement="left",
-            #             trigger="hover focus",
-            #            ), 
             ],
             style={"marginLeft": "50px", "position": "relative"}
         ),
@@ -143,21 +106,6 @@ app.layout = html.Div([
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
-            html.Div(id="k-bubble",
-                     style={"position":"absolute",
-                            "left":"105%",
-                            "padding":"2px 4px",
-                            "background":"#343a40","color":"#fff",
-                            "fontSize":"11px","borderRadius":"4px",
-                            "transform":"translateY(-50%)",
-                            "pointerEvents":"none",
-                            "display":"none"}
-                    ),
-            # dbc.Tooltip(id="k-tt",
-            #             target="k-scale-slider-handle",
-            #             placement="left",
-            #             trigger="hover focus",
-            #            ), 
             ],
             style={"marginLeft": "50px", "position": "relative"}
         ),
@@ -170,21 +118,6 @@ app.layout = html.Div([
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
-            html.Div(id="m-bubble",
-                     style={"position":"absolute",
-                            "left":"105%",
-                            "padding":"2px 4px",
-                            "background":"#343a40","color":"#fff",
-                            "fontSize":"11px","borderRadius":"4px",
-                            "transform":"translateY(-50%)",
-                            "pointerEvents":"none",
-                            "display":"none"}
-                    ),
-            # dbc.Tooltip(id="m-tt",
-            #             target="m-scale-slider-handle",
-            #             placement="left",
-            #             trigger="hover focus",
-            #            ), 
             ],
             style={"marginLeft": "50px", "position": "relative"}
         ),
@@ -197,21 +130,6 @@ app.layout = html.Div([
                        tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
-            html.Div(id="M-bubble",
-                     style={"position":"absolute",
-                            "left":"105%",
-                            "padding":"2px 4px",
-                            "background":"#343a40","color":"#fff",
-                            "fontSize":"11px","borderRadius":"4px",
-                            "transform":"translateY(-50%)",
-                            "pointerEvents":"none",
-                            "display":"none"}
-                    ),
-            # dbc.Tooltip(id="M-tt",
-            #             target="M-scale-slider-handle",
-            #             placement="left",
-            #             trigger="hover focus",
-            #            ), 
             ],
             style={"marginLeft": "50px", "position": "relative"}
         ),
@@ -354,104 +272,44 @@ def update_T_slider(material, T):
     return min_val, max_val, step, value, marks
 
 @app.callback(
-    [Output("alpha-bubble", "children"),
-     Output("alpha-bubble", "style"),
-     Output("alpha-scale-label", "children")],
-    [Input("alpha-scale-slider", "drag_value"),
-     Input("alpha-scale-slider", "value")],
-    State("alpha-bubble", "style"),
-    prevent_initial_call=True
+    Output("alpha-scale-label", "children"),
+    Input("alpha-scale-slider", "drag_value"),
 )
-def move_alpha_bubble(drag_v, final_v, st):
-    if drag_v is None:                # мышь отпущена → прячем
-        st["display"] = "none"
-        k = 10**final_v
-        return dash.no_update, st, f"{k:.2f} × α"
-    k = 10**drag_v
-    st["display"] = "block"
-    frac = (drag_v + np.log10(5)) / (2*np.log10(5))   # 0–1
-    st["top"] = f"{(1-frac)*100:.1f}%"
-    return f"{k:.2f}", st, f"{k:.2f} × α"
+def move_alpha_bubble(logk):
+    k = 10**logk
+    return f"{k:.2f} × α"
 
 @app.callback(
-    [Output("chi-bubble", "children"),
-     Output("chi-bubble", "style"),
-     Output("chi-scale-label", "children")],
-    [Input("chi-scale-slider", "drag_value"),
-     Input("chi-scale-slider", "value")],
-    State("chi-bubble", "style"),
-    prevent_initial_call=True
+    Output("chi-scale-label", "children"),
+    Input("chi-scale-slider", "drag_value"),
 )
-def move_chi_bubble(drag_v, final_v, st):
-    if drag_v is None:                # мышь отпущена → прячем
-        st["display"] = "none"
-        k = 10**final_v
-        return dash.no_update, st, f"{k:.2f} × χ"
-    k = 10**drag_v
-    st["display"] = "block"
-    frac = (drag_v + np.log10(5)) / (2*np.log10(5))   # 0–1
-    st["top"] = f"{(1-frac)*100:.1f}%"
-    return f"{k:.2f}", st, f"{k:.2f} × χ"
+def move_chi_bubble(logk):
+    k = 10**logk
+    return f"{k:.2f} × χ"
 
 @app.callback(
-    [Output("k-bubble", "children"),
-     Output("k-bubble", "style"),
-     Output("k-scale-label", "children")],
-    [Input("k-scale-slider", "drag_value"),
-     Input("k-scale-slider", "value")],
-    State("k-bubble", "style"),
-    prevent_initial_call=True
+    Output("k-scale-label", "children"),
+    Input("k-scale-slider", "drag_value"),
 )
-def move_k_bubble(drag_v, final_v, st):
-    if drag_v is None:                # мышь отпущена → прячем
-        st["display"] = "none"
-        k = 10**final_v
-        return dash.no_update, st, f"{k:.2f} × K(T)"
-    k = 10**drag_v
-    st["display"] = "block"
-    frac = (drag_v + np.log10(5)) / (2*np.log10(5))   # 0–1
-    st["top"] = f"{(1-frac)*100:.1f}%"
-    return f"{k:.2f}", st, f"{k:.2f} × K(T)"
+def move_k_bubble(logk):
+    k = 10**logk
+    return f"{k:.2f} × K(T)"
 
 @app.callback(
-    [Output("m-bubble", "children"),
-     Output("m-bubble", "style"),
-     Output("m-scale-label", "children")],
-    [Input("m-scale-slider", "drag_value"),
-     Input("m-scale-slider", "value")],
-    State("m-bubble", "style"),
-    prevent_initial_call=True
+    Output("m-scale-label", "children"),
+    Input("m-scale-slider", "drag_value"),
 )
-def move_m_bubble(drag_v, final_v, st):
-    if drag_v is None:                # мышь отпущена → прячем
-        st["display"] = "none"
-        k = 10**final_v
-        return dash.no_update, st, f"{k:.2f} × m"
-    k = 10**drag_v
-    st["display"] = "block"
-    frac = (drag_v + np.log10(5)) / (2*np.log10(5))   # 0–1
-    st["top"] = f"{(1-frac)*100:.1f}%"
-    return f"{k:.2f}", st, f"{k:.2f} × m"
+def move_m_bubble(logk):
+    k = 10**logk
+    return f"{k:.2f} × m"
 
 @app.callback(
-    [Output("M-bubble", "children"),
-     Output("M-bubble", "style"),
-     Output("M-scale-label", "children")],
-    [Input("M-scale-slider", "drag_value"),
-     Input("M-scale-slider", "value")],
-    State("M-bubble", "style"),
-    prevent_initial_call=True
+    Output("M-scale-label", "children"),
+    Input("M-scale-slider", "drag_value"),
 )
-def move_M_bubble(drag_v, final_v, st):
-    if drag_v is None:                # мышь отпущена → прячем
-        st["display"] = "none"
-        k = 10**final_v
-        return dash.no_update, st, f"{k:.2f} × M"
-    k = 10**drag_v
-    st["display"] = "block"
-    frac = (drag_v + np.log10(5)) / (2*np.log10(5))   # 0–1
-    st["top"] = f"{(1-frac)*100:.1f}%"
-    return f"{k:.2f}", st, f"{k:.2f} × M"
+def move_M_bubble(logk):
+    k = 10**logk
+    return f"{k:.2f} × M"
 
 @app.callback(
     [Output('alpha-scale-slider',      'value'),
