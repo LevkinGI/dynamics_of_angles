@@ -124,7 +124,7 @@ app.layout = html.Div([
         ),
         daq.BooleanSwitch(
             id='auto-calc-switch',
-            on=True,
+            on=False,
             label='Моделирование при изменении параметров',
             labelPosition='top',
             color='#119DFF',
