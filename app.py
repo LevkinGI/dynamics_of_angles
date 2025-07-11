@@ -532,10 +532,6 @@ def update_graphs(store, freqs, H, T, material):
     yz_fig = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
                            np.cos(np.pi/2 + np.radians(theta)),
                            time_ns)
-    H_fix_freqs = (freq_array1[:, h_index], freq_array2[:, h_index])
-    T_fix_freqs = (freq_array1[t_index, :], freq_array2[t_index, :])
-    H_fix_fig = create_H_fix_fig(T_vals, H_fix_freqs, H)
-    T_fix_fig = create_T_fix_fig(H_vals, T_fix_freqs, T)
     if material_changed:
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
@@ -549,7 +545,7 @@ def update_graphs(store, freqs, H, T, material):
         theta_amp_fig = no_update
         freq_fig = no_update
 
-    return phi_fig, theta_fig, yz_fig, H_fix_fig, T_fix_fig, phi_amp_fig, theta_amp_fig, freq_fig
+    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
