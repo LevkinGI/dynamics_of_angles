@@ -27,9 +27,9 @@ def calc_coef(H: float, m: float, M: float, K: float,
 
 @njit(cache=True, fastmath=True)
 def dynamics(t, y, a, b, c, sign):
+    theta, phi, dtheta, dphi = y
     ddtheta = -a * dtheta - b * theta - sign * c * dphi
     ddphi = -a * dphi - b * phi + sign * c * dtheta
-    
     return (dtheta, dphi, ddtheta, ddphi)
 
 def run_simulation(
