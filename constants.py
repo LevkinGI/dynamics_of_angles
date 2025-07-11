@@ -46,13 +46,7 @@ chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
 @njit(parallel=True, fastmath=True)
-def compute_frequencies(H_array, T_array, m_array, chi_array, K_array, gamma):
-    # Предвычисление meshgrid’ов и частот для материала 1
-    H_mesh, T_mesh = np.meshgrid(H_array, T_array)
-    _, m_mesh = np.meshgrid(H_array, m_array)
-    _, chi_mesh = np.meshgrid(H_array, chi_array)
-    _, K_mesh = np.meshgrid(H_array, K_array)
-    
+def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     rows, cols = H_mesh.shape
     f1_GHz = np.empty((rows, cols), dtype=np.float64)
     f2_GHz = np.empty((rows, cols), dtype=np.float64)
