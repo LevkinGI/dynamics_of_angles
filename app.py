@@ -404,8 +404,6 @@ def update_freq_cache(store, material):
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
-     Output('H_fix-graph', 'figure'),
-     Output('T_fix-graph', 'figure'),
      Output('phi-amplitude-graph', 'figure'),
      Output('theta-amplitude-graph', 'figure'),
      Output('frequency-surface-graph', 'figure')],
