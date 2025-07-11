@@ -92,7 +92,7 @@ app.layout = html.Div([
                       ),
             html.Div(id="alpha-bubble",
                      style={"position":"absolute",
-                            "left":"95%",
+                            "left":"98%",
                             "background":"#343a40","color":"#fff",
                             "fontSize":"10px","borderRadius":"4px",
                             "transform":"translateY(-50%)",
