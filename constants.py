@@ -132,7 +132,7 @@ def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
             + (kappa**2) * g4 / (2 * chi_i**2)
         )
         term   = math.fabs(2 * gamma * H - sign * kappa * g2 / chi_i)
-        sqrt_t = np.sqrt(
+        sqrt_t = math.sqrt(
             2 * K_i * g2 / chi_i
             + abs_m * H * g2 / chi_i
             - sign * kappa * g3 * H / chi_i
@@ -169,7 +169,7 @@ def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
             + (kappa**2) * g4 / (2 * chi**2)
         )
         term   = math.fabs(2 * gamma * H_j - sign * kappa * g2 / chi)
-        sqrt_t = np.sqrt(
+        sqrt_t = math.sqrt(
             2 * K * g2 / chi
             + abs_m * H_j * g2 / chi
             - sign * kappa * g3 * H_j / chi
