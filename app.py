@@ -6,7 +6,6 @@ import numpy as np
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
-import dash_bootstrap_components as dbc
 from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 import plotly.graph_objs as go
