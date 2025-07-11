@@ -316,7 +316,7 @@ def move_m_bubble(logk):
     prevent_initial_call=True,
 )
 def live_fix_graphs(H_d, T_d,
-                    a_d, chi_d, k_d, m_d, M_d,
+                    a_d, chi_d, k_d, m_d,
                     H_v, T_v, material, store):
     H = H_d if H_d is not None else H_v
     T = T_d if T_d is not None else T_v
