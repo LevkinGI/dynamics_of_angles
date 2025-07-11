@@ -54,7 +54,7 @@ app.layout = html.Div([
         step=10,
         value=1000,
         marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        updatemode="mouseup",
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
@@ -65,7 +65,7 @@ app.layout = html.Div([
         step=0.1,
         value=T_init,
         marks={i: str(i) for i in range(290, 351, 10)},
-        updatemode="mouseup",
+        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
@@ -91,7 +91,7 @@ app.layout = html.Div([
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
             ],
@@ -103,7 +103,7 @@ app.layout = html.Div([
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
             ],
@@ -115,7 +115,7 @@ app.layout = html.Div([
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
             ],
@@ -127,7 +127,7 @@ app.layout = html.Div([
             dcc.Slider(id='M-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
-                       tooltip={"placement": "left", "always_visible": False}, updatemode="mouseup",
+                       updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
             ],
@@ -240,12 +240,10 @@ app.layout = html.Div([
 @app.callback(
     [Output('H-label', 'children'),
      Output('T-label', 'children')],
-    [Input('H-slider', 'drag_value'),
-     Input('T-slider', 'drag_value')]
+    [Input('H-slider', 'value'),
+     Input('T-slider', 'value')]
 )
 def update_slider_values(H, T):
-    if H is None or T in None:                          # при первом рендере drag_value == None
-        raise dash.exceptions.PreventUpdate
     return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
 
 @app.callback(
