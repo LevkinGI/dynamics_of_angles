@@ -132,7 +132,7 @@ app.layout = html.Div([
             #             placement="left",
             #             trigger="hover focus",
             #            ), 
-            # ],
+            ],
             style={"marginLeft": "50px", "position": "relative"}
         ),
         
