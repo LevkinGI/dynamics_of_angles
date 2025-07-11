@@ -149,7 +149,8 @@ app.layout = html.Div([
             id='auto-calc-switch',
             on=True,
             label='Расчёт при изменении параметров',
-            labelPosition='bottom',
+            labelPosition='right',
+            color='#119DFF',
             style={"marginLeft": "30px"}
         ),
     ]),
