@@ -45,7 +45,7 @@ K_const = 13500
 chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
-@njit(fastmath=True, parallel=False)
+@njit(fastmath=True, cache=True)
 def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     kappa = m_mesh / gamma
     abs_m = np.abs(m_mesh)
