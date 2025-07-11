@@ -244,6 +244,8 @@ app.layout = html.Div([
      Input('T-slider', 'drag_value')]
 )
 def update_slider_values(H, T):
+    if H is None or T in None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
 
 @app.callback(
@@ -276,6 +278,8 @@ def update_T_slider(material, T):
     Input("alpha-scale-slider", "drag_value"),
 )
 def move_alpha_bubble(logk):
+    if logk is None:                          # при первом рендере drag_value == None
+        raise dash.exceptions.PreventUpdate
     k = 10**logk
     return f"{k:.2f} × α"
 
@@ -284,6 +288,8 @@ def move_alpha_bubble(logk):
     Input("chi-scale-slider", "drag_value"),
 )
 def move_chi_bubble(logk):
+    if logk is None:
+        raise dash.exceptions.PreventUpdate
     k = 10**logk
     return f"{k:.2f} × χ"
 
@@ -292,6 +298,8 @@ def move_chi_bubble(logk):
     Input("k-scale-slider", "drag_value"),
 )
 def move_k_bubble(logk):
+    if logk is None:
+        raise dash.exceptions.PreventUpdate
     k = 10**logk
     return f"{k:.2f} × K(T)"
 
@@ -300,6 +308,8 @@ def move_k_bubble(logk):
     Input("m-scale-slider", "drag_value"),
 )
 def move_m_bubble(logk):
+    if logk is None:
+        raise dash.exceptions.PreventUpdate
     k = 10**logk
     return f"{k:.2f} × m"
 
@@ -308,6 +318,8 @@ def move_m_bubble(logk):
     Input("M-scale-slider", "drag_value"),
 )
 def move_M_bubble(logk):
+    if logk is None:
+        raise dash.exceptions.PreventUpdate
     k = 10**logk
     return f"{k:.2f} × M"
 
