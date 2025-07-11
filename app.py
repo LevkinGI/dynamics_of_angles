@@ -83,7 +83,7 @@ app.layout = html.Div([
                        vertical=True, verticalHeight=180,
                       ),
             ],
-            style={"marginLeft": "50px","position": "relative"}
+            style={"marginLeft": "30px","position": "relative"}
         ),
         
         html.Div([
@@ -95,7 +95,7 @@ app.layout = html.Div([
                        vertical=True, verticalHeight=180,
                       ),
             ],
-            style={"marginLeft": "50px", "position": "relative"}
+            style={"marginLeft": "30px", "position": "relative"}
         ),
         
         html.Div([
@@ -107,7 +107,7 @@ app.layout = html.Div([
                        vertical=True, verticalHeight=180,
                       ),
             ],
-            style={"marginLeft": "50px", "position": "relative"}
+            style={"marginLeft": "30px", "position": "relative"}
         ),
         
         html.Div([
@@ -119,7 +119,7 @@ app.layout = html.Div([
                        vertical=True, verticalHeight=180,
                       ),
             ],
-            style={"marginLeft": "50px", "position": "relative"}
+            style={"marginLeft": "30px", "position": "relative"}
         ),
         
         html.Div([
@@ -131,7 +131,7 @@ app.layout = html.Div([
                        vertical=True, verticalHeight=180,
                       ),
             ],
-            style={"marginLeft": "50px", "position": "relative"}
+            style={"marginLeft": "30px", "position": "relative"}
         ),
         ],
         style={
