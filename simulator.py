@@ -41,12 +41,12 @@ def calc_coef(H: float, m: float, M: float, K: float,
 #     return (dtheta, dphi, ddtheta, ddphi)
 
 def run_simulation(
-        H_val: float,
-        T_val: float,
-        m_val: float,
-        M_val: float,
-        K_val: float,
-        chi_val: float,
+        H: float,
+        T: float,
+        m: float,
+        M: float,
+        K: float,
+        chi: float,
         alpha: float,
         kappa: float,
         simulation_time: float = 0.3e-9,
@@ -59,9 +59,9 @@ def run_simulation(
     theta_initial = 0.0
     phi_initial = 0.0
     dtheta_initial = 0.0
-    dphi_initial = (gamma**2) * (H_val + abs(m_val) / chi_val) * h_IFE * delta_t
+    dphi_initial = (gamma**2) * (H + abs(m) / chi) * h_IFE * delta_t
 
-    a, b, c, sign = calc_coef(H_val, m_val, M_val, K_val, chi_val, alpha, kappa)
+    a, b, c, sign = calc_coef(H, m, M, K, chi, alpha, kappa)
     dynamics = _dynamics_factory(a, b, c, sign)
                        
     y0 = [theta_initial, phi_initial, dtheta_initial, dphi_initial]
