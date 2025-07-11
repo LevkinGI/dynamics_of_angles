@@ -9,7 +9,7 @@ import dash
 from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
-from dash_extensions import DebounceSlider
+from dash_extensions.enrich import DebounceSlider
 import dash_daq as daq
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
