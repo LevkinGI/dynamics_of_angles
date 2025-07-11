@@ -109,7 +109,7 @@ def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
     )
     return fig
 
-def create_T_fix_fig(H_vals, T_fix_freqs, T):
+def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
