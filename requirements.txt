@@ -1,7 +1,6 @@
 dash
 dash-core-components
 dash-html-components
-dash-debounce-component
 dash-table
 dash-daq
 plotly
