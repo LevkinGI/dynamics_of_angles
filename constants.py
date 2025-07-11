@@ -46,42 +46,44 @@ chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
 @njit(parallel=True, fastmath=True, cache=True)
-def compute_frequencies_parallel(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
+def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     nT, nH = H_mesh.shape
+    total = nT * nH
     f1 = np.empty((nT, nH), np.float64)
     f2 = np.empty((nT, nH), np.float64)
 
     g2, g3, g4 = gamma**2, gamma**3, gamma**4
 
-    for i in range(nT):
-        for j in prange(nH):
-            H_ij   = H_mesh[i, j]
-            m_ij   = m_mesh[i, j]
-            chi_ij = chi_mesh[i, j]
-            K_ij   = K_mesh[i, j]
+    for idx in prange(total):
+        i = idx // nH
+        j = idx % nH
+        H_ij   = H_mesh[i, j]
+        m_ij   = m_mesh[i, j]
+        chi_ij = chi_mesh[i, j]
+        K_ij   = K_mesh[i, j]
 
-            abs_m = abs(m_ij)
-            sign  = 1.0 if m_ij >= 0.0 else -1.0
-            kappa = m_ij / gamma
-            H2    = H_ij * H_ij
+        abs_m = abs(m_ij)
+        sign  = 1.0 if m_ij >= 0.0 else -1.0
+        kappa = m_ij / gamma
+        H2    = H_ij * H_ij
 
-            common = (
-                g2 * H2
-                + 2 * K_ij * g2 / chi_ij
-                + abs_m * H_ij * g2 / chi_ij
-                - 2 * sign * kappa * g3 * H_ij / chi_ij
-                + (kappa**2) * g4 / (2 * chi_ij**2)
-            )
-            term   = abs(2 * gamma * H_ij - sign * kappa * g2 / chi_ij)
-            sqrt_t = np.sqrt(
-                2 * K_ij * g2 / chi_ij
-                + abs_m * H_ij * g2 / chi_ij
-                - sign * kappa * g3 * H_ij / chi_ij
-                + (kappa**2) * g4 / (4 * chi_ij**2)
-            )
+        common = (
+            g2 * H2
+            + 2 * K_ij * g2 / chi_ij
+            + abs_m * H_ij * g2 / chi_ij
+            - 2 * sign * kappa * g3 * H_ij / chi_ij
+            + (kappa**2) * g4 / (2 * chi_ij**2)
+        )
+        term   = abs(2 * gamma * H_ij - sign * kappa * g2 / chi_ij)
+        sqrt_t = np.sqrt(
+            2 * K_ij * g2 / chi_ij
+            + abs_m * H_ij * g2 / chi_ij
+            - sign * kappa * g3 * H_ij / chi_ij
+            + (kappa**2) * g4 / (4 * chi_ij**2)
+        )
 
-            f1[i, j] = np.sqrt(common + term * sqrt_t) / (2 * np.pi * 1e9)
-            f2[i, j] = np.sqrt(common - term * sqrt_t) / (2 * np.pi * 1e9)
+        f1[i, j] = np.sqrt(common + term * sqrt_t) / (2 * np.pi * 1e9)
+        f2[i, j] = np.sqrt(common - term * sqrt_t) / (2 * np.pi * 1e9)
 
     return f1, f2
 
