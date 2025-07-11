@@ -78,9 +78,10 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
             dcc.Slider(id='alpha-scale-slider',
-                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                           updatemode="mouseup",
-                           vertical=True, verticalHeight=180,
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       updatemode="mouseup",
+                       vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px","position": "relative"}
@@ -89,9 +90,10 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='chi-scale-label'),
             dcc.Slider(id='chi-scale-slider',
-                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                           updatemode="mouseup",
-                           vertical=True, verticalHeight=180,
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       updatemode="mouseup",
+                       vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -100,9 +102,10 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='k-scale-label'),
             dcc.Slider(id='k-scale-slider',
-                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                           updatemode="mouseup",
-                           vertical=True, verticalHeight=180,
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       updatemode="mouseup",
+                       vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -111,9 +114,10 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='m-scale-label'),
             dcc.Slider(id='m-scale-slider',
-                           min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                           updatemode="mouseup",
-                           vertical=True, verticalHeight=180,
+                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       marks=log_marks,
+                       updatemode="mouseup",
+                       vertical=True, verticalHeight=180,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
