@@ -25,13 +25,6 @@ def calc_coef(H: float, m: float, M: float, K: float,
 
     return (a, b, c, sign)
 
-@njit(cache=True, fastmath=True)
-def dynamics(t, y, a, b, c, sign):
-    theta, phi, dtheta, dphi = y
-    ddtheta = -a * dtheta - b * theta - sign * c * dphi
-    ddphi = -a * dphi - b * phi + sign * c * dtheta
-    return (dtheta, dphi, ddtheta, ddphi)
-
 def run_simulation(
         H: float,
         m: float,
@@ -53,7 +46,7 @@ def run_simulation(
     dphi_initial = (gamma**2) * (H + abs(m) / chi) * h_IFE * delta_t
 
     a, b, c, sign = calc_coef(H, m, M, K, chi, alpha, kappa)
-    # dynamics = _dynamics_factory(a, b, c, sign)
+    dynamics = _dynamics_factory(a, b, c, sign)
                        
     y0 = [theta_initial, phi_initial, dtheta_initial, dphi_initial]
     t_eval = np.linspace(0, simulation_time, num_points)
@@ -61,7 +54,6 @@ def run_simulation(
         dynamics,
         (0.0, simulation_time),
         y0,
-        args=(a, b, c, sign),
         t_eval=t_eval,
         method=method,
         rtol=rtol,
