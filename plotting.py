@@ -93,10 +93,13 @@ def create_yz_fig(y, z, time, anim_speed=5):
     )
     return fig
 
-def create_H_fix_fig(T_vals, H_fix_freqs, H):
+def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+    if not data:
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
     fig.update_layout(
         title=f"Зависимость частот от температуры при H = {H} Э",
         xaxis_title="Температура (K)",
@@ -110,6 +113,9 @@ def create_T_fix_fig(H_vals, T_fix_freqs, T):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+    if not data:
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
     fig.update_layout(
         title=f"Зависимость частот от магнитного поля при T = {T} K",
         xaxis_title="Магнитное поле (Э)",
