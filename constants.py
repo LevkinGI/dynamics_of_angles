@@ -45,7 +45,7 @@ K_const = 13500
 chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
-@njit(fastmath=True, cache=True, parallel=True)
+@njit(fastmath=True, cache=True)
 def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     kappa = m_mesh / gamma
     abs_m = np.abs(m_mesh)
@@ -88,7 +88,7 @@ _, chi_mesh_2 = np.meshgrid(H_vals, chi_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
-@njit(cache=True, fastmath=True, parallel=True)
+@njit(cache=True, fastmath=True)
 def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
     kappa_vec = m_vec / gamma
     abs_m = np.abs(m_vec)
@@ -113,7 +113,7 @@ def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
 
 
 # вектор по полю, T – скаляр
-@njit(cache=True, fastmath=True, parallel=True)
+@njit(cache=True, fastmath=True)
 def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
     kappa = m / gamma
     abs_m = abs(m)
