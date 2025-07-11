@@ -8,6 +8,8 @@ pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=
 import dash
 from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
+import dash_daq as daq
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
@@ -132,15 +134,25 @@ app.layout = html.Div([
 
 
     
-    dcc.Dropdown(
-        id='material-dropdown',
-        options=[
-            {'label': 'FeFe', 'value': '1'},
-            {'label': 'GdFe', 'value': '2'}
-        ],
-        value='1',
-        style={'width': '300px'}
-    ),
+    
+    html.Div([
+        dcc.Dropdown(
+            id='material-dropdown',
+            options=[
+                {'label': 'FeFe', 'value': '1'},
+                {'label': 'GdFe', 'value': '2'}
+            ],
+            value='1',
+            style={'width': '300px'}
+        ),
+        daq.BooleanSwitch(
+            id='auto-calc-switch',
+            on=True,
+            label='Расчёт при изменении параметров',
+            labelPosition='bottom',
+            style={"marginLeft": "30px"}
+        ),
+    ]),
 
 
 
@@ -264,7 +276,7 @@ def update_T_slider(material, T):
 )
 def move_alpha_bubble(logk):
     if logk is None:                          # при первом рендере drag_value == None
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     k = 10**logk
     return f"{k:.2f} × α"
 
@@ -274,7 +286,7 @@ def move_alpha_bubble(logk):
 )
 def move_chi_bubble(logk):
     if logk is None:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     k = 10**logk
     return f"{k:.2f} × χ"
 
@@ -284,7 +296,7 @@ def move_chi_bubble(logk):
 )
 def move_k_bubble(logk):
     if logk is None:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     k = 10**logk
     return f"{k:.2f} × K(T)"
 
@@ -294,7 +306,7 @@ def move_k_bubble(logk):
 )
 def move_m_bubble(logk):
     if logk is None:
-        raise dash.exceptions.PreventUpdate
+        raise PreventUpdate
     k = 10**logk
     return f"{k:.2f} × m"
 
@@ -379,11 +391,18 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
 @app.callback(
     Output('freq-cache', 'data'),
     [Input('param-store',       'data'),
-     Input('material-dropdown', 'value')],
+     Input('material-dropdown', 'value'),
+     Input('auto-calc-switch',  'on')],
 )
-def update_freq_cache(store, material):
+def update_freq_cache(store, material, calc_on):
+    trg = {t['prop_id'] for t in callback_context.triggered}
+    material_changed = any('material-dropdown' in t for t in trg)
+    if not calc_on and not material_changed:
+        # и расчёт, и материал не нужны – пропускаем
+        raise PreventUpdate
+    
     p = SimParams(**store[material])
-
+    
     h_index = np.abs(H_vals - 1000).argmin()
     T_vals = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - 293).argmin()
@@ -411,9 +430,18 @@ def update_freq_cache(store, material):
      Input('freq-cache', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
-     Input('material-dropdown', 'value')]
+     Input('material-dropdown', 'value'),
+     Input('auto-calc-switch',  'on')]
 )
-def update_graphs(store, freqs, H, T, material):
+def update_graphs(store, freqs, H, T, material, calc_on):
+    # Определяем, какой input вызвал callback
+    ctx = callback_context
+    triggered_inputs = [t['prop_id'] for t in ctx.triggered]
+    material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
+    freqs_changed  = any('freq-cache' in ti for ti in triggered_inputs)
+    if not auto_on and not material_changed:
+        raise PreventUpdate
+        
     p = SimParams(**store[material])
 
     if freqs is None:
@@ -421,12 +449,6 @@ def update_graphs(store, freqs, H, T, material):
     else:
         freq_array1 = np.array(freqs["freq_array1"])
         freq_array2 = np.array(freqs["freq_array2"])
-    
-    # Определяем, какой input вызвал callback
-    ctx = callback_context
-    triggered_inputs = [t['prop_id'] for t in ctx.triggered]
-    material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
-    freqs_changed  = any('freq-cache' in ti for ti in triggered_inputs)
   
     h_index = np.abs(H_vals - H).argmin()
     
