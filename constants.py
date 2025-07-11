@@ -87,6 +87,56 @@ H_mesh_2, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
 _, chi_mesh_2 = np.meshgrid(H_vals, chi_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
+# вектор по температуре, H – скаляр
+@njit(cache=True, fastmath=True)
+def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
+    kappa_vec = m_vec / gamma
+    abs_m = np.abs(m_vec)
+    g2, g3, g4 = gamma**2, gamma**3, gamma**4
+    H2 = H ** 2
+
+    sign = np.where(m_vec < 0.0, -1.0, 1.0)
+    common = (g2 * H2 +
+              2 * K_vec * g2 / chi_vec +
+              abs_m * H * g2 / chi_vec -
+              2 * sign * kappa_vec * g3 * H / chi_vec +
+              kappa_vec**2 * g4 / (2 * chi_vec**2))
+    term = np.abs(2 * gamma * H - sign * kappa_vec * g2 / chi_vec)
+    sqrt_t = np.sqrt(2 * K_vec * g2 / chi_vec +
+                     abs_m * H * g2 / chi_vec -
+                     sign * kappa_vec * g3 * H / chi_vec +
+                     kappa_vec**2 * g4 / (4 * chi_vec**2))
+
+    f1 = np.sqrt(common + term * sqrt_t) / (2*np.pi*1e9)
+    f2 = np.sqrt(common - term * sqrt_t) / (2*np.pi*1e9)
+    return f1, f2
+
+
+# вектор по полю, T – скаляр
+@njit(cache=True, fastmath=True)
+def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
+    kappa = m / gamma
+    abs_m = abs(m)
+    g2, g3, g4 = gamma**2, gamma**3, gamma**4
+    H2   = H_vec*H_vec
+    sign = 1.0 if m > 0 else -1.0
+
+    common = (g2 * H2 +
+              2 * K * g2 / chi +
+              abs_m * H_vec * g2 / chi -
+              2 * sign * kappa * g3 * H_vec / chi +
+              kappa**2 * g4 / (2 * chi**2))
+    term   = np.abs(2 * gamma * H_vec - sign * kappa * g2 / chi)
+    sqrt_t = np.sqrt(2 * K * g2 / chi +
+                     abs_m * H_vec * g2 / chi -
+                     sign * kappa * g3 * H_vec / chi +
+                     kappa**2 * g4 / (4 * chi**2))
+
+    f1 = np.sqrt(common + term * sqrt_t) / (2*np.pi*1e9)
+    f2 = np.sqrt(common - term * sqrt_t) / (2*np.pi*1e9)
+    return f1, f2
+
+
 __all__ = [
     # сетки и оси
     'H_vals', 'T_vals_1', 'T_vals_2', 'T_init',
@@ -103,7 +153,7 @@ __all__ = [
     # температурные функции
     'K_T', 'chi_T',
     # JIT-функция для частот
-    'compute_frequencies',
+    'compute_frequencies', 'compute_frequencies_H_fix', 'compute_frequencies_T_fix'
     # частоты
     'f1_GHz', 'f2_GHz',
     # амплитуды
