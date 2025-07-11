@@ -350,8 +350,11 @@ def live_fix_graphs(H_d, T_d,
     f1_T, f2_T = compute_frequencies_H_fix(H, m_vec_T, chi_vec_T, K_vec_T, gamma)
     f1_H, f2_H = compute_frequencies_T_fix(H_vals, m_T, chi_T, K_T, gamma)
 
-    H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H, H_1000 if H==1000 and material == '1' else None)
-    T_fix_fig = create_T_fix_fig(H_vals, (f1_H, f2_H), T, T_293 if T==293 and material == '1' else None)
+    H_data = H_1000 if H==1000 and material == '1' else None
+    T_data = T_293 if T==293 and material == '1' else None
+
+    H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H, H_data)
+    T_fix_fig = create_T_fix_fig(H_vals, (f1_H, f2_H), T, T_data)
 
     return H_fix_fig, T_fix_fig
 
