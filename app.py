@@ -180,7 +180,7 @@ app.layout = html.Div([
                             "transform":"translateY(-50%)",
                             "pointerEvents":"none",
                             "display":"none"}
-            #         ),
+                    ),
             # dbc.Tooltip(id="m-tt",
             #             target="m-scale-slider-handle",
             #             placement="left",
@@ -207,7 +207,7 @@ app.layout = html.Div([
                             "transform":"translateY(-50%)",
                             "pointerEvents":"none",
                             "display":"none"}
-            #         ),
+                    ),
             # dbc.Tooltip(id="M-tt",
             #             target="M-scale-slider-handle",
             #             placement="left",
