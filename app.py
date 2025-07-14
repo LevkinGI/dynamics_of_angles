@@ -25,7 +25,7 @@ from plotting import *
 
 app = dash.Dash(__name__)
 server = app.server
-sliders_range = 30
+sliders_range = 5
 log_marks = {}
 for i in  range(1, sliders_range+1):
     if i > 10 and i % 10 != 0: continue
@@ -357,14 +357,24 @@ def move_m_bubble(logk):
 def live_fix_graphs(H_evt, T_evt,
                     a_evt, chi_evt, k_evt, m_evt,
                     material, H_v, T_v, store):
-    H = H_evt if H_evt is not None else H_v
-    T = T_evt if T_evt is not None else T_v
+
+    def as_float(evt, fallback):
+        if evt is None:
+            return fallback
+        if isinstance(evt, (int, float)):        # evt пришёл числом
+            return float(evt)
+        if isinstance(evt, dict) and "value" in evt:
+            return float(evt["value"])           # обычный случай
+        return fallback
+                        
+    H = as_float(H_evt,  H_v)
+    T = as_float(T_evt,  T_v)
 
     p0  = SimParams(**store[material])
-    alpha_scale = 10**a_evt   if a_evt   is not None else p0.alpha_scale
-    chi_scale   = 10**chi_evt if chi_evt is not None else p0.chi_scale
-    k_scale     = 10**k_evt   if k_evt   is not None else p0.k_scale
-    m_scale     = 10**m_evt   if m_evt   is not None else p0.m_scale
+    alpha_scale = 10 ** as_float(a_evt,  np.log10(p0.alpha_scale))
+    chi_scale   = 10 ** as_float(chi_evt, np.log10(p0.chi_scale))
+    k_scale     = 10 ** as_float(k_evt,   np.log10(p0.k_scale))
+    m_scale     = 10 ** as_float(m_evt,   np.log10(p0.m_scale))
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
