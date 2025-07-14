@@ -9,6 +9,7 @@ import dash
 from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
+from dash_extensions import EventListener
 import dash_daq as daq
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
@@ -24,17 +25,22 @@ from plotting import *
 
 app = dash.Dash(__name__)
 server = app.server
-log_marks = {
-    -np.log10(5):  "1/5",
-    -np.log10(4):  "1/4",
-    -np.log10(3):  "1/3",
-    -np.log10(2):  "1/2",
-     0.0:          "1",
-     np.log10(2):  "2",
-     np.log10(3):  "3",
-     np.log10(4):  "4",
-     np.log10(5):  "5",
-}
+log_marks = {}
+for i in  range(1, 31):
+    if i > 10 and i % 10 != 0: continue
+    log_marks[np.log10(i)]  = str(i)
+    log_marks[-np.log10(i)] = '1/'+str(i)
+# log_marks = {
+#     -np.log10(5):  "1/5",
+#     -np.log10(4):  "1/4",
+#     -np.log10(3):  "1/3",
+#     -np.log10(2):  "1/2",
+#      0.0:          "1",
+#      np.log10(2):  "2",
+#      np.log10(3):  "3",
+#      np.log10(4):  "4",
+#      np.log10(5):  "5",
+# }
 
 app.layout = html.Div([
     dcc.Store(
@@ -48,25 +54,35 @@ app.layout = html.Div([
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
-    dcc.Slider(
-        id='H-slider',
-        min=0,
-        max=H_vals[-1],
-        step=10,
-        value=1000,
-        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+    EventListener(
+        id="H-slider-el",
+        events=[{"event": "input"}],
+        debounce=300,
+        children=dcc.Slider(
+            id='H-slider',
+            min=0,
+            max=H_vals[-1],
+            step=10,
+            value=1000,
+            marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
+            tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+        ),
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
-    dcc.Slider(
-        id='T-slider',
-        min=290,
-        max=350,
-        step=0.1,
-        value=T_init,
-        marks={i: str(i) for i in range(290, 351, 10)},
-        tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+    EventListener(
+        id="T-slider-el",
+        events=[{"event": "input"}],
+        debounce=300,
+        children=dcc.Slider(
+            id='T-slider',
+            min=290,
+            max=350,
+            step=0.1,
+            value=T_init,
+            marks={i: str(i) for i in range(290, 351, 10)},
+            tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
+        ),
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
@@ -77,48 +93,68 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
-            dcc.Slider(id='alpha-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
-                       marks=log_marks,
-                       updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
-                      ),
+            EventListener(
+                id="alpha-scale-slider-el",
+                events=[{"event": "input"}],
+                debounce=300,
+                children=dcc.Slider(id='alpha-scale-slider',
+                               min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                               marks=log_marks,
+                               updatemode="mouseup",
+                               vertical=True, verticalHeight=180,
+                              ),
+                ),
             ],
             style={"marginLeft": "30px","position": "relative"}
-        ),
+            ),
         
         html.Div([
             html.Label(id='chi-scale-label'),
-            dcc.Slider(id='chi-scale-slider',
+            EventListener(
+                id="chi-scale-slider-el",
+                events=[{"event": "input"}],
+                debounce=300,
+                children=dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
+                ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
         
         html.Div([
             html.Label(id='k-scale-label'),
-            dcc.Slider(id='k-scale-slider',
+            EventListener(
+                id="k-scale-slider-el",
+                events=[{"event": "input"}],
+                debounce=300,
+                children=dcc.Slider(id='k-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
+                ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
         
         html.Div([
             html.Label(id='m-scale-label'),
-            dcc.Slider(id='m-scale-slider',
+            EventListener(
+                id="m-scale-slider-el",
+                events=[{"event": "input"}],
+                debounce=300,
+                children=dcc.Slider(id='m-scale-slider',
                        min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
                       ),
+                ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
@@ -311,31 +347,36 @@ def move_m_bubble(logk):
 @app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure')],
-    [
-    Input('H-slider',  'drag_value'),
-    Input('T-slider',  'drag_value'),
-    Input('alpha-scale-slider', 'drag_value'),
-    Input('chi-scale-slider',   'drag_value'),
-    Input('k-scale-slider',     'drag_value'),
-    Input('m-scale-slider',     'drag_value'),
-    Input('H-slider',  'value'),
-    Input('T-slider',  'value'),
-    Input('material-dropdown', 'value')
-    ],
-    State('param-store', 'data'),
+    [Input('H-slider-el', 'event'),
+     Input('T-slider-el', 'event'),
+     Input('alpha-scale-slider-el', 'event'),
+     Input('chi-scale-slider-el', 'event'),
+     Input('k-scale-slider-el', 'event'),
+     Input('m-scale-slider-el', 'event'),
+     Input('material-dropdown',  'value')],
+    [State('H-slider', 'value'),
+     State('T-slider', 'value'),
+     State('param-store', 'data')],
     prevent_initial_call=True,
 )
-def live_fix_graphs(H_d, T_d,
-                    a_d, chi_d, k_d, m_d,
-                    H_v, T_v, material, store):
-    H = H_d if H_d is not None else H_v
-    T = T_d if T_d is not None else T_v
+def live_fix_graphs(H_evt, T_evt,
+                    a_evt, chi_evt, k_evt, m_evt,
+                    material, H_v, T_v, store):
+    def _v(evt, fallback):
+        if evt and evt.get("value") is not None:
+            return float(evt["value"])
+        if evt and evt.get("target") and evt["target"].get("value"):
+            return float(evt["target"]["value"])
+        return fallback
 
     p0 = SimParams(**store[material])
-    alpha_scale = 10**a_d   if a_d   is not None else p0.alpha_scale
-    chi_scale   = 10**chi_d if chi_d is not None else p0.chi_scale
-    k_scale     = 10**k_d   if k_d   is not None else p0.k_scale
-    m_scale     = 10**m_d   if m_d   is not None else p0.m_scale
+                        
+    H = _v(H_evt, H_val)
+    T = _v(T_evt, T_val)
+    alpha_scale = _v(a_evt, p0.alpha_scale)
+    chi_scale   = _v(chi_evt, p0.chi_scale)
+    k_scale     = _v(k_evt, p0.k_scale)
+    m_scale     = _v(m_evt, p0.m_scale)
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
