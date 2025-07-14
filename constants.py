@@ -115,7 +115,7 @@ _, chi_mesh_2 = np.meshgrid(H_vals, chi_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
-@njit(parallel=False, cache=True, fastmath=True)
+@njit(parallel=True, cache=True, fastmath=True)
 def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
     n = m_vec.size
     f1 = np.empty(n, np.float64)
@@ -154,7 +154,7 @@ def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
 
 
 # вектор по полю, T – скаляр
-@njit(parallel=False, cache=True, fastmath=True)
+@njit(parallel=True, cache=True, fastmath=True)
 def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
     n = H_vec.size
     f1 = np.empty(n, np.float64)
