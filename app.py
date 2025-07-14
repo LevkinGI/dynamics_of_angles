@@ -25,8 +25,9 @@ from plotting import *
 
 app = dash.Dash(__name__)
 server = app.server
+sliders_range = 30
 log_marks = {}
-for i in  range(1, 31):
+for i in  range(1, sliders_range+1):
     if i > 10 and i % 10 != 0: continue
     log_marks[np.log10(i)]  = str(i)
     log_marks[-np.log10(i)] = '1/'+str(i)
@@ -95,7 +96,7 @@ app.layout = html.Div([
                 id="alpha-scale-slider-el",
                 events=[{"event": "input", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='alpha-scale-slider',
-                               min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                               min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                                marks=log_marks,
                                updatemode="mouseup",
                                vertical=True, verticalHeight=180,
@@ -111,7 +112,7 @@ app.layout = html.Div([
                 id="chi-scale-slider-el",
                 events=[{"event": "input", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='chi-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
@@ -127,7 +128,7 @@ app.layout = html.Div([
                 id="k-scale-slider-el",
                 events=[{"event": "input", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='k-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
@@ -143,7 +144,7 @@ app.layout = html.Div([
                 id="m-scale-slider-el",
                 events=[{"event": "input", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='m-scale-slider',
-                       min=-np.log10(5), max=np.log10(5), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
