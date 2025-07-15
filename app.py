@@ -46,7 +46,7 @@ app.layout = html.Div([
     html.Label(id='H-label'),
     EventListener(
         id="H-slider-el",
-        events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
+        events=[{"event": "change", "debounce": 300, "props": ["value"]}],
         children=dcc.Slider(
             id='H-slider',
             min=0,
@@ -61,7 +61,7 @@ app.layout = html.Div([
     html.Label(id='T-label'),
     EventListener(
         id="T-slider-el",
-        events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
+        events=[{"event": "change", "debounce": 300, "props": ["value"]}],
         children=dcc.Slider(
             id='T-slider',
             min=290,
@@ -83,7 +83,7 @@ app.layout = html.Div([
             html.Label(id='alpha-scale-label'),
             EventListener(
                 id="alpha-scale-slider-el",
-                events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
+                events=[{"event": "change", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='alpha-scale-slider',
                                min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                                marks=log_marks,
@@ -99,7 +99,7 @@ app.layout = html.Div([
             html.Label(id='chi-scale-label'),
             EventListener(
                 id="chi-scale-slider-el",
-                events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
+                events=[{"event": "change", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -115,7 +115,7 @@ app.layout = html.Div([
             html.Label(id='k-scale-label'),
             EventListener(
                 id="k-scale-slider-el",
-                events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
+                events=[{"event": "change", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='k-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -131,7 +131,7 @@ app.layout = html.Div([
             html.Label(id='m-scale-label'),
             EventListener(
                 id="m-scale-slider-el",
-                events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
+                events=[{"event": "change", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='m-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -331,33 +331,37 @@ def move_m_bubble(logk):
 @app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure')],
-    [Input('H-slider-el', 'event'),
-     Input('T-slider-el', 'event'),
-     Input('alpha-scale-slider-el', 'event'),
-     Input('chi-scale-slider-el', 'event'),
-     Input('k-scale-slider-el', 'event'),
-     Input('m-scale-slider-el', 'event'),
-     Input('material-dropdown',  'value')],
-    [State('H-slider', 'value'),
+    [Input('H-slider-el',  'n_events'),
+     Input('T-slider-el',  'n_events'),
+     Input('alpha-scale-slider-el', 'n_events'),
+     Input('chi-scale-slider-el',   'n_events'),
+     Input('k-scale-slider-el',     'n_events'),
+     Input('m-scale-slider-el',     'n_events'),
+     Input('material-dropdown',     'value')],
+    [State('H-slider-el',  'event'),
+     State('T-slider-el',  'event'),
+     State('alpha-scale-slider-el', 'event'),
+     State('chi-scale-slider-el',   'event'),
+     State('k-scale-slider-el',     'event'),
+     State('m-scale-slider-el',     'event'),
+     State('H-slider', 'value'),
      State('T-slider', 'value'),
      State('param-store', 'data')],
     prevent_initial_call=True,
 )
-def live_fix_graphs(H_evt, T_evt,
+def live_fix_graphs(H_nevt, T_nevt,
+                    a_nevt, chi_nevt, k_nevt, m_nevt,
+                    material,
+                    H_evt, T_evt,
                     a_evt, chi_evt, k_evt, m_evt,
-                    material, H_v, T_v, store):
+                    H_v, T_v, store):
     print("live_fix_graphs TRIGGERED", callback_context.triggered)
 
     def as_float(evt, fallback):
         if evt is None:
             return fallback
-        if isinstance(evt, (int, float)):        # evt пришёл числом
-            return float(evt)
-        if isinstance(evt, dict):
-            if "target.value" in evt:
-                return float(evt["target.value"])
-            if "value" in evt:
-                return float(evt["value"])
+        if "value" in evt:
+            return float(evt["value"])
         return fallback
                         
     H = as_float(H_evt,  H_v)
