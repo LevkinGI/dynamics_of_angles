@@ -254,7 +254,8 @@ def update_slider_values(H, T):
      Output('T-slider', 'value'),
      Output('T-slider', 'marks')],
     [Input('material-dropdown', 'value')],
-    [State('T-slider', 'value')]
+    [State('T-slider', 'value')],
+    prevent_initial_call=True,
 )
 def update_T_slider(material, T):
     if material == '1':
@@ -444,6 +445,7 @@ def sync_sliders_with_material(material, store, H, T):
     Input('k-scale-slider',    'value'),
     Input('m-scale-slider',    'value')],
     State('param-store',       'data'),
+    prevent_initial_call=True,
 )
 def update_params(material, a_k, chi_k, k_k, m_k, store):
     p = SimParams(**store[material])
@@ -459,12 +461,12 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
     [Input('param-store',       'data'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on')],
+    prevent_initial_call=True,
 )
 def update_freq_cache(store, material, calc_on):
     trg = {t['prop_id'] for t in callback_context.triggered}
     material_changed = any('material-dropdown' in t for t in trg)
     if not calc_on and not material_changed:
-        # и расчёт, и материал не нужны – пропускаем
         raise PreventUpdate
     
     p = SimParams(**store[material])
@@ -497,7 +499,8 @@ def update_freq_cache(store, material, calc_on):
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
-     Input('auto-calc-switch',  'on')]
+     Input('auto-calc-switch',  'on')],
+    prevent_initial_call=True,
 )
 def update_graphs(store, freqs, H, T, material, calc_on):
     # Определяем, какой input вызвал callback
