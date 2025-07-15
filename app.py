@@ -359,7 +359,8 @@ def move_m_slider(logk, cache):
      Output("k-scale-slider-cache", "data"),
      Output("m-scale-slider-cache", "data")],
     Input("throttle", "n_intervals"),        # тик таймера
-    [State('material-dropdown', 'value'),   
+    [State('material-dropdown', 'value'),
+     State('param-store', 'data'),
      State("H-slider", "value"),
      State("T-slider", "value"),
      State("H-slider-cache", "data"),
