@@ -34,7 +34,7 @@ for i in  range(1, sliders_range+1):
     log_marks[-np.log10(i)] = '1/'+str(i)
 
 app.layout = html.Div([
-    dcc.Interval(id="throttle", interval=300, n_intervals=0)
+    dcc.Interval(id="throttle", interval=300, n_intervals=0),
     dcc.Store(
         id='param-store',
         data={
