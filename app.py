@@ -358,9 +358,11 @@ def move_m_slider(logk, cache):
      Output("chi-scale-slider-cache", "data"),
      Output("k-scale-slider-cache", "data"),
      Output("m-scale-slider-cache", "data")],
-    [Input("throttle", "n_intervals"),        # тик таймера
-     Input('material-dropdown', 'value')],
-    [State("H-slider-cache", "data"),
+    Input("throttle", "n_intervals"),        # тик таймера
+    [State('material-dropdown', 'value'),   
+     State("H-slider", "value"),
+     State("T-slider", "value"),
+     State("H-slider-cache", "data"),
      State("T-slider-cache", "data"),
      State("alpha-scale-slider-cache", "data"),
      State("chi-scale-slider-cache", "data"),
@@ -368,7 +370,7 @@ def move_m_slider(logk, cache):
      State("m-scale-slider-cache", "data")],
     prevent_initial_call=True,
 )
-def live_fix_graphs(_, material,
+def live_fix_graphs(_, material, store, H_val, T_val
                     H_cache, T_cache,
                     a_cache, chi_cache, k_cache, m_cache):
     now = time.time()
@@ -378,13 +380,15 @@ def live_fix_graphs(_, material,
     if all(c["val"] is None for c in caches):raise PreventUpdate
     if all((c["val"] is None) or (now - c["ts"] < 0.30) or (c["ts"] == 0) for c in caches): raise PreventUpdate
     if all(c["val"] == c["last"] for c in caches): raise PreventUpdate
+    
+    H = H_cache["val"] if H_cache["val"] is not None else H_val
+    T = T_cache["val"] if T_cache["val"] is not None else T_val
 
-    H           = H_cache["val"]
-    T           = T_cache["val"]
-    alpha_scale = 10 ** a_cache["val"]
-    chi_scale   = 10 ** chi_cache["val"]
-    k_scale     = 10 ** k_cache["val"]
-    m_scale     = 10 ** m_cache["val"]
+    p = SimParams(**store[material])
+    alpha_scale = 10 ** a_cache["val"] if a_cache["val"] is not None else p.alpha_scale
+    chi_scale   = 10 ** chi_cache["val"] if chi_cache["val"] is not None else p.chi_scale
+    k_scale     = 10 ** k_cache["val"] if k_cache["val"] is not None else p.k_scale
+    m_scale     = 10 ** m_cache["val"] if m_cache["val"] is not None else p.m_scale
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
