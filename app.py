@@ -368,7 +368,6 @@ def move_m_slider(logk, cache):
      State("chi-scale-slider-cache", "data"),
      State("k-scale-slider-cache", "data"),
      State("m-scale-slider-cache", "data")],
-    prevent_initial_call=True,
 )
 def live_fix_graphs(_, material, store, H_val, T_val,
                     H_cache, T_cache,
