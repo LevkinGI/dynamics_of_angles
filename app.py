@@ -370,7 +370,7 @@ def move_m_slider(logk, cache):
      State("m-scale-slider-cache", "data")],
     prevent_initial_call=True,
 )
-def live_fix_graphs(_, material, store, H_val, T_val
+def live_fix_graphs(_, material, store, H_val, T_val,
                     H_cache, T_cache,
                     a_cache, chi_cache, k_cache, m_cache):
     now = time.time()
