@@ -131,7 +131,7 @@ app.layout = html.Div([
             html.Label(id='m-scale-label'),
             EventListener(
                 id="m-scale-slider-el",
-                events=[{"event": "change", "debounce": 300, "props": ["value"]}],
+                events=[{"event": "change", "debounce": 300, "props": ["target.value"]}],
                 children=dcc.Slider(id='m-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -360,8 +360,11 @@ def live_fix_graphs(H_nevt, T_nevt,
     def as_float(evt, fallback):
         if evt is None:
             return fallback
-        if "value" in evt:
-            return float(evt["value"])
+        if isinstance(evt, dict):
+            if "target.value" in evt:
+                return float(evt["target.value"])
+            if "value" in evt:
+                return float(evt["value"])
         return fallback
                         
     H = as_float(H_evt,  H_v)
