@@ -11,3 +11,4 @@ scipy
 cython
 numba
 gunicorn
+diskcache>=5.6
