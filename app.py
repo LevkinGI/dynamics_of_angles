@@ -99,7 +99,7 @@ app.layout = html.Div([
             html.Label(id='chi-scale-label'),
             EventListener(
                 id="chi-scale-slider-el",
-                events=[{"event": "input", "debounce": 300, "props": ["value"]}],
+                events=[{"event": "touchend", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -115,7 +115,7 @@ app.layout = html.Div([
             html.Label(id='k-scale-label'),
             EventListener(
                 id="k-scale-slider-el",
-                events=[{"event": "input", "debounce": 300, "props": ["value"]}],
+                events=[{"event": "drag_value", "debounce": 300, "props": ["value"]}],
                 children=dcc.Slider(id='k-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
