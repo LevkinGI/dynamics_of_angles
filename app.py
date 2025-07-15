@@ -433,7 +433,8 @@ def live_fix_graphs(_, material, store, H_val, T_val,
 )
 def sync_sliders_with_material(material, store, H, T):
     p = SimParams(**store[material])
-    a, chi, k, m = map(np.log10, (p.alpha_scale, p.chi_scale, p.k_scale, p.m_scale))
+    a, chi, k, m = (np.log10(p.alpha_scale), np.log10(p.chi_scale),
+                    np.log10(p.k_scale), np.log10(p.m_scale))
     now = time.time()
     make_cache = lambda v: {"val": v, "ts": now, "last": None}
     return (a, chi, k, m,
