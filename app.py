@@ -77,7 +77,7 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
-            dcc.Store(id="alpha-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
+            dcc.Store(id="alpha-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -90,7 +90,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='chi-scale-label'),
-            dcc.Store(id="chi-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
+            dcc.Store(id="chi-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -103,7 +103,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='k-scale-label'),
-            dcc.Store(id="k-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
+            dcc.Store(id="k-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -116,7 +116,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='m-scale-label'),
-            dcc.Store(id="m-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
+            dcc.Store(id="m-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -380,10 +380,10 @@ def live_fix_graphs(_, material,
 
     H           = H_cache["val"]
     T           = T_cache["val"]
-    alpha_scale = a_cache["val"]
-    chi_scale   = chi_cache["val"]
-    k_scale     = k_cache["val"]
-    m_scale     = m_cache["val"]
+    alpha_scale = 10 ** a_cache["val"]
+    chi_scale   = 10 ** chi_cache["val"]
+    k_scale     = 10 ** k_cache["val"]
+    m_scale     = 10 ** m_cache["val"]
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
@@ -432,8 +432,7 @@ def sync_sliders_with_material(material, store, H, T):
     a, chi, k, m = map(np.log10, (p.alpha_scale, p.chi_scale, p.k_scale, p.m_scale))
     now = time.time()
     make_cache = lambda v: {"val": v, "ts": now, "last": None}
-    return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
-            np.log10(p.k_scale), np.log10(p.m_scale),
+    return (a, chi, k, m,
             make_cache(a), make_cache(chi), make_cache(k), make_cache(m),
             make_cache(H), make_cache(T))
 
