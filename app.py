@@ -46,7 +46,7 @@ app.layout = html.Div([
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
-    dcc.Store(id="H-slider-cache", data={"val": None, "ts": 0.0, "last": None}),
+    dcc.Store(id="H-slider-cache", data={"val": 1000, "ts": 0.0, "last": None}),
     dcc.Slider(
         id='H-slider',
         min=0,
@@ -58,7 +58,7 @@ app.layout = html.Div([
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
-    dcc.Store(id="T-slider-cache", data={"val": None, "ts": 0.0, "last": None}),
+    dcc.Store(id="T-slider-cache", data={"val": T_init, "ts": 0.0, "last": None}),
     dcc.Slider(
         id='T-slider',
         min=290,
@@ -77,7 +77,7 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
-            dcc.Store(id="alpha-scale-slider-cache", data={"val": None, "ts": 0.0, "last": None}),
+            dcc.Store(id="alpha-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -90,7 +90,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='chi-scale-label'),
-            dcc.Store(id="chi-scale-slider-cache", data={"val": None, "ts": 0.0, "last": None}),
+            dcc.Store(id="chi-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -103,7 +103,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='k-scale-label'),
-            dcc.Store(id="k-scale-slider-cache", data={"val": None, "ts": 0.0, "last": None}),
+            dcc.Store(id="k-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -116,7 +116,7 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='m-scale-label'),
-            dcc.Store(id="m-scale-slider-cache", data={"val": None, "ts": 0.0, "last": None}),
+            dcc.Store(id="m-scale-slider-cache", data={"val": 1.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
