@@ -31,17 +31,6 @@ for i in  range(1, sliders_range+1):
     if i > 10 and i % 10 != 0: continue
     log_marks[np.log10(i)]  = str(i)
     log_marks[-np.log10(i)] = '1/'+str(i)
-# log_marks = {
-#     -np.log10(5):  "1/5",
-#     -np.log10(4):  "1/4",
-#     -np.log10(3):  "1/3",
-#     -np.log10(2):  "1/2",
-#      0.0:          "1",
-#      np.log10(2):  "2",
-#      np.log10(3):  "3",
-#      np.log10(4):  "4",
-#      np.log10(5):  "5",
-# }
 
 app.layout = html.Div([
     dcc.Store(
@@ -357,6 +346,7 @@ def move_m_bubble(logk):
 def live_fix_graphs(H_evt, T_evt,
                     a_evt, chi_evt, k_evt, m_evt,
                     material, H_v, T_v, store):
+    print("live_fix_graphs TRIGGERED", callback_context.triggered)
 
     def as_float(evt, fallback):
         if evt is None:
