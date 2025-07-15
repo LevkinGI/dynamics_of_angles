@@ -304,7 +304,7 @@ def move_alpha_slider(logk, cache):
     if logk is None:                          # при первом рендере drag_value == None
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": val, "ts": time.time()})
+    cache.update({"val": logk, "ts": time.time()})
     return f"{k:.2f} × α", cache
 
 @app.callback(
@@ -318,7 +318,7 @@ def move_chi_slider(logk, cache):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": val, "ts": time.time()})
+    cache.update({"val": logk, "ts": time.time()})
     return f"{k:.2f} × χ", cache
 
 @app.callback(
@@ -332,7 +332,7 @@ def move_k_slider(logk, cache):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": val, "ts": time.time()})
+    cache.update({"val": logk, "ts": time.time()})
     return f"{k:.2f} × K(T)", cache
 
 @app.callback(
@@ -346,7 +346,7 @@ def move_m_slider(logk, cache):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": val, "ts": time.time()})
+    cache.update({"val": logk, "ts": time.time()})
     return f"{k:.2f} × m", cache
 
 @app.callback(
