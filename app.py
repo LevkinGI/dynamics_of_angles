@@ -40,7 +40,6 @@ app.layout = html.Div([
             "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0)),
         }
     ),
-    dcc.Store(id='freq-cache',  data={'freq_array1': f1_GHz.tolist(), 'freq_array2': f2_GHz.tolist()}),
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
@@ -380,22 +379,21 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
      Output('yz-graph', 'figure'),
      Output('phi-amplitude-graph', 'figure'),
      Output('theta-amplitude-graph', 'figure'),
-     Output('frequency-surface-graph', 'figure'),
-     Output('freq-cache', 'data')],
+     Output('frequency-surface-graph', 'figure')],
     [Input('param-store', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on')],
-    State('freq-cache', 'data'),
     prevent_initial_call=True,
 )
-def update_graphs(store, H, T, material, calc_on, freqs):
+def update_graphs(store, H, T, material, calc_on):
     # Определяем, какой input вызвал callback
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
     params_changed   = any('param-store' in ti for ti in triggered_inputs)
+    switch_on = any('auto-calc-switch' in ti for ti in triggered_inputs)
     if not calc_on: raise PreventUpdate
         
     p = SimParams(**store[material])
@@ -418,12 +416,7 @@ def update_graphs(store, H, T, material, calc_on, freqs):
     m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
-
-    if material_changed or params_changed:
-        freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
-        freqs = {"freq_array1": freq_array1.tolist(), "freq_array2": freq_array2.tolist()}
-    else:
-        freq_array1, freq_array2 = np.array(freqs["freq_array1"]), np.array(freqs["freq_array2"])
+    freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, m_val, M_val, K_val, chi_val, alpha, kappa)
@@ -516,7 +509,7 @@ def update_graphs(store, H, T, material, calc_on, freqs):
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
-    elif params_changed:
+    elif params_changed or switch_on:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
         freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
@@ -525,7 +518,7 @@ def update_graphs(store, H, T, material, calc_on, freqs):
         theta_amp_fig = no_update
         freq_fig = no_update
 
-    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig, freqs
+    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
