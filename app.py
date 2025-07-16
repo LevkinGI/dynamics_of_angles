@@ -11,6 +11,8 @@ from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_daq as daq
+import diskcache
+from dash.long_callback import DiskcacheLongCallbackManager, long_callback
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
@@ -23,14 +25,21 @@ from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
 from plotting import *
 
-app = dash.Dash(__name__)
-server = app.server
 sliders_range = 5
 log_marks = {}
 for i in  range(1, sliders_range+1):
     if i > 10 and i % 10 != 0: continue
     log_marks[np.log10(i)]  = str(i)
     log_marks[-np.log10(i)] = '1/'+str(i)
+
+cache = diskcache.Cache("./cache_dir")
+long_callback_manager = DiskcacheLongCallbackManager(cache)
+
+app = dash.Dash(
+    __name__,
+    long_callback_manager=long_callback_manager,
+)
+server = app.server
 
 app.layout = html.Div([
     dcc.Store(
@@ -124,6 +133,12 @@ app.layout = html.Div([
             labelPosition='top',
             color='#119DFF',
             style={"marginLeft": "60px"}
+        ),
+        dcc.Loading(
+            id="graphs-loading",
+            type="circle",
+            children=html.Div(id="graphs-dummy"),
+            style={"margin": "20px 0"}
         ),
         ],
         style={
@@ -373,19 +388,25 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
     store[material] = asdict(p)
     return store
 
-@app.callback(
+@long_callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
      Output('phi-amplitude-graph', 'figure'),
      Output('theta-amplitude-graph', 'figure'),
-     Output('frequency-surface-graph', 'figure')],
+     Output('frequency-surface-graph', 'figure'),
+     Output('graphs-dummy', 'children'),],
     [Input('param-store', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on')],
-    prevent_initial_call=True,
+    running=[
+        (Output('graphs-loading', 'loading_state'),
+         {"is_loading": True},
+         {"is_loading": False}),
+    ],
+    long_callback_manager=long_callback_manager
 )
 def update_graphs(store, H, T, material, calc_on):
     # Определяем, какой input вызвал callback
@@ -518,7 +539,7 @@ def update_graphs(store, H, T, material, calc_on):
         theta_amp_fig = no_update
         freq_fig = no_update
 
-    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig
+    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig, ''
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
