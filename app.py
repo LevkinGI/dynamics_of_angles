@@ -320,7 +320,7 @@ def move_m_slider(logk):
     State('material-dropdown', 'value'),
     prevent_initial_call=True,
 )
-def live_fix_graphs(H, T, material, store):
+def live_fix_graphs(H, T, store, material):
     p0 = SimParams(**store[material])
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
