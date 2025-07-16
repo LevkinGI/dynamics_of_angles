@@ -314,37 +314,20 @@ def move_m_slider(logk):
 @app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure')],
-    [
-    Input('H-slider',  'drag_value'),
-    Input('T-slider',  'drag_value'),
-    Input('alpha-scale-slider', 'drag_value'),
-    Input('chi-scale-slider',   'drag_value'),
-    Input('k-scale-slider',     'drag_value'),
-    Input('m-scale-slider',     'drag_value'),
-    Input('H-slider',  'value'),
+    [Input('H-slider',  'value'),
     Input('T-slider',  'value'),
-    Input('material-dropdown', 'value')
-    ],
-    State('param-store', 'data'),
+    Input('material-dropdown', 'value'),
+    Input('param-store', 'data')]
     prevent_initial_call=True,
 )
-def live_fix_graphs(H_d, T_d,
-                    a_d, chi_d, k_d, m_d,
-                    H_v, T_v, material, store):
-    H = H_d if H_d is not None else H_v
-    T = T_d if T_d is not None else T_v
-
+def live_fix_graphs(H, T, material, store):
     p0 = SimParams(**store[material])
-    alpha_scale = 10**a_d   if a_d   is not None else p0.alpha_scale
-    chi_scale   = 10**chi_d if chi_d is not None else p0.chi_scale
-    k_scale     = 10**k_d   if k_d   is not None else p0.k_scale
-    m_scale     = 10**m_d   if m_d   is not None else p0.m_scale
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
-    m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
-    K_vec_T   = k_scale * (K_array_1 if material == '1' else K_array_2)
-    chi_vec_T = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+    m_vec_T   = p0.m_scale * (m_array_1 if material == '1' else m_array_2)
+    K_vec_T   = p0.k_scale * (K_array_1 if material == '1' else K_array_2)
+    chi_vec_T = p0.chi_scale * (chi_array_1 if material == '1' else chi_array_2)
 
     m_T   = m_vec_T[t_index]
     K_T   = K_vec_T[t_index]
