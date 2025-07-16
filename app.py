@@ -7,12 +7,11 @@ import time
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
-from dash import dcc, html, no_update, callback, ctx
-from dash import DiskcacheManager
+from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_daq as daq
-import diskcache
+import threading
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
@@ -32,13 +31,11 @@ for i in  range(1, sliders_range+1):
     log_marks[np.log10(i)]  = str(i)
     log_marks[-np.log10(i)] = '1/'+str(i)
 
-cache = diskcache.Cache("./cache_dir")
-background_manager = DiskcacheManager(cache)
+def compute_frequencies_safe(*args):
+    with threading.Lock():
+        return compute_frequencies(*args)
 
-app = dash.Dash(
-    __name__,
-    background_callback_manager=background_manager
-)
+app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div([
@@ -133,12 +130,6 @@ app.layout = html.Div([
             labelPosition='top',
             color='#119DFF',
             style={"marginLeft": "60px"}
-        ),
-        dcc.Loading(
-            id="graphs-loading",
-            type="circle",
-            children=html.Div(id="graphs-dummy"),
-            style={"margin": "20px 0"}
         ),
         ],
         style={
@@ -244,7 +235,7 @@ app.layout = html.Div([
     ]),
 ])
 
-@callback(
+@app.callback(
     [Output('H-label', 'children'),
      Output('T-label', 'children')],
     [Input('H-slider', 'value'),
@@ -253,7 +244,7 @@ app.layout = html.Div([
 def update_slider_values(H, T):
     return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
 
-@callback(
+@app.callback(
     [Output('T-slider', 'min'),
      Output('T-slider', 'max'),
      Output('T-slider', 'step'),
@@ -279,7 +270,7 @@ def update_T_slider(material, T):
     marks = {float(val): str(val) for val in t_vals if val % 10 == 0}
     return min_val, max_val, step, value, marks
     
-@callback(
+@app.callback(
     Output("alpha-scale-label", "children"),
     Input("alpha-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -290,7 +281,7 @@ def move_alpha_slider(logk):
     k = 10**logk
     return f"{k:.2f} × α"
 
-@callback(
+@app.callback(
     Output("chi-scale-label", "children"),
     Input("chi-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -301,7 +292,7 @@ def move_chi_slider(logk):
     k = 10**logk
     return f"{k:.2f} × χ"
 
-@callback(
+@app.callback(
     Output("k-scale-label", "children"),
     Input("k-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -312,7 +303,7 @@ def move_k_slider(logk):
     k = 10**logk
     return f"{k:.2f} × K(T)"
 
-@callback(
+@app.callback(
     Output("m-scale-label", "children"),
     Input("m-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -323,22 +314,22 @@ def move_m_slider(logk):
     k = 10**logk
     return f"{k:.2f} × m"
 
-@callback(
+@app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure')],
     [Input('H-slider',  'value'),
     Input('T-slider',  'value'),
-    Input('param-store', 'data'),
+    Input("chi-scale-slider", "value"),
+    Input("k-scale-slider", "value"),
+    Input("m-scale-slider", "value"),
     Input('material-dropdown', 'value')]
 )
-def live_fix_graphs(H, T, store, material):
-    p0 = SimParams(**store[material])
-
+def live_fix_graphs(H, T, chi_scale, k_scale, m_scale, material):
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
-    m_vec_T   = p0.m_scale * (m_array_1 if material == '1' else m_array_2)
-    K_vec_T   = p0.k_scale * (K_array_1 if material == '1' else K_array_2)
-    chi_vec_T = p0.chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+    m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
+    K_vec_T   = k_scale * (K_array_1 if material == '1' else K_array_2)
+    chi_vec_T = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
 
     m_T   = m_vec_T[t_index]
     K_T   = K_vec_T[t_index]
@@ -355,7 +346,7 @@ def live_fix_graphs(H, T, store, material):
 
     return H_fix_fig, T_fix_fig
 
-@callback(
+@app.callback(
     [Output('alpha-scale-slider',      'value'),
     Output('chi-scale-slider',      'value'),
     Output('k-scale-slider',      'value'),
@@ -369,7 +360,7 @@ def sync_sliders_with_material(material, store):
     return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
             np.log10(p.k_scale), np.log10(p.m_scale))
 
-@callback(
+@app.callback(
     Output('param-store', 'data'),
     [Input('material-dropdown', 'value'),
     Input('alpha-scale-slider',      'value'),
@@ -388,35 +379,29 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
     store[material] = asdict(p)
     return store
 
-@callback(
+@app.callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
      Output('phi-amplitude-graph', 'figure'),
      Output('theta-amplitude-graph', 'figure'),
-     Output('frequency-surface-graph', 'figure'),
-     Output('graphs-dummy', 'children'),],
+     Output('frequency-surface-graph', 'figure')],
     [Input('param-store', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on')],
-    running=[
-        (Output('graphs-loading', 'loading_state'),
-         {"is_loading": True},
-         {"is_loading": False}),
-    ],
     prevent_initial_call=True,
-    background=True,
-    manager=background_manager
 )
 def update_graphs(store, H, T, material, calc_on):
+    if not calc_on: raise PreventUpdate
+        
     # Определяем, какой input вызвал callback
+    ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
     params_changed   = any('param-store' in ti for ti in triggered_inputs)
     switch_on = any('auto-calc-switch' in ti for ti in triggered_inputs)
-    if not calc_on: raise PreventUpdate
         
     p = SimParams(**store[material])
   
@@ -438,7 +423,7 @@ def update_graphs(store, H, T, material, calc_on):
     m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
-    freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+    freq_array1, freq_array2 = compute_frequencies_safe(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, m_val, M_val, K_val, chi_val, alpha, kappa)
@@ -540,7 +525,7 @@ def update_graphs(store, H, T, material, calc_on):
         theta_amp_fig = no_update
         freq_fig = no_update
 
-    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig, ''
+    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
