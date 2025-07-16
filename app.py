@@ -316,8 +316,8 @@ def move_m_slider(logk):
      Output('T_fix-graph', 'figure')],
     [Input('H-slider',  'value'),
     Input('T-slider',  'value'),
-    Input('material-dropdown', 'value'),
-    Input('param-store', 'data')]
+    Input('param-store', 'data')],
+    State('material-dropdown', 'value'),
     prevent_initial_call=True,
 )
 def live_fix_graphs(H, T, material, store):
