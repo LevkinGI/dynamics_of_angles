@@ -31,8 +31,9 @@ for i in  range(1, sliders_range+1):
     log_marks[np.log10(i)]  = str(i)
     log_marks[-np.log10(i)] = '1/'+str(i)
 
+_freq_lock = threading.Lock()
 def compute_frequencies_safe(*args):
-    with threading.Lock():
+    with _freq_lock:
         return compute_frequencies(*args)
 
 app = dash.Dash(__name__)
