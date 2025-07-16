@@ -421,7 +421,7 @@ def update_graphs(store, H, T, material, calc_on, freqs):
 
     if material_changed or params_changed:
         freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
-        freqs["freq_array1"], freqs["freq_array2"] = freq_array1.tolist(), freq_array2.tolist()
+        freqs = {"freq_array1": freq_array1.tolist(), "freq_array2": freq_array2.tolist()}
     else:
         freq_array1, freq_array2 = np.array(freqs["freq_array1"]), np.array(freqs["freq_array2"])
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
