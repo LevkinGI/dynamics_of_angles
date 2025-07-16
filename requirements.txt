@@ -1,4 +1,4 @@
-dash[diskcache]>=3
+dash
 dash-core-components
 dash-html-components
 dash-table
@@ -10,4 +10,3 @@ scipy
 cython
 numba
 gunicorn
-diskcache>=5.6
