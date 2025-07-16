@@ -7,12 +7,12 @@ import time
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
-from dash import dcc, html, no_update, callback_context
+from dash import dcc, html, no_update, callback, ctx
+from dash import DiskcacheManager
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_daq as daq
 import diskcache
-from dash.long_callback import DiskcacheLongCallbackManager, long_callback
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
@@ -33,11 +33,11 @@ for i in  range(1, sliders_range+1):
     log_marks[-np.log10(i)] = '1/'+str(i)
 
 cache = diskcache.Cache("./cache_dir")
-long_callback_manager = DiskcacheLongCallbackManager(cache)
+background_manager = DiskcacheManager(cache)
 
 app = dash.Dash(
     __name__,
-    long_callback_manager=long_callback_manager,
+    background_callback_manager=background_manager
 )
 server = app.server
 
@@ -244,7 +244,7 @@ app.layout = html.Div([
     ]),
 ])
 
-@app.callback(
+@callback(
     [Output('H-label', 'children'),
      Output('T-label', 'children')],
     [Input('H-slider', 'value'),
@@ -253,7 +253,7 @@ app.layout = html.Div([
 def update_slider_values(H, T):
     return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
 
-@app.callback(
+@callback(
     [Output('T-slider', 'min'),
      Output('T-slider', 'max'),
      Output('T-slider', 'step'),
@@ -279,7 +279,7 @@ def update_T_slider(material, T):
     marks = {float(val): str(val) for val in t_vals if val % 10 == 0}
     return min_val, max_val, step, value, marks
     
-@app.callback(
+@callback(
     Output("alpha-scale-label", "children"),
     Input("alpha-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -290,7 +290,7 @@ def move_alpha_slider(logk):
     k = 10**logk
     return f"{k:.2f} × α"
 
-@app.callback(
+@callback(
     Output("chi-scale-label", "children"),
     Input("chi-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -301,7 +301,7 @@ def move_chi_slider(logk):
     k = 10**logk
     return f"{k:.2f} × χ"
 
-@app.callback(
+@callback(
     Output("k-scale-label", "children"),
     Input("k-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -312,7 +312,7 @@ def move_k_slider(logk):
     k = 10**logk
     return f"{k:.2f} × K(T)"
 
-@app.callback(
+@callback(
     Output("m-scale-label", "children"),
     Input("m-scale-slider", "drag_value"),
     prevent_initial_call=True,
@@ -323,7 +323,7 @@ def move_m_slider(logk):
     k = 10**logk
     return f"{k:.2f} × m"
 
-@app.callback(
+@callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure')],
     [Input('H-slider',  'value'),
@@ -355,7 +355,7 @@ def live_fix_graphs(H, T, store, material):
 
     return H_fix_fig, T_fix_fig
 
-@app.callback(
+@callback(
     [Output('alpha-scale-slider',      'value'),
     Output('chi-scale-slider',      'value'),
     Output('k-scale-slider',      'value'),
@@ -369,7 +369,7 @@ def sync_sliders_with_material(material, store):
     return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
             np.log10(p.k_scale), np.log10(p.m_scale))
 
-@app.callback(
+@callback(
     Output('param-store', 'data'),
     [Input('material-dropdown', 'value'),
     Input('alpha-scale-slider',      'value'),
@@ -388,7 +388,7 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
     store[material] = asdict(p)
     return store
 
-@long_callback(
+@callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
@@ -406,11 +406,12 @@ def update_params(material, a_k, chi_k, k_k, m_k, store):
          {"is_loading": True},
          {"is_loading": False}),
     ],
-    long_callback_manager=long_callback_manager
+    prevent_initial_call=True,
+    background=True,
+    manager=background_manager
 )
 def update_graphs(store, H, T, material, calc_on):
     # Определяем, какой input вызвал callback
-    ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
     params_changed   = any('param-store' in ti for ti in triggered_inputs)
