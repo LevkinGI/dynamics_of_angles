@@ -305,7 +305,7 @@ def move_k_slider(logk):
     Input("m-scale-slider", "drag_value"),
     prevent_initial_call=True,
 )
-def move_m_slider(logk, cache):
+def move_m_slider(logk):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
