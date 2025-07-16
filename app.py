@@ -34,7 +34,6 @@ for i in  range(1, sliders_range+1):
     log_marks[-np.log10(i)] = '1/'+str(i)
 
 app.layout = html.Div([
-    dcc.Interval(id="throttle", interval=300, n_intervals=0),
     dcc.Store(
         id='param-store',
         data={
@@ -46,7 +45,6 @@ app.layout = html.Div([
 
     html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
-    dcc.Store(id="H-slider-cache", data={"val": 1000, "ts": 0.0, "last": None}),
     dcc.Slider(
         id='H-slider',
         min=0,
@@ -58,7 +56,6 @@ app.layout = html.Div([
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
-    dcc.Store(id="T-slider-cache", data={"val": T_init, "ts": 0.0, "last": None}),
     dcc.Slider(
         id='T-slider',
         min=290,
@@ -77,7 +74,6 @@ app.layout = html.Div([
     html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
-            dcc.Store(id="alpha-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='alpha-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -90,7 +86,6 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='chi-scale-label'),
-            dcc.Store(id="chi-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='chi-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -103,7 +98,6 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='k-scale-label'),
-            dcc.Store(id="k-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='k-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -116,7 +110,6 @@ app.layout = html.Div([
         
         html.Div([
             html.Label(id='m-scale-label'),
-            dcc.Store(id="m-scale-slider-cache", data={"val": 0.0, "ts": 0.0, "last": None}),
             dcc.Slider(id='m-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
@@ -242,7 +235,8 @@ app.layout = html.Div([
     [Output('H-label', 'children'),
      Output('T-label', 'children')],
     [Input('H-slider', 'value'),
-     Input('T-slider', 'value')]
+     Input('T-slider', 'value')],
+    prevent_initial_call=True,
 )
 def update_slider_values(H, T):
     return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
@@ -272,123 +266,79 @@ def update_T_slider(material, T):
     value = t_vals[t_index]
     marks = {float(val): str(val) for val in t_vals if val % 10 == 0}
     return min_val, max_val, step, value, marks
-
-@app.callback(
-    Output("H-slider-cache", "data", allow_duplicate=True),
-    Input("H-slider", "drag_value"),
-    State("H-slider-cache", "data"),
-    prevent_initial_call=True,
-)
-def move_H_slider(val, cache):
-    cache.update({"val": val, "ts": time.time()})
-    return cache
     
 @app.callback(
-    Output("T-slider-cache", "data", allow_duplicate=True),
-    Input("T-slider", "drag_value"),
-    State("T-slider-cache", "data"),
-    prevent_initial_call=True,
-)
-def move_T_slider(val, cache):
-    cache.update({"val": val, "ts": time.time()})
-    return cache
-    
-@app.callback(
-    [Output("alpha-scale-label", "children"),
-    Output("alpha-scale-slider-cache", "data", allow_duplicate=True)],
+    Output("alpha-scale-label", "children"),
     Input("alpha-scale-slider", "drag_value"),
-    State("alpha-scale-slider-cache", "data"),
     prevent_initial_call=True,
 )
-def move_alpha_slider(logk, cache):
+def move_alpha_slider(logk):
     if logk is None:                          # при первом рендере drag_value == None
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": logk, "ts": time.time()})
-    return f"{k:.2f} × α", cache
+    return f"{k:.2f} × α"
 
 @app.callback(
-    [Output("chi-scale-label", "children"),
-    Output("chi-scale-slider-cache", "data", allow_duplicate=True)],
+    Output("chi-scale-label", "children"),
     Input("chi-scale-slider", "drag_value"),
-    State("chi-scale-slider-cache", "data"),
     prevent_initial_call=True,
 )
-def move_chi_slider(logk, cache):
+def move_chi_slider(logk):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": logk, "ts": time.time()})
-    return f"{k:.2f} × χ", cache
+    return f"{k:.2f} × χ"
 
 @app.callback(
-    [Output("k-scale-label", "children"),
-    Output("k-scale-slider-cache", "data", allow_duplicate=True)],
+    Output("k-scale-label", "children"),
     Input("k-scale-slider", "drag_value"),
-    State("k-scale-slider-cache", "data"),
     prevent_initial_call=True,
 )
-def move_k_slider(logk, cache):
+def move_k_slider(logk):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": logk, "ts": time.time()})
-    return f"{k:.2f} × K(T)", cache
+    return f"{k:.2f} × K(T)"
 
 @app.callback(
-    [Output("m-scale-label", "children"),
-    Output("m-scale-slider-cache", "data", allow_duplicate=True)],
+    Output("m-scale-label", "children"),
     Input("m-scale-slider", "drag_value"),
-    State("m-scale-slider-cache", "data"),
     prevent_initial_call=True,
 )
 def move_m_slider(logk, cache):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    cache.update({"val": logk, "ts": time.time()})
-    return f"{k:.2f} × m", cache
+    return f"{k:.2f} × m"
 
 @app.callback(
     [Output('H_fix-graph', 'figure'),
-     Output('T_fix-graph', 'figure'),
-     Output("H-slider-cache", "data"),
-     Output("T-slider-cache", "data"),
-     Output("alpha-scale-slider-cache", "data"),
-     Output("chi-scale-slider-cache", "data"),
-     Output("k-scale-slider-cache", "data"),
-     Output("m-scale-slider-cache", "data")],
-    Input("throttle", "n_intervals"),        # тик таймера
-    [State('material-dropdown', 'value'),
-     State('param-store', 'data'),
-     State("H-slider", "value"),
-     State("T-slider", "value"),
-     State("H-slider-cache", "data"),
-     State("T-slider-cache", "data"),
-     State("alpha-scale-slider-cache", "data"),
-     State("chi-scale-slider-cache", "data"),
-     State("k-scale-slider-cache", "data"),
-     State("m-scale-slider-cache", "data")],
+     Output('T_fix-graph', 'figure')],
+    [
+    Input('H-slider',  'drag_value'),
+    Input('T-slider',  'drag_value'),
+    Input('alpha-scale-slider', 'drag_value'),
+    Input('chi-scale-slider',   'drag_value'),
+    Input('k-scale-slider',     'drag_value'),
+    Input('m-scale-slider',     'drag_value'),
+    Input('H-slider',  'value'),
+    Input('T-slider',  'value'),
+    Input('material-dropdown', 'value')
+    ],
+    State('param-store', 'data'),
+    prevent_initial_call=True,
 )
-def live_fix_graphs(_, material, store, H_val, T_val,
-                    H_cache, T_cache,
-                    a_cache, chi_cache, k_cache, m_cache):
-    now = time.time()
-                        
-    caches = [H_cache, T_cache, a_cache, chi_cache, k_cache, m_cache]
-                        
-    if all(c["val"] is None for c in caches):raise PreventUpdate
-    if all((c["val"] is None) or (now - c["ts"] < 0.30) or (c["ts"] == 0) for c in caches): raise PreventUpdate
-    if all(c["val"] == c["last"] for c in caches): raise PreventUpdate
-    
-    H = H_cache["val"] if H_cache["val"] is not None else H_val
-    T = T_cache["val"] if T_cache["val"] is not None else T_val
+def live_fix_graphs(H_d, T_d,
+                    a_d, chi_d, k_d, m_d,
+                    H_v, T_v, material, store):
+    H = H_d if H_d is not None else H_v
+    T = T_d if T_d is not None else T_v
 
-    p = SimParams(**store[material])
-    alpha_scale = 10 ** a_cache["val"] if a_cache["val"] is not None else p.alpha_scale
-    chi_scale   = 10 ** chi_cache["val"] if chi_cache["val"] is not None else p.chi_scale
-    k_scale     = 10 ** k_cache["val"] if k_cache["val"] is not None else p.k_scale
-    m_scale     = 10 ** m_cache["val"] if m_cache["val"] is not None else p.m_scale
+    p0 = SimParams(**store[material])
+    alpha_scale = 10**a_d   if a_d   is not None else p0.alpha_scale
+    chi_scale   = 10**chi_d if chi_d is not None else p0.chi_scale
+    k_scale     = 10**k_d   if k_d   is not None else p0.k_scale
+    m_scale     = 10**m_d   if m_d   is not None else p0.m_scale
 
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
@@ -408,39 +358,22 @@ def live_fix_graphs(_, material, store, H_val, T_val,
 
     H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H, H_data)
     T_fix_fig = create_T_fix_fig(H_vals, (f1_H, f2_H), T, T_data)
-    for c in caches:
-        c["last"] = c["val"]
 
-    return (H_fix_fig, T_fix_fig,
-            H_cache, T_cache,
-            a_cache, chi_cache, k_cache, m_cache)
+    return H_fix_fig, T_fix_fig
 
 @app.callback(
-    [Output('alpha-scale-slider', 'value'),
-     Output('chi-scale-slider',    'value'),
-     Output('k-scale-slider',      'value'),
-     Output('m-scale-slider',      'value'),
-     Output("alpha-scale-slider-cache", "data", allow_duplicate=True),
-     Output("chi-scale-slider-cache",   "data", allow_duplicate=True),
-     Output("k-scale-slider-cache",     "data", allow_duplicate=True),
-     Output("m-scale-slider-cache",     "data", allow_duplicate=True),
-     Output("H-slider-cache",           "data", allow_duplicate=True),
-     Output("T-slider-cache",           "data", allow_duplicate=True)],
+    [Output('alpha-scale-slider',      'value'),
+    Output('chi-scale-slider',      'value'),
+    Output('k-scale-slider',      'value'),
+    Output('m-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
-    [State('param-store',       'data'),    
-     State("H-slider", "value"),
-     State("T-slider", "value")],
-    prevent_initial_call=True,
+    State('param-store',       'data'),   
+    prevent_initial_call=True, 
 )
-def sync_sliders_with_material(material, store, H, T):
+def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
-    a, chi, k, m = (np.log10(p.alpha_scale), np.log10(p.chi_scale),
-                    np.log10(p.k_scale), np.log10(p.m_scale))
-    now = time.time()
-    make_cache = lambda v: {"val": v, "ts": now, "last": None}
-    return (a, chi, k, m,
-            make_cache(a), make_cache(chi), make_cache(k), make_cache(m),
-            make_cache(H), make_cache(T))
+    return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
+            np.log10(p.k_scale), np.log10(p.m_scale))
 
 @app.callback(
     Output('param-store', 'data'),
