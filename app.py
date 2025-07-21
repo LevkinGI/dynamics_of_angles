@@ -321,7 +321,7 @@ def move_m_slider(logk):
     Input("m-scale-slider", "value"),
     Input('material-dropdown', 'value')],
 )
-def live_fix_graphs(H_val, T_val, chi_val, k_val, m_val, material):
+def live_fix_graphs(H, T, chi_val, k_val, m_val, material):
     chi_scale = 10**chi_val
     k_scale   = 10**k_val
     m_scale   = 10**m_val
