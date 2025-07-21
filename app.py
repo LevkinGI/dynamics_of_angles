@@ -342,9 +342,9 @@ def live_fix_graphs(H, T, chi_val, k_val, m_val, material):
     T_data = T_293 if T==293 and material == '1' else None
 
     H_mesh = H_mesh_1 if material == '1' else H_mesh_2
-    m_mesh = m_mesh_1 if material == '1' else m_mesh_2
-    K_mesh = K_mesh_1 if material == '1' else K_mesh_2
-    chi_mesh = chi_mesh_1 if material == '1' else chi_mesh_2
+    m_mesh = m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
+    K_mesh = k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
+    chi_mesh = chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
     theta_0 = compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh)
 
     H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H, H_data)
