@@ -192,18 +192,7 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
     )
     return fig
 
-def create_phase_fig(T_vals, H_vals, m_array, K_array, chi_array):
-
-    T, H = np.meshgrid(T_vals, H_vals)
-    # растянем m(T) так, чтобы размер совпал с сеткой (nH, nT)
-    m = np.tile(m_array, (H_vals.size, 1))
-    chi = np.tile(chi_array, (H_vals.size, 1))
-    K = np.tile(K_array, (H_vals.size, 1))
-
-    m_cr = chi * H + 2 * K / H
-    theta_0 = np.where(np.abs(m) > m_cr, 0.0,
-                       np.arccos(np.abs(m) / m_cr))
-
+def create_phase_fig(T_vals, H_vals, theta_0):
     custom_colorscale = [
         [0.00, 'rgb(0, 0, 0)'],        # black
         [0.31, 'rgb(0, 0, 255)'],      # blue
@@ -212,8 +201,8 @@ def create_phase_fig(T_vals, H_vals, m_array, K_array, chi_array):
         [1.00, 'rgb(255, 255, 255)']   # white
     ]
     heat = go.Heatmap(
-        x=T_vals,                     # K
-        y=H_vals / 1000,              # kOe для подписи оси
+        x=T_vals,
+        y=H_vals,
         z=theta_0,
         colorscale=custom_colorscale,
         colorbar=dict(
@@ -259,7 +248,7 @@ def create_phase_fig(T_vals, H_vals, m_array, K_array, chi_array):
 
     fig.update_layout(
         xaxis=dict(title='T (K)', range=[T_vals.min(), T_vals.max()]),
-        yaxis=dict(title='H (kOe)', range=[H_vals.min() / 1000, H_vals.max() / 1000]),
+        yaxis=dict(title='H (Oe)', range=[H_vals.min(), H_vals.max()]),
         template='plotly_white',
         width=800,
         height=600,
