@@ -242,11 +242,11 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         y_col    = H_vals[idx_min] - 300
         fig.add_annotation(x=T_vals[0], y=y_noncol,
                            text='non‑collinear',
-                           showarrow=False, font=dict(color='white', size=12),
+                           showarrow=False, font=dict(color='white', size=14),
                            xanchor='left', yanchor='bottom')
         fig.add_annotation(x=T_vals[0], y=y_col,
                            text='collinear',
-                           showarrow=False, font=dict(color='white', size=12),
+                           showarrow=False, font=dict(color='white', size=14),
                            xanchor='left', yanchor='top')
 
     fig.update_layout(
