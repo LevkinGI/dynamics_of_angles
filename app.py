@@ -11,7 +11,6 @@ from dash import dcc, html, no_update, callback_context
 from dash.dependencies import Input, Output, State
 from dash.exceptions import PreventUpdate
 import dash_daq as daq
-import threading
 import plotly.graph_objs as go
 from scipy.optimize import least_squares
 
@@ -30,17 +29,6 @@ for i in  range(1, sliders_range+1):
     if i > 10 and i % 10 != 0: continue
     log_marks[np.log10(i)]  = str(i)
     log_marks[-np.log10(i)] = '1/'+str(i)
-
-_freq_lock = threading.Lock()
-def compute_frequencies_safe(*args):
-    with _freq_lock:
-        return compute_frequencies(*args)
-def compute_frequencies_H_fix_safe(*args):
-    with _freq_lock:
-        return compute_frequencies_H_fix(*args)
-def compute_frequencies_T_fix_safe(*args):
-    with _freq_lock:
-        return compute_frequencies_T_fix(*args)
 
 app = dash.Dash(__name__)
 server = app.server
