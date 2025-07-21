@@ -198,6 +198,7 @@ def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
         i = idx // nH
         j = idx % nH
         H_ij   = H_mesh[i, j]
+        if H_ij == 0.0: continue
         m_ij   = m_mesh[i, j]
         abs_m = np.abs(m_ij)
         chi_ij = chi_mesh[i, j]
