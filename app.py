@@ -320,10 +320,10 @@ def move_m_slider(logk):
     Input("k-scale-slider", "drag_value"),
     Input("m-scale-slider", "drag_value"),
     Input('material-dropdown', 'value')],
-    prevent_initial_call=True,
 )
 def live_fix_graphs(H, T, chi_scale, k_scale, m_scale, material):
-    chi_scale, k_scale, m_scale = 10**chi_scale, 10**k_scale, 10**m_scale
+    for var in ('chi_scale', 'k_scale', 'm_scale'):
+        locals()[var] = 10 ** (locals()[var] or 0.0)
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
     m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
