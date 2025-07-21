@@ -203,7 +203,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     heat = go.Heatmap(
         x=T_vals,
         y=H_vals,
-        z=theta_0,
+        z=theta_0.T,
         colorscale=custom_colorscale,
         colorbar=dict(
             title=dict(
@@ -224,7 +224,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     contour = go.Contour(
         x=T_vals,
         y=H_vals,
-        z=theta_0,
+        z=theta_0.T,
         showscale=False,
         contours=dict(
             start=0.01, end=0.01, size=0.01,
