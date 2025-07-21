@@ -238,8 +238,8 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.1)
     if np.any(mask):
         idx_min, idx_max = np.where(mask)[0][[0, -1]]
-        y_noncol = H_vals[idx_max] + 100
-        y_col    = H_vals[idx_min] - 100
+        y_noncol = H_vals[idx_max] + 300
+        y_col    = H_vals[idx_min] - 300
         fig.add_annotation(x=T_vals[0], y=y_noncol,
                            text='non‑collinear',
                            showarrow=False, font=dict(color='white', size=12),
