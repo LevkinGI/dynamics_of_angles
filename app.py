@@ -424,7 +424,7 @@ def update_graphs(store, H, T, material, calc_on):
     m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
-    freq_array1, freq_array2 = compute_frequencies_safe(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+    freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, m_val, M_val, K_val, chi_val, alpha, kappa)
