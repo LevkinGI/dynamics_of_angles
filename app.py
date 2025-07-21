@@ -321,8 +321,8 @@ def move_m_slider(logk):
     Input("m-scale-slider", "drag_value"),
     Input('material-dropdown', 'value')],
 )
-def live_fix_graphs(H_val, T_val, chi_val, k_val, m_val, material):
-    for var in ('chi_val', 'k_val', 'm_val'):
+def live_fix_graphs(H_val, T_val, chi_scale, k_scale, m_scale, material):
+    for var in ('chi_scale', 'k_scale', 'm_scale'):
         locals()[var] = 10 ** (locals()[var] or 0.0)
     H = H_val if H_val != None else 1000
     T = T_val if T_val != None else T_init
