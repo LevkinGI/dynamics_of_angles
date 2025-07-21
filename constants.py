@@ -188,7 +188,7 @@ def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
 
     return f1, f2
 
-@njit(parallel=True, cache=True, fastmath=True)
+@njit(parallel=False, cache=True, fastmath=True)
 def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
     nT, nH = H_mesh.shape
     total = nT * nH
