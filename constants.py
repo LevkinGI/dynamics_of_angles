@@ -36,7 +36,7 @@ def chi_T(T):
 # Загрузка данных для материала 1
 m_array_1 = np.load('m_array.npy')
 M_array_1 = np.load('M_array.npy')
-chi_array_1 = chi_T(T_vals_1)
+chi_array_1 = chi_T(T_vals_1) if False else np.full_like(m_array_1, chi_T(T_init))
 K_array_1 = K_T(T_vals_1)
 phi_amplitude = np.load('phi_amplitude.npy')
 theta_amplitude = np.load('theta_amplitude.npy')
@@ -53,7 +53,7 @@ K_const = 13500
 chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
-@njit(parallel=True, fastmath=False, cache=True)
+@njit(parallel=False, fastmath=True, cache=True)
 def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
     nT, nH = H_mesh.shape
     total = nT * nH
