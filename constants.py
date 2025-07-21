@@ -188,6 +188,12 @@ def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
 
     return f1, f2
 
+@njit(parallel=True, cache=True, fastmath=True)
+def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
+  m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
+  return np.where(np.abs(m_mesh) > m_cr, 0.0,
+                       np.arccos(np.abs(m_mesh) / m_cr))
+
 
 __all__ = [
     # сетки и оси
@@ -203,7 +209,8 @@ __all__ = [
     'gamma', 'alpha_1', 'alpha_2', 'K_const', 'chi_const',
     'h_IFE', 'delta_t',
     # JIT-функция для частот
-    'compute_frequencies', 'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
+    'compute_frequencies', 'compute_phases',
+    'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
     # частоты
     'f1_GHz', 'f2_GHz',
     # амплитуды
