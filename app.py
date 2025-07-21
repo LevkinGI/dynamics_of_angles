@@ -312,11 +312,11 @@ def move_m_slider(logk):
 @app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure')],
-    [Input('H-slider',  'value'),
-    Input('T-slider',  'value'),
-    Input("chi-scale-slider", "value"),
-    Input("k-scale-slider", "value"),
-    Input("m-scale-slider", "value"),
+    [Input('H-slider', 'drag_value'),
+    Input('T-slider', 'drag_value'),
+    Input("chi-scale-slider", "drag_value"),
+    Input("k-scale-slider", "drag_value"),
+    Input("m-scale-slider", "drag_value"),
     Input('material-dropdown', 'value')]
 )
 def live_fix_graphs(H, T, chi_scale, k_scale, m_scale, material):
