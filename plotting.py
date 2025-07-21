@@ -191,8 +191,85 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
         )
     )
     return fig
+
+def create_phase_fig(T_vals, H_vals, m_array, K_array, chi_array):
+
+    T, H = np.meshgrid(T_vals, H_vals)
+    # растянем m(T) так, чтобы размер совпал с сеткой (nH, nT)
+    m = np.tile(m_array, (H_vals.size, 1))
+    chi = np.tile(chi_array, (H_vals.size, 1))
+    K = np.tile(K_array, (H_vals.size, 1))
+
+    m_cr = chi * H + 2 * K / H
+    theta_0 = np.where(np.abs(m) > m_cr, 0.0,
+                       np.arccos(np.abs(m) / m_cr))
+
+    custom_colorscale = [
+        [0.00, 'rgb(0, 0, 0)'],        # black
+        [0.31, 'rgb(0, 0, 255)'],      # blue
+        [0.62, 'rgb(0, 128, 0)'],      # green
+        [0.93, 'rgb(255, 255, 0)'],    # yellow
+        [1.00, 'rgb(255, 255, 255)']   # white
+    ]
+    heat = go.Heatmap(
+        x=T_vals,                     # K
+        y=H_vals / 1000,              # kOe для подписи оси
+        z=theta_0,
+        colorscale=custom_colorscale,
+        colorbar=dict(
+            title=r'$\theta_0$ (rad)',
+            titleside='right',
+            tickmode='array',
+            tickvals=[0, np.pi / 4, np.pi / 2],
+            ticktext=['0', 'π/4', 'π/2'],
+            outlinewidth=1
+        ),
+        zmin=0, zmax=np.pi / 2,
+        showscale=True
+    )
+
+    fig = go.Figure(data=[heat])
+
+    contour = go.Contour(
+        x=T_vals,
+        y=H_vals / 1000,
+        z=theta_0,
+        showscale=False,
+        contours=dict(
+            start=0.01, end=0.01, size=0.01,
+            coloring='none'
+        ),
+        line=dict(width=1.5, color='white')
+    )
+    fig.add_trace(contour)
+
+    mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.2)
+    if np.any(mask):
+        idx_min, idx_max = np.where(mask)[0][[0, -1]]
+        y_noncol = H_vals[idx_max] / 1000 + 0.1
+        y_col    = H_vals[idx_min] / 1000 - 0.1
+        fig.add_annotation(x=T_vals[0], y=y_noncol,
+                           text='non‑collinear',
+                           showarrow=False, font=dict(color='white', size=12),
+                           xanchor='left', yanchor='bottom')
+        fig.add_annotation(x=T_vals[0], y=y_col,
+                           text='collinear',
+                           showarrow=False, font=dict(color='white', size=12),
+                           xanchor='left', yanchor='top')
+
+    fig.update_layout(
+        xaxis=dict(title='T (K)', range=[T_vals.min(), T_vals.max()]),
+        yaxis=dict(title='H (kOe)', range=[H_vals.min() / 1000, H_vals.max() / 1000]),
+        template='plotly_white',
+        width=800,
+        height=600,
+        margin=dict(l=60, r=40, t=40, b=60)
+    )
+
+    return fig
+
     
 __all__ = [
-    'create_phi_fig', 'create_theta_fig', 'create_yz_fig', 'create_H_fix_fig',
+    'create_phi_fig', 'create_theta_fig', 'create_yz_fig', 'create_H_fix_fig', 'create_phase_fig',
     'create_T_fix_fig', 'create_phi_amp_fig', 'create_theta_amp_fig', 'create_freq_fig',
 ]
