@@ -208,7 +208,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         colorscale=custom_colorscale,
         colorbar=dict(
             title=dict(
-                text=r'$\theta_0$ (rad)',
+                text=r'θ₀ (rad)',
                 side='right'
             ),
             tickmode='array',
