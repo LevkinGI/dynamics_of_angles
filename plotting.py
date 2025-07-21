@@ -206,8 +206,10 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         z=theta_0,
         colorscale=custom_colorscale,
         colorbar=dict(
-            title=r'$\theta_0$ (rad)',
-            titleside='right',
+            title=dict(
+                text=r'$\theta_0$ (rad)',
+                side='right'
+            ),
             tickmode='array',
             tickvals=[0, np.pi / 4, np.pi / 2],
             ticktext=['0', 'π/4', 'π/2'],
