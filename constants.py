@@ -202,8 +202,6 @@ __all__ = [
     # физические константы
     'gamma', 'alpha_1', 'alpha_2', 'K_const', 'chi_const',
     'h_IFE', 'delta_t',
-    # температурные функции
-    'K_T', 'chi_T',
     # JIT-функция для частот
     'compute_frequencies', 'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
     # частоты
