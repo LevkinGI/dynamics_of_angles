@@ -326,6 +326,7 @@ def move_m_slider(logk):
     Input('material-dropdown', 'value')]
 )
 def live_fix_graphs(H, T, chi_scale, k_scale, m_scale, material):
+    chi_scale, k_scale, m_scale = 10**chi_scale, 10**k_scale, 10**m_scale
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
     m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
