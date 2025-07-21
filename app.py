@@ -343,8 +343,8 @@ def live_fix_graphs(H, T, chi_scale, k_scale, m_scale, material):
     K_T   = K_vec_T[t_index]
     chi_T = chi_vec_T[t_index]
 
-    f1_T, f2_T = compute_frequencies_H_fix_safe(H, m_vec_T, chi_vec_T, K_vec_T, gamma)
-    f1_H, f2_H = compute_frequencies_T_fix_safe(H_vals, m_T, chi_T, K_T, gamma)
+    f1_T, f2_T = compute_frequencies_H_fix(H, m_vec_T, chi_vec_T, K_vec_T, gamma)
+    f1_H, f2_H = compute_frequencies_T_fix(H_vals, m_T, chi_T, K_T, gamma)
 
     H_data = H_1000 if H==1000 and material == '1' else None
     T_data = T_293 if T==293 and material == '1' else None
@@ -431,7 +431,7 @@ def update_graphs(store, H, T, material, calc_on):
     m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
-    freq_array1, freq_array2 = compute_frequencies_safe(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+    freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, m_val, M_val, K_val, chi_val, alpha, kappa)
