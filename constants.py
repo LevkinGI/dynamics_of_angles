@@ -190,9 +190,23 @@ def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
 
 @njit(parallel=True, cache=True, fastmath=True)
 def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
-  m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
-  return np.where(np.abs(m_mesh) > m_cr, 0.0,
-                       np.arccos(np.abs(m_mesh) / m_cr))
+    nT, nH = H_mesh.shape
+    total = nT * nH
+    theta_0 = np.empty((nT, nH), np.float64)
+
+    for idx in prange(total):
+        i = idx // nH
+        j = idx % nH
+        H_ij   = H_mesh[i, j]
+        m_ij   = m_mesh[i, j]
+        abs_m = np.abs(m_ij)
+        chi_ij = chi_mesh[i, j]
+        K_ij   = K_mesh[i, j]
+
+        m_cr = chi_ij * H_ij + (2 * K_ij) / H_ij
+        theta_0[i, j] = 0.0 if abs_m > m_cr else np.arccos(abs_m / m_cr)
+      
+    return theta_0
 
 
 __all__ = [
