@@ -314,19 +314,17 @@ def move_m_slider(logk):
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure'),
      Output('phase-graph', 'figure')],
-    [Input('H-slider', 'drag_value'),
-    Input('T-slider', 'drag_value'),
-    Input("chi-scale-slider", "drag_value"),
-    Input("k-scale-slider", "drag_value"),
-    Input("m-scale-slider", "drag_value"),
+    [Input('H-slider', 'value'),
+    Input('T-slider', 'value'),
+    Input("chi-scale-slider", "value"),
+    Input("k-scale-slider", "value"),
+    Input("m-scale-slider", "value"),
     Input('material-dropdown', 'value')],
 )
 def live_fix_graphs(H_val, T_val, chi_val, k_val, m_val, material):
-    H = H_val if H_val != None else 1000
-    T = T_val if T_val != None else T_init
-    chi_scale = 1.0 if chi_val is None else 10**chi_val
-    k_scale   = 1.0 if k_val   is None else 10**k_val
-    m_scale   = 1.0 if m_val   is None else 10**m_val
+    chi_scale = 10**chi_val
+    k_scale   = 10**k_val
+    m_scale   = 10**m_val
     
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
