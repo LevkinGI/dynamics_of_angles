@@ -223,7 +223,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
 
     contour = go.Contour(
         x=T_vals,
-        y=H_vals / 1000,
+        y=H_vals,
         z=theta_0,
         showscale=False,
         contours=dict(
@@ -234,11 +234,11 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     )
     fig.add_trace(contour)
 
-    mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.2)
+    mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.1)
     if np.any(mask):
         idx_min, idx_max = np.where(mask)[0][[0, -1]]
-        y_noncol = H_vals[idx_max] / 1000 + 0.1
-        y_col    = H_vals[idx_min] / 1000 - 0.1
+        y_noncol = H_vals[idx_max] + 100
+        y_col    = H_vals[idx_min] - 100
         fig.add_annotation(x=T_vals[0], y=y_noncol,
                            text='non‑collinear',
                            showarrow=False, font=dict(color='white', size=12),
