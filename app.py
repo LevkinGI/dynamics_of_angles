@@ -153,9 +153,10 @@ app.layout = html.Div([
 
     
     html.Div([
+        dcc.Graph(id='phase-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'}),
         dcc.Graph(
             id='frequency-surface-graph',
-            style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
+            style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'},
             figure=go.Figure(
                 data=[
                     go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
@@ -177,8 +178,8 @@ app.layout = html.Div([
                 )
             )
         ),
-        dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'}),
-        dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'})
+        dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'}),
+        dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'})
     ]),
                       
 
@@ -311,7 +312,8 @@ def move_m_slider(logk):
 
 @app.callback(
     [Output('H_fix-graph', 'figure'),
-     Output('T_fix-graph', 'figure')],
+     Output('T_fix-graph', 'figure'),
+     Output('phase-graph', 'figure')],
     [Input('H-slider', 'drag_value'),
     Input('T-slider', 'drag_value'),
     Input("chi-scale-slider", "drag_value"),
@@ -333,14 +335,20 @@ def live_fix_graphs(H, T, chi_scale, k_scale, m_scale, material):
 
     f1_T, f2_T = compute_frequencies_H_fix(H, m_vec_T, chi_vec_T, K_vec_T, gamma)
     f1_H, f2_H = compute_frequencies_T_fix(H_vals, m_T, chi_T, K_T, gamma)
-
     H_data = H_1000 if H==1000 and material == '1' else None
     T_data = T_293 if T==293 and material == '1' else None
 
+    H_mesh = H_mesh_1 if material == '1' else H_mesh_2
+    m_mesh = m_mesh_1 if material == '1' else m_mesh_2
+    K_mesh = K_mesh_1 if material == '1' else K_mesh_2
+    chi_mesh = chi_mesh_1 if material == '1' else chi_mesh_2
+    theta_0 = compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh)
+
     H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H, H_data)
     T_fix_fig = create_T_fix_fig(H_vals, (f1_H, f2_H), T, T_data)
+    phase_fig = create_phase_fig(T_vals, H_vals, theta_0)
 
-    return H_fix_fig, T_fix_fig
+    return H_fix_fig, T_fix_fig, phase_fig
 
 @app.callback(
     [Output('alpha-scale-slider',      'value'),
