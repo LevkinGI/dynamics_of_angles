@@ -10,4 +10,4 @@ scipy
 cython
 numba
 gunicorn
-skimage
+scikit-image
