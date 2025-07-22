@@ -241,13 +241,30 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         yaxis=dict(title='H (Oe)', range=[H_vals.min(), H_vals.max()]),
         template='plotly_white',
     )
-
+                                
     def add_phase_labels(fig, T_vals, H_vals, theta_0,
                          eps=0.1,                  # уровень контура
                          angle_tol=5,               # допустимая RMS‑кривизна, град
                          label_gap=1.1,             # множитель × длина надписи
                          font_size=14):
+
+        def keep_inside(xc, yc, dx, dy, T_min, T_max, H_min, H_max,
+                    margin_T=1.0, margin_H=40.0):
+        """Сдвигает (xc,yc), чтобы ОБЕ крайние точки текста были внутри."""
+        left, right = xc - dx, xc + dx
+        low,  high  = yc - dy, yc + dy
     
+        shift_x = shift_y = 0.0
+        if left  < T_min + margin_T:
+            shift_x += (T_min + margin_T) - left
+        if right > T_max - margin_T:
+            shift_x += (T_max - margin_T) - right
+        if low   < H_min + margin_H:
+            shift_y += (H_min + margin_H) - low
+        if high  > H_max - margin_H:
+            shift_y += (H_max - margin_H) - high
+        return xc + shift_x, yc + shift_y
+                             
         # 1. Поиск контуров (в индексах массива).
         contours = find_contours(theta_0, level=eps)
         if not contours:
@@ -301,32 +318,71 @@ def create_phase_fig(T_vals, H_vals, theta_0):
             # координаты точки размещения
             x0, y0 = T_curve[best_i], H_curve[best_i]
             # касательный угол (используем центральную разность)
-            dy = H_curve[best_i+1] - H_curve[best_i-1]
-            dx = T_curve[best_i+1] - T_curve[best_i-1]
-            ang = np.degrees(np.arctan2(dy, dx))
+            N_c = 5
+            i1 = max(best_i - N_c, 0)
+            i2 = min(best_i + N_c, len(T_curve)-1)
+            # аппроксимация прямой линией: polyfit 1‑й степени
+            p = np.polyfit(T_curve[i1:i2+1], H_curve[i1:i2+1], deg=1)
+            dHdT = p[0]                              # производная dH/dT
+            ang   = np.degrees(np.arctan(dHdT))      # угол касательной
+            ang_rad = np.radians(ang)
             # нормаль
             norm_ang = ang + 90
             # смещение:  2·dT по T,  40 Oe по H  (подберите под свои шкалы)
             off_T = 2.0 * np.cos(np.radians(norm_ang))
             off_H = 40.0 * np.sin(np.radians(norm_ang))
-    
-            # 4. Подписи
+
+            char_len_T = 0.6 * (T_vals[1] - T_vals[0])
+            margin_T   = 1.0
+            margin_H   = 40.0
+            max_iter   = 3
+            
+            # пробуем несколько раз: уменьшаем шрифт, если не помещается
+            fs = font_size
+            for _ in range(max_iter):
+                # длина строки под текущий шрифт
+                L_text_T = char_len_T * len('non‑collinear') * fs / font_size
+                dx_half  = 0.5 * L_text_T * np.cos(ang_rad)
+                dy_half  = 0.5 * L_text_T * np.sin(ang_rad)
+            
+                x_nc_try, y_nc_try = keep_inside(
+                    x0 - off_T, y0 - off_H,
+                    dx_half, dy_half,
+                    T_vals[0], T_vals[-1], H_vals[0], H_vals[-1],
+                    margin_T, margin_H
+                )
+                x_c_try, y_c_try = keep_inside(
+                    x0 + off_T, y0 + off_H,
+                    dx_half, dy_half,
+                    T_vals[0], T_vals[-1], H_vals[0], H_vals[-1],
+                    margin_T, margin_H
+                )
+            
+                # Если keep_inside НЕ двинул центр → весь текст влез
+                if (abs(x_nc_try - (x0 - off_T)) < 1e-9 and
+                    abs(y_nc_try - (y0 - off_H)) < 1e-9 and
+                    abs(x_c_try  - (x0 + off_T)) < 1e-9 and
+                    abs(y_c_try  - (y0 + off_H)) < 1e-9):
+                    break
+                fs = max(8, int(fs * 0.85))   # ещё меньше
+            
+            # ---------------- добавляем подписи ------------------------------------
             fig.add_annotation(
-                x=x0 - off_T, y=y0 - off_H,
+                x=x_nc_try, y=y_nc_try,
                 xref='x', yref='y',
                 text='non‑collinear',
                 textangle=ang,
                 showarrow=False,
-                font=dict(color='white', size=font_size),
+                font=dict(color='white', size=fs),
                 xanchor='center', yanchor='middle'
             )
             fig.add_annotation(
-                x=x0 + off_T, y=y0 + off_H,
+                x=x_c_try, y=y_c_try,
                 xref='x', yref='y',
                 text='collinear',
                 textangle=ang,
                 showarrow=False,
-                font=dict(color='white', size=font_size),
+                font=dict(color='white', size=fs),
                 xanchor='center', yanchor='middle'
             )
 
