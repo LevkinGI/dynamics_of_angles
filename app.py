@@ -23,7 +23,7 @@ from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
 from plotting import *
 
-sliders_range = 10
+sliders_range = 5
 log_marks = {}
 for i in  range(1, sliders_range+1):
     if i > 10 and i % 10 != 0: continue
