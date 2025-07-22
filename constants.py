@@ -197,8 +197,10 @@ def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
     for idx in prange(total):
         i = idx // nH
         j = idx % nH
-        if i == 0: i += 1
         H_ij   = H_mesh[i, j]
+        if H_ij == 0:
+            theta_0[i, j] = None
+            continue
         m_ij   = m_mesh[i, j]
         abs_m = np.abs(m_ij)
         chi_ij = chi_mesh[i, j]
