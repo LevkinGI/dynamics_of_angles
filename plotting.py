@@ -1,6 +1,7 @@
 # plotting.py
-import plotly.graph_objs as go
 import numpy as np
+import plotly.graph_objs as go
+from skimage.measure import find_contours
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
     fig = go.Figure()
