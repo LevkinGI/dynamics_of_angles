@@ -318,7 +318,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
             # координаты точки размещения
             x0, y0 = T_curve[best_i], H_curve[best_i]
             # касательный угол (используем центральную разность)
-            N_c = 5
+            N_c = 10
             i1 = max(best_i - N_c, 0)
             i2 = min(best_i + N_c, len(T_curve)-1)
             # аппроксимация прямой линией: polyfit 1‑й степени
