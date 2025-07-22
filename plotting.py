@@ -249,21 +249,21 @@ def create_phase_fig(T_vals, H_vals, theta_0):
                          font_size=14):
 
         def keep_inside(xc, yc, dx, dy, T_min, T_max, H_min, H_max,
-                    margin_T=1.0, margin_H=40.0):
-        """Сдвигает (xc,yc), чтобы ОБЕ крайние точки текста были внутри."""
-        left, right = xc - dx, xc + dx
-        low,  high  = yc - dy, yc + dy
-    
-        shift_x = shift_y = 0.0
-        if left  < T_min + margin_T:
-            shift_x += (T_min + margin_T) - left
-        if right > T_max - margin_T:
-            shift_x += (T_max - margin_T) - right
-        if low   < H_min + margin_H:
-            shift_y += (H_min + margin_H) - low
-        if high  > H_max - margin_H:
-            shift_y += (H_max - margin_H) - high
-        return xc + shift_x, yc + shift_y
+                        margin_T=1.0, margin_H=40.0):
+            """Сдвигает (xc,yc), чтобы ОБЕ крайние точки текста были внутри."""
+            left, right = xc - dx, xc + dx
+            low,  high  = yc - dy, yc + dy
+        
+            shift_x = shift_y = 0.0
+            if left  < T_min + margin_T:
+                shift_x += (T_min + margin_T) - left
+            if right > T_max - margin_T:
+                shift_x += (T_max - margin_T) - right
+            if low   < H_min + margin_H:
+                shift_y += (H_min + margin_H) - low
+            if high  > H_max - margin_H:
+                shift_y += (H_max - margin_H) - high
+            return xc + shift_x, yc + shift_y
                              
         # 1. Поиск контуров (в индексах массива).
         contours = find_contours(theta_0, level=eps)
