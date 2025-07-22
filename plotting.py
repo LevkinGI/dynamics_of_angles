@@ -250,108 +250,84 @@ def create_phase_fig(T_vals, H_vals, theta_0):
                          label_gap=0.6,             # множитель × длина надписи
                          font_size=14):
     
-        # ---------- 1. Собираем точки контура ----------------------------------
-        # Найдём клетки, в которых θ0 пересекает eps.
-        rows, cols = theta_0.shape
-        points = []
-        for j in range(cols):
-            col = theta_0[:, j]
-            mask = col > eps
-            if not np.any(mask):
-                continue
-            # можем получить несколько сегментов ⇒ находим все границы.
-            idx = np.where(mask)[0]
-            # точки, где переходит через eps — это idx[i-1] → idx[i]
-            gaps = np.where(np.diff(idx) > 1)[0]          # разрывы
-            blocks = np.split(idx, gaps + 1)
+        # 1. Поиск контуров (в индексах массива).
+        contours = find_contours(theta_0, level=eps)
+        if not contours:
+            return
     
-            for block in blocks:
-                i0 = block[0]
-                if i0 == 0:
+        # Шаги сетки
+        dT = T_vals[1] - T_vals[0]
+        dH = H_vals[1] - H_vals[0]
+    
+        # Полуэмпирическая оценка длины текста в координатах графика
+        # 1 символ ≈ 0.6*dT по горизонтали
+        char_len_T = 0.6 * dT
+        txt_len_T  = char_len_T * len('non‑collinear')
+    
+        # 2. Обрабатываем каждую полилинию
+        for curve in contours:
+            # curve: shape (N, 2)   →   индексы (row, col) = (i_H, j_T)
+            i_H, j_T = curve[:, 0], curve[:, 1]
+            T_curve = T_vals[j_T.astype(int)]
+            H_curve = H_vals[i_H.astype(int)]
+    
+            # длины сегментов и кумулятивная длина
+            seg_len = np.sqrt(np.diff(T_curve)**2 + np.diff(H_curve)**2)
+            s = np.insert(np.cumsum(seg_len), 0, 0.0)
+    
+            if s[-1] < txt_len_T * label_gap:
+                continue   # кривая слишком короткая для надписи
+    
+            # 3. Скользящее окно      ( ~ 15% длины кривой )
+            win_len = 0.15 * s[-1]
+            best_i  = None
+            best_rms = 1e9
+    
+            for k in range(1, len(s)-1):
+                s_left  = s[k] - win_len/2
+                s_right = s[k] + win_len/2
+                # ищем подотрезок [s_left, s_right]
+                mask = (s >= s_left) & (s <= s_right)
+                if mask.sum() < 3:
                     continue
-                # линейный интерпол. между (i0-1, i0)
-                t1, t2 = theta_0[i0-1, j], theta_0[i0, j]
-                h1, h2 = H_vals[i0-1], H_vals[i0]
-                h_interp = h1 + (eps - t1) * (h2 - h1) / (t2 - t1)
-                points.append((j, h_interp))
+                Tx, Hy = T_curve[mask], H_curve[mask]
+                angles = np.degrees(np.arctan2(np.diff(Hy), np.diff(Tx)))
+                rms = np.std(angles)
+                if rms < best_rms:
+                    best_rms = rms
+                    best_i = k
     
-        if not points:
-            return  # контур не найден
-    
-        # ---------- 2. Кластеризация по непрерывности вдоль T ------------------
-        points = np.array(points)  # shape (N, 2): j, H
-        # сортируем по j (индекс T), затем разбиваем по разрывам >1 столбец
-        order = np.argsort(points[:, 0])
-        pts = points[order]
-        gaps = np.where(np.diff(pts[:, 0]) > 1)[0]
-        branches = np.split(pts, gaps + 1)
-    
-        # ---------- 3. Обрабатываем каждую ветку -------------------------------
-        for branch in branches:
-            if branch.shape[0] < 5:
+            if best_i is None:
                 continue
-            # координаты ветки
-            T_br = T_vals[branch[:, 0].astype(int)]
-            H_br = branch[:, 1]
     
-            # --- 3.1. Разбиваем на скользящее окно (N_win точек) ---------------
-            N_win = 7  # окно ~70–100 K, подберите под шаг
-            good_seg = None
-            best_len = 0.0
+            # координаты точки размещения
+            x0, y0 = T_curve[best_i], H_curve[best_i]
+            # касательный угол (используем центральную разность)
+            dy = H_curve[best_i+1] - H_curve[best_i-1]
+            dx = T_curve[best_i+1] - T_curve[best_i-1]
+            ang = np.degrees(np.arctan2(dy, dx))
+            # нормаль
+            norm_ang = ang + 90
+            # смещение:  2·dT по T,  40 Oe по H  (подберите под свои шкалы)
+            off_T = 2.0 * np.cos(np.radians(norm_ang))
+            off_H = 40.0 * np.sin(np.radians(norm_ang))
     
-            for k in range(N_win//2, len(T_br)-N_win//2):
-                sl = slice(k-N_win//2, k+N_win//2+1)
-                Tx, Hy = T_br[sl], H_br[sl]
-                # длина дуги
-                L = np.sum(np.sqrt(np.diff(Tx)**2 + np.diff(Hy)**2))
-                # углы касательных
-                ang = np.degrees(np.arctan2(np.diff(Hy), np.diff(Tx)))
-                rms = np.std(ang)                      # rms‑кривизна
-                if rms <= angle_tol and L > best_len:
-                    best_len = L
-                    good_seg = (Tx, Hy, np.mean(ang))
-    
-            # если прямой сегмент не найден — берём всю ветку
-            if good_seg is None:
-                Tx, Hy = T_br, H_br
-                # угол касательной по всей ветке
-                ang = np.degrees(np.arctan2(Hy[-1] - Hy[0], Tx[-1] - Tx[0]))
-                good_seg = (Tx, Hy, ang)
-                best_len = np.sum(np.sqrt(np.diff(Tx)**2 + np.diff(Hy)**2))
-    
-            Tx, Hy, ang = good_seg
-            mid = len(Tx)//2
-            x0, y0 = Tx[mid], Hy[mid]
-    
-            # --- 3.2. Длина надписи -------------------------------------------
-            # примем 1 символ ≈ 0.015 × (ось X диапазон)  ← эмпирика
-            x_span = T_vals[-1] - T_vals[0]
-            txt_len = 0.015 * font_size * len('non‑collinear')  # K
-            need = txt_len * label_gap
-            if best_len < need:
-                font_size = max(8, int(font_size * best_len / need))
-    
-            # --- 3.3. Нормаль для смещения -------------------------------------
-            norm_angle = ang + 90
-            offset_T = 0.5 * np.cos(np.radians(norm_angle))
-            offset_H = 50 * np.sin(np.radians(norm_angle))
-    
-            # --- 3.4. Добавляем подписи ----------------------------------------
+            # 4. Подписи
             fig.add_annotation(
-                x=x0 - offset_T, y=y0 - offset_H,
+                x=x0 - off_T, y=y0 - off_H,
                 xref='x', yref='y',
                 text='non‑collinear',
-                showarrow=False,
                 textangle=ang,
+                showarrow=False,
                 font=dict(color='white', size=font_size),
                 xanchor='center', yanchor='middle'
             )
             fig.add_annotation(
-                x=x0 + offset_T, y=y0 + offset_H,
+                x=x0 + off_T, y=y0 + off_H,
                 xref='x', yref='y',
                 text='collinear',
-                showarrow=False,
                 textangle=ang,
+                showarrow=False,
                 font=dict(color='white', size=font_size),
                 xanchor='center', yanchor='middle'
             )
