@@ -235,20 +235,6 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     )
     fig.add_trace(contour)
 
-    mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.1)
-    if np.any(mask):
-        idx_min, idx_max = np.where(mask)[0][[0, -1]]
-        y_noncol = H_vals[idx_max] + 300
-        y_col    = H_vals[idx_min] - 300
-        fig.add_annotation(x=T_vals[0], y=y_noncol,
-                           text='non‑collinear',
-                           showarrow=False, font=dict(color='white', size=14),
-                           xanchor='left', yanchor='bottom')
-        fig.add_annotation(x=T_vals[0], y=y_col,
-                           text='collinear',
-                           showarrow=False, font=dict(color='white', size=14),
-                           xanchor='left', yanchor='top')
-
     fig.update_layout(
         xaxis=dict(title='T (K)', range=[T_vals.min(), T_vals.max()]),
         yaxis=dict(title='H (Oe)', range=[H_vals.min(), H_vals.max()]),
@@ -257,6 +243,120 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         height=600,
         margin=dict(l=60, r=40, t=40, b=60)
     )
+
+    def add_phase_labels(fig, T_vals, H_vals, theta_0,
+                         eps=0.1,                  # уровень контура
+                         angle_tol=5,               # допустимая RMS‑кривизна, град
+                         label_gap=0.6,             # множитель × длина надписи
+                         font_size=14):
+    
+        # ---------- 1. Собираем точки контура ----------------------------------
+        # Найдём клетки, в которых θ0 пересекает eps.
+        rows, cols = theta_0.shape
+        points = []
+        for j in range(cols):
+            col = theta_0[:, j]
+            mask = col > eps
+            if not np.any(mask):
+                continue
+            # можем получить несколько сегментов ⇒ находим все границы.
+            idx = np.where(mask)[0]
+            # точки, где переходит через eps — это idx[i-1] → idx[i]
+            gaps = np.where(np.diff(idx) > 1)[0]          # разрывы
+            blocks = np.split(idx, gaps + 1)
+    
+            for block in blocks:
+                i0 = block[0]
+                if i0 == 0:
+                    continue
+                # линейный интерпол. между (i0-1, i0)
+                t1, t2 = theta_0[i0-1, j], theta_0[i0, j]
+                h1, h2 = H_vals[i0-1], H_vals[i0]
+                h_interp = h1 + (eps - t1) * (h2 - h1) / (t2 - t1)
+                points.append((j, h_interp))
+    
+        if not points:
+            return  # контур не найден
+    
+        # ---------- 2. Кластеризация по непрерывности вдоль T ------------------
+        points = np.array(points)  # shape (N, 2): j, H
+        # сортируем по j (индекс T), затем разбиваем по разрывам >1 столбец
+        order = np.argsort(points[:, 0])
+        pts = points[order]
+        gaps = np.where(np.diff(pts[:, 0]) > 1)[0]
+        branches = np.split(pts, gaps + 1)
+    
+        # ---------- 3. Обрабатываем каждую ветку -------------------------------
+        for branch in branches:
+            if branch.shape[0] < 5:
+                continue
+            # координаты ветки
+            T_br = T_vals[branch[:, 0].astype(int)]
+            H_br = branch[:, 1]
+    
+            # --- 3.1. Разбиваем на скользящее окно (N_win точек) ---------------
+            N_win = 7  # окно ~70–100 K, подберите под шаг
+            good_seg = None
+            best_len = 0.0
+    
+            for k in range(N_win//2, len(T_br)-N_win//2):
+                sl = slice(k-N_win//2, k+N_win//2+1)
+                Tx, Hy = T_br[sl], H_br[sl]
+                # длина дуги
+                L = np.sum(np.sqrt(np.diff(Tx)**2 + np.diff(Hy)**2))
+                # углы касательных
+                ang = np.degrees(np.arctan2(np.diff(Hy), np.diff(Tx)))
+                rms = np.std(ang)                      # rms‑кривизна
+                if rms <= angle_tol and L > best_len:
+                    best_len = L
+                    good_seg = (Tx, Hy, np.mean(ang))
+    
+            # если прямой сегмент не найден — берём всю ветку
+            if good_seg is None:
+                Tx, Hy = T_br, H_br
+                # угол касательной по всей ветке
+                ang = np.degrees(np.arctan2(Hy[-1] - Hy[0], Tx[-1] - Tx[0]))
+                good_seg = (Tx, Hy, ang)
+                best_len = np.sum(np.sqrt(np.diff(Tx)**2 + np.diff(Hy)**2))
+    
+            Tx, Hy, ang = good_seg
+            mid = len(Tx)//2
+            x0, y0 = Tx[mid], Hy[mid]
+    
+            # --- 3.2. Длина надписи -------------------------------------------
+            # примем 1 символ ≈ 0.015 × (ось X диапазон)  ← эмпирика
+            x_span = T_vals[-1] - T_vals[0]
+            txt_len = 0.015 * font_size * len('non‑collinear')  # K
+            need = txt_len * label_gap
+            if best_len < need:
+                font_size = max(8, int(font_size * best_len / need))
+    
+            # --- 3.3. Нормаль для смещения -------------------------------------
+            norm_angle = ang + 90
+            offset_T = 0.5 * np.cos(np.radians(norm_angle))
+            offset_H = 50 * np.sin(np.radians(norm_angle))
+    
+            # --- 3.4. Добавляем подписи ----------------------------------------
+            fig.add_annotation(
+                x=x0 - offset_T, y=y0 - offset_H,
+                xref='x', yref='y',
+                text='non‑collinear',
+                showarrow=False,
+                textangle=ang,
+                font=dict(color='white', size=font_size),
+                xanchor='center', yanchor='middle'
+            )
+            fig.add_annotation(
+                x=x0 + offset_T, y=y0 + offset_H,
+                xref='x', yref='y',
+                text='collinear',
+                showarrow=False,
+                textangle=ang,
+                font=dict(color='white', size=font_size),
+                xanchor='center', yanchor='middle'
+            )
+
+    add_phase_labels(fig, T_vals, H_vals, theta_0)
 
     return fig
 
