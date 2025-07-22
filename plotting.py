@@ -245,7 +245,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     def add_phase_labels(fig, T_vals, H_vals, theta_0,
                          eps=0.1,                  # уровень контура
                          angle_tol=5,               # допустимая RMS‑кривизна, град
-                         label_gap=0.6,             # множитель × длина надписи
+                         label_gap=1.1,             # множитель × длина надписи
                          font_size=14):
     
         # 1. Поиск контуров (в индексах массива).
