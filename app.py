@@ -551,18 +551,22 @@ def update_graphs(store, H, T, material, calc_on):
     Output('download-H-file', 'data'),
     Input('download-H-btn',  'n_clicks'),
     State('H-slider',        'value'),
+    State('param-store',       'data'),
     State('material-dropdown', 'value'),
     prevent_initial_call=True,
 )
-def download_hfix(n_clicks, H, material):
+def download_hfix(n_clicks, H, p, material):
     if not n_clicks:
         raise PreventUpdate
-    def _make_hfix_npy(H, material):
+    def _make_hfix_npy(H, p, material):
         """Возвращает bytes содержимого .npy для фиксированного H."""
-        T_vals = T_vals_1 if material == '1' else T_vals_2
-        m_vec   = m_array_1 if material == '1' else m_array_2
-        chi_vec = chi_array_1 if material == '1' else chi_array_2
-        K_vec   = K_array_1 if material == '1' else K_array_2
+        p.chi_scale = 10 ** chi_k
+        p.k_scale = 10 ** k_k
+        p.m_scale = 10 ** m_k
+        T_vals  = T_vals_1 if material == '1' else T_vals_2
+        m_vec   = p.m_scale * (m_array_1 if material == '1' else m_array_2)
+        chi_vec = p.chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+        K_vec   = p.k_scale * (K_array_1 if material == '1' else K_array_2)
     
         f1, f2 = compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma)
         arr = np.vstack([T_vals, f1, f2])           # shape (3, N)
@@ -571,7 +575,8 @@ def download_hfix(n_clicks, H, material):
         np.save(buf, arr)
         buf.seek(0)
         return buf.getvalue()
-    content = _make_hfix_npy(H, material)
+    p = SimParams(**store[material])
+    content = _make_hfix_npy(H, p, material)
     return dcc.send_bytes(content, filename=f'H_{H/10:.0f}.npy')
 
 
@@ -579,20 +584,24 @@ def download_hfix(n_clicks, H, material):
     Output('download-T-file', 'data'),
     Input('download-T-btn',   'n_clicks'),
     State('T-slider',         'value'),
+    State('param-store',       'data'),
     State('material-dropdown', 'value'),
     prevent_initial_call=True,
 )
-def download_tfix(n_clicks, T, material):
+def download_tfix(n_clicks, T, p, material):
     if not n_clicks:
         raise PreventUpdate
-    def _make_tfix_npy(T, material):
+    def _make_tfix_npy(T, p, material):
         """Возвращает bytes содержимого .npy для фиксированной T."""
+        p.chi_scale = 10 ** chi_k
+        p.k_scale = 10 ** k_k
+        p.m_scale = 10 ** m_k
         H_vec = H_vals
         # индексы и скаляры при выбранной температуре
-        t_idx  = np.abs((T_vals_1 if material == '1' else T_vals_2) - T).argmin()
-        m_val  = (m_array_1 if material == '1' else m_array_2)[t_idx]
-        chi_val = (chi_array_1 if material == '1' else chi_array_2)[t_idx]
-        K_val   = (K_array_1  if material == '1' else K_array_2)[t_idx]
+        t_idx   = np.abs((T_vals_1 if material == '1' else T_vals_2) - T).argmin()
+        m_val   = p.m_scale * (m_array_1 if material == '1' else m_array_2)[t_idx]
+        chi_val = p.chi_scale * (chi_array_1 if material == '1' else chi_array_2)[t_idx]
+        K_val   = p.k_scale * (K_array_1  if material == '1' else K_array_2)[t_idx]
     
         f1, f2 = compute_frequencies_T_fix(H_vec, m_val, chi_val, K_val, gamma)
         arr = np.vstack([H_vec, f1, f2])            # shape (3, N)
@@ -601,7 +610,8 @@ def download_tfix(n_clicks, T, material):
         np.save(buf, arr)
         buf.seek(0)
         return buf.getvalue()
-    content = _make_tfix_npy(T, material)
+    p = SimParams(**store[material])
+    content = _make_tfix_npy(T, p, material)
     return dcc.send_bytes(content, filename=f'T_{T:.0f}.npy')
 
 if __name__ == '__main__':
