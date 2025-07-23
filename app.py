@@ -4,6 +4,7 @@
 import pyximport
 import numpy as np
 import time
+import io
 pyximport.install(setup_args={"include_dirs": np.get_include()}, language_level=3)
 
 import dash
@@ -178,8 +179,20 @@ app.layout = html.Div([
                 )
             )
         ),
-        dcc.Graph(id='H_fix-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'}),
-        dcc.Graph(id='T_fix-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'})
+        html.Div([
+            html.Button('Скачать данные', id='download-H-btn',
+                        style={'margin-bottom': '5px'}),
+            dcc.Download(id='download-H-file'),
+            dcc.Graph(id='H_fix-graph',
+                      style={'width': '25%', 'height': 'calc(25vw)'})
+        ], style={'display': 'inline-block', 'verticalAlign': 'top'}),
+        html.Div([
+            html.Button('Скачать данные', id='download-T-btn',
+                        style={'margin-bottom': '5px'}),
+            dcc.Download(id='download-T-file'),
+            dcc.Graph(id='T_fix-graph',
+                      style={'width': '25%', 'height': 'calc(25vw)'})
+        ], style={'display': 'inline-block', 'verticalAlign': 'top'}),
     ]),
                       
 
@@ -533,6 +546,63 @@ def update_graphs(store, H, T, material, calc_on):
         freq_fig = no_update
 
     return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig
+
+@app.callback(
+    Output('download-H-file', 'data'),
+    Input('download-H-btn',  'n_clicks'),
+    State('H-slider',        'value'),
+    State('material-dropdown', 'value'),
+    prevent_initial_call=True,
+)
+def download_hfix(n_clicks, H, material):
+    if not n_clicks:
+        raise PreventUpdate
+    def _make_hfix_npy(H, material):
+        """Возвращает bytes содержимого .npy для фиксированного H."""
+        T_vals = T_vals_1 if material == '1' else T_vals_2
+        m_vec   = m_array_1 if material == '1' else m_array_2
+        chi_vec = chi_array_1 if material == '1' else chi_array_2
+        K_vec   = K_array_1 if material == '1' else K_array_2
+    
+        f1, f2 = compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma)
+        arr = np.vstack([T_vals, f1, f2])           # shape (3, N)
+    
+        buf = io.BytesIO()
+        np.save(buf, arr)
+        buf.seek(0)
+        return buf.getvalue()
+    content = _make_hfix_npy(H, material)
+    return dcc.send_bytes(content, filename=f'H_{H/10:.0f}.npy')
+
+
+@app.callback(
+    Output('download-T-file', 'data'),
+    Input('download-T-btn',   'n_clicks'),
+    State('T-slider',         'value'),
+    State('material-dropdown', 'value'),
+    prevent_initial_call=True,
+)
+def download_tfix(n_clicks, T, material):
+    if not n_clicks:
+        raise PreventUpdate
+    def _make_tfix_npy(T, material):
+        """Возвращает bytes содержимого .npy для фиксированной T."""
+        H_vec = H_vals
+        # индексы и скаляры при выбранной температуре
+        t_idx  = np.abs((T_vals_1 if material == '1' else T_vals_2) - T).argmin()
+        m_val  = (m_array_1 if material == '1' else m_array_2)[t_idx]
+        chi_val = (chi_array_1 if material == '1' else chi_array_2)[t_idx]
+        K_val   = (K_array_1  if material == '1' else K_array_2)[t_idx]
+    
+        f1, f2 = compute_frequencies_T_fix(H_vec, m_val, chi_val, K_val, gamma)
+        arr = np.vstack([H_vec, f1, f2])            # shape (3, N)
+    
+        buf = io.BytesIO()
+        np.save(buf, arr)
+        buf.seek(0)
+        return buf.getvalue()
+    content = _make_tfix_npy(T, material)
+    return dcc.send_bytes(content, filename=f'T_{T:.0f}.npy')
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
