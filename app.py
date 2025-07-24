@@ -192,7 +192,7 @@ app.layout = html.Div([
             dcc.Download(id='download-T-file'),
             dcc.Graph(id='T_fix-graph')
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
-                  'width': '25%', 'height': 'calc(25vw)'}}),
+                  'width': '25%', 'height': 'calc(25vw)'}),
     ]),
                       
 
