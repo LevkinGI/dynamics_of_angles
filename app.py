@@ -183,7 +183,7 @@ app.layout = html.Div([
             html.Button('Скачать данные', id='download-H-btn',
                         style={'margin-bottom': '5px'}),
             dcc.Download(id='download-H-file'),
-            dcc.Graph(id='H_fix-graph'})
+            dcc.Graph(id='H_fix-graph')
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '25%', 'height': 'calc(25vw)'}),
         html.Div([
