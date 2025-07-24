@@ -557,7 +557,7 @@ def update_graphs(store, H, T, material, calc_on):
     State('material-dropdown', 'value'),
     prevent_initial_call=True,
 )
-def download_hfix(n_clicks, H, p, material):
+def download_hfix(n_clicks, H, store, material):
     if not n_clicks:
         raise PreventUpdate
     def _make_hfix_npy(H, p, material):
@@ -590,7 +590,7 @@ def download_hfix(n_clicks, H, p, material):
     State('material-dropdown', 'value'),
     prevent_initial_call=True,
 )
-def download_tfix(n_clicks, T, p, material):
+def download_tfix(n_clicks, T, store, material):
     if not n_clicks:
         raise PreventUpdate
     def _make_tfix_npy(T, p, material):
