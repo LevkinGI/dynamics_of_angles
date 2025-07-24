@@ -154,10 +154,10 @@ app.layout = html.Div([
 
     
     html.Div([
-        dcc.Graph(id='phase-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'}),
+        dcc.Graph(id='phase-graph', style={'display': 'inline-block', 'width': '34%', 'height': 'calc(25vw)'}),
         dcc.Graph(
             id='frequency-surface-graph',
-            style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'},
+            style={'display': 'inline-block', 'width': '22%', 'height': 'calc(25vw)'},
             figure=go.Figure(
                 data=[
                     go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
@@ -180,19 +180,19 @@ app.layout = html.Div([
             )
         ),
         html.Div([
-            dcc.Graph(id='H_fix-graph'),
             html.Button('Скачать данные', id='download-H-btn',
-                        style={'margin-top': '5px'}),
+                        style={'margin-bottom': '5px'}),
             dcc.Download(id='download-H-file'),
+            dcc.Graph(id='H_fix-graph'),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
-                  'width': '25%', 'height': 'calc(25vw)'}),
+                  'width': '22%', 'height': 'calc(25vw)'}),
         html.Div([
-            dcc.Graph(id='T_fix-graph'),
             html.Button('Скачать данные', id='download-T-btn',
-                        style={'margin-top': '5px'}),
+                        style={'margin-bottom': '5px'}),
             dcc.Download(id='download-T-file'),
+            dcc.Graph(id='T_fix-graph'),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
-                  'width': '25%', 'height': 'calc(25vw)'}),
+                  'width': '22%', 'height': 'calc(25vw)'}),
     ]),
                       
 
