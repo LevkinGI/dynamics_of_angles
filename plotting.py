@@ -253,8 +253,6 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         xaxis=dict(title='T (K)', range=[T_vals.min(), T_vals.max()]),
         yaxis=dict(title='H (Oe)', range=[H_vals.min(), H_vals.max()]),
         template='plotly_white',
-        width=800,
-        height=600,
         margin=dict(l=60, r=40, t=40, b=60)
     )
 
