@@ -154,10 +154,12 @@ app.layout = html.Div([
 
     
     html.Div([
-        dcc.Graph(id='phase-graph', style={'display': 'inline-block', 'width': '25%', 'height': 'calc(19vw)'}),
+        dcc.Graph(id='phase-graph', style={'display': 'inline-block', 'verticalAlign': 'top',
+                                           'width': '25%', 'height': 'calc(19vw)'}),
         dcc.Graph(
             id='frequency-surface-graph',
-            style={'display': 'inline-block', 'width': '25%', 'height': 'calc(25vw)'},
+            style={'display': 'inline-block', 'verticalAlign': 'top',
+                   'width': '25%', 'height': 'calc(25vw)'},
             figure=go.Figure(
                 data=[
                     go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
