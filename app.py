@@ -600,7 +600,7 @@ def download_tfix(n_clicks, T, store, material):
         K_val   = p.k_scale * (K_array_1  if material == '1' else K_array_2)[t_idx]
     
         f1, f2 = compute_frequencies_T_fix(H_vec, m_val, chi_val, K_val, gamma)
-        arr = np.vstack([H_vec, f1, f2])            # shape (3, N)
+        arr = np.vstack([H_vec/10, f1, f2])            # Η (mT), shape (3, N)
     
         buf = io.BytesIO()
         np.save(buf, arr)
