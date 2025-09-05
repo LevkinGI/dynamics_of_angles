@@ -148,12 +148,14 @@ _, M_mesh_1 = np.meshgrid(H_vals, M_array_1)
 _, chi_mesh_1 = np.meshgrid(H_vals, chi_array_1)
 _, K_mesh_1 = np.meshgrid(H_vals, K_array_1)
 
-f1_GHz, f2_GHz = compute_frequencies(
+(f1_GHz, _), (f2_GHz, _) = compute_frequencies(
         H_mesh_1,
         m_mesh_1,
+        M_mesh_1,
         chi_mesh_1,
         K_mesh_1,
-        gamma)
+        gamma,
+        alpha_1)
 
 # --- GdFe ---
 H_mesh_2, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
