@@ -139,10 +139,9 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
         xaxis_title="Температура (K)",
         font=dict(size=18),
         template="plotly_white",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0)
     )
     fig.update_yaxes(title_text="Частота (ГГц)", secondary_y=False)
-    fig.update_yaxes(title_text="Затухание (нс⁻¹)", secondary_y=True)
+    fig.update_yaxes(title_text="Затухание (нс)", secondary_y=True)
     return fig
     
 # def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
@@ -205,10 +204,9 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
         xaxis_title="Магнитное поле (Э)",
         font=dict(size=18),
         template="plotly_white",
-        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0)
     )
     fig.update_yaxes(title_text="Частота (ГГц)", secondary_y=False)
-    fig.update_yaxes(title_text="Затухание (нс⁻¹)", secondary_y=True)
+    fig.update_yaxes(title_text="Затухание (нс)", secondary_y=True)
     return fig
 
 # def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
