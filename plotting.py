@@ -278,12 +278,12 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
         data=[
             go.Surface(
                 z=f1_grid, x=H_vals, y=T_vals,
-                colorscale=[[0, 'rgb(255,182,193)'], [1, 'rgb(255,0,0)']],
+                colorscale=[[0, 'rgb(173,216,230)'], [1, 'rgb(0,0,255)']],
                 showscale=False, name='HF'
             ),
             go.Surface(
                 z=f2_grid, x=H_vals, y=T_vals,
-                colorscale=[[0, 'rgb(173,216,230)'], [1, 'rgb(0,0,255)']],
+                colorscale=[[0, 'rgb(255,182,193)'], [1, 'rgb(255,0,0)']],
                 showscale=False, name='LF'
             ),
         ],
