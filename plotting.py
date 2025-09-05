@@ -1,5 +1,6 @@
 # plotting.py
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 import numpy as np
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
