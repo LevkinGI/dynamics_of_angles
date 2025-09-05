@@ -349,8 +349,8 @@ __all__ = [
     'chi_array_1', 'K_array_1', 'chi_array_2', 'K_array_2',
     # mesh
     'H_mesh_1', 'H_mesh_2',
-    'm_mesh_1', 'chi_mesh_1', 'K_mesh_1',
-    'm_mesh_2', 'chi_mesh_2', 'K_mesh_2',
+    'm_mesh_1', 'M_mesh_1', 'chi_mesh_1', 'K_mesh_1',
+    'm_mesh_2', 'M_mesh_2', 'chi_mesh_2', 'K_mesh_2',
     # физические константы
     'gamma', 'alpha_1', 'alpha_2', 'K_const', 'chi_const',
     'h_IFE', 'delta_t',
