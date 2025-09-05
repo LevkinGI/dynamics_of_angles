@@ -93,37 +93,138 @@ def create_yz_fig(y, z, time, anim_speed=5):
     )
     return fig
 
-def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
-    if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
+def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
+    (f1, t1), (f2, t2) = H_fix_res  # HF, LF
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    # Частоты — левая ось
+    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines',
+                             name='HF (частота)', line=dict(color='blue')),
+                  secondary_y=False)
+    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines',
+                             name='LF (частота)', line=dict(color='red')),
+                  secondary_y=False)
+
+    # Затухания — правая ось (штрих)
+    fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines',
+                             name='HF (затухание)', line=dict(color='blue', dash='dash')),
+                  secondary_y=True)
+    fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines',
+                             name='LF (затухание)', line=dict(color='red', dash='dash')),
+                  secondary_y=True)
+
+    # Экспериментальные точки (частоты)
+    if data_freq is not None:
+        x_m, hf_m, lf_m = data_freq
+        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers',
+                                 name='HF (эксп.)', marker=dict(color='blue', symbol='circle', size=8)),
+                      secondary_y=False)
+        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers',
+                                 name='LF (эксп.)', marker=dict(color='red', symbol='circle', size=8)),
+                      secondary_y=False)
+
+    # Экспериментальные точки (затухания)
+    if data_damp is not None:
+        x_dm, thf_m, tlf_m = data_damp
+        fig.add_trace(go.Scatter(x=x_dm, y=thf_m, mode='markers',
+                                 name='HF γ (эксп.)', marker=dict(color='blue', symbol='x', size=9)),
+                      secondary_y=True)
+        fig.add_trace(go.Scatter(x=x_dm, y=tlf_m, mode='markers',
+                                 name='LF γ (эксп.)', marker=dict(color='red', symbol='x', size=9)),
+                      secondary_y=True)
+
     fig.update_layout(
-        title=f"Зависимость частот от температуры при H = {H} Э",
+        title=f"Зависимость частот и затуханий от температуры при H = {H} Э",
         xaxis_title="Температура (K)",
-        yaxis_title="Частота (ГГц)",
         font=dict(size=18),
-        template="plotly_white"
+        template="plotly_white",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0)
     )
+    fig.update_yaxes(title_text="Частота (ГГц)", secondary_y=False)
+    fig.update_yaxes(title_text="Затухание (нс⁻¹)", secondary_y=True)
+    return fig
+    
+# def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
+#     fig = go.Figure()
+#     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
+#     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+#     if data is not None:
+#         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
+#         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
+#     fig.update_layout(
+#         title=f"Зависимость частот от температуры при H = {H} Э",
+#         xaxis_title="Температура (K)",
+#         yaxis_title="Частота (ГГц)",
+#         font=dict(size=18),
+#         template="plotly_white"
+#     )
+#     return fig
+
+def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
+    (f1, t1), (f2, t2) = T_fix_res  # HF, LF
+
+    fig = make_subplots(specs=[[{"secondary_y": True}]])
+    # Частоты — левая ось
+    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines',
+                             name='HF (частота)', line=dict(color='blue')),
+                  secondary_y=False)
+    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines',
+                             name='LF (частота)', line=dict(color='red')),
+                  secondary_y=False)
+
+    # Затухания — правая ось
+    fig.add_trace(go.Scatter(x=H_vals, y=t1, mode='lines',
+                             name='HF (затухание)', line=dict(color='blue', dash='dash')),
+                  secondary_y=True)
+    fig.add_trace(go.Scatter(x=H_vals, y=t2, mode='lines',
+                             name='LF (затухание)', line=dict(color='red', dash='dash')),
+                  secondary_y=True)
+
+    # Эксперимент
+    if data_freq is not None:
+        x_m, hf_m, lf_m = data_freq
+        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers',
+                                 name='HF (эксп.)', marker=dict(color='blue', symbol='circle', size=8)),
+                      secondary_y=False)
+        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers',
+                                 name='LF (эксп.)', marker=dict(color='red', symbol='circle', size=8)),
+                      secondary_y=False)
+
+    if data_damp is not None:
+        x_dm, ghf_m, glf_m = data_damp
+        fig.add_trace(go.Scatter(x=x_dm, y=ghf_m, mode='markers',
+                                 name='HF γ (эксп.)', marker=dict(color='blue', symbol='x', size=9)),
+                      secondary_y=True)
+        fig.add_trace(go.Scatter(x=x_dm, y=glf_m, mode='markers',
+                                 name='LF γ (эксп.)', marker=dict(color='red', symbol='x', size=9)),
+                      secondary_y=True)
+
+    fig.update_layout(
+        title=f"Зависимость частот и затуханий от магнитного поля при T = {T} K",
+        xaxis_title="Магнитное поле (Э)",
+        font=dict(size=18),
+        template="plotly_white",
+        legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="left", x=0)
+    )
+    fig.update_yaxes(title_text="Частота (ГГц)", secondary_y=False)
+    fig.update_yaxes(title_text="Затухание (нс⁻¹)", secondary_y=True)
     return fig
 
-def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
-    if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
-    fig.update_layout(
-        title=f"Зависимость частот от магнитного поля при T = {T} K",
-        xaxis_title="Магнитное поле (Э)",
-        yaxis_title="Частота (ГГц)",
-        font=dict(size=18),
-        template="plotly_white"
-    )
-    return fig
+# def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
+#     fig = go.Figure()
+#     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
+#     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+#     if data is not None:
+#         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
+#         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
+#     fig.update_layout(
+#         title=f"Зависимость частот от магнитного поля при T = {T} K",
+#         xaxis_title="Магнитное поле (Э)",
+#         yaxis_title="Частота (ГГц)",
+#         font=dict(size=18),
+#         template="plotly_white"
+#     )
+#     return fig
 
 def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
     fig = go.Figure(
@@ -169,15 +270,21 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     )
     return fig
 
-def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
+def create_freq_fig(T_vals, H_vals, freq_res_grid):
+    (f1_grid, _t1_grid), (f2_grid, _t2_grid) = freq_res_grid  # HF, LF
+
     fig = go.Figure(
         data=[
-            go.Surface(z=freq_array1, x=H_vals, y=T_vals,
-                       colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
-                       showscale=False, name='HF'),
-            go.Surface(z=freq_array2, x=H_vals, y=T_vals,
-                       colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
-                       showscale=False, name='LF')
+            go.Surface(
+                z=f1_grid, x=H_vals, y=T_vals,
+                colorscale=[[0, 'rgb(255,182,193)'], [1, 'rgb(255,0,0)']],
+                showscale=False, name='HF'
+            ),
+            go.Surface(
+                z=f2_grid, x=H_vals, y=T_vals,
+                colorscale=[[0, 'rgb(173,216,230)'], [1, 'rgb(0,0,255)']],
+                showscale=False, name='LF'
+            ),
         ],
         layout=go.Layout(
             title="Частоты LF и HF в зависимости от H и T",
@@ -191,6 +298,29 @@ def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
         )
     )
     return fig
+
+# def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
+#     fig = go.Figure(
+#         data=[
+#             go.Surface(z=freq_array1, x=H_vals, y=T_vals,
+#                        colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
+#                        showscale=False, name='HF'),
+#             go.Surface(z=freq_array2, x=H_vals, y=T_vals,
+#                        colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
+#                        showscale=False, name='LF')
+#         ],
+#         layout=go.Layout(
+#             title="Частоты LF и HF в зависимости от H и T",
+#             scene=dict(
+#                 xaxis_title='Магнитное поле (Э)',
+#                 yaxis_title='Температура (K)',
+#                 zaxis_title='Частота (ГГц)'
+#             ),
+#             font=dict(size=14),
+#             template="plotly_white"
+#         )
+#     )
+#     return fig
 
 def create_phase_fig(T_vals, H_vals, theta_0):
     theta_0 = theta_0.T
