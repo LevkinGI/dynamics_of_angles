@@ -116,7 +116,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
 
     # Экспериментальные точки (частоты)
     if data_freq is not None:
-        x_m, hf_m, lf_m = data_freq
+        x_m, lf_m, hf_m = data_freq
         fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers',
                                  name='HF (эксп.)', marker=dict(color='blue', symbol='circle', size=8)),
                       secondary_y=False)
@@ -126,7 +126,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
 
     # Экспериментальные точки (затухания)
     if data_damp is not None:
-        x_dm, thf_m, tlf_m = data_damp
+        x_dm, tlf_m, thf_m = data_damp
         fig.add_trace(go.Scatter(x=x_dm, y=thf_m, mode='markers',
                                  name='HF γ (эксп.)', marker=dict(color='blue', symbol='x', size=9)),
                       secondary_y=True)
@@ -182,7 +182,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
 
     # Эксперимент
     if data_freq is not None:
-        x_m, hf_m, lf_m = data_freq
+        x_m, lf_m, hf_m = data_freq
         fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers',
                                  name='HF (эксп.)', marker=dict(color='blue', symbol='circle', size=8)),
                       secondary_y=False)
@@ -191,7 +191,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
                       secondary_y=False)
 
     if data_damp is not None:
-        x_dm, ghf_m, glf_m = data_damp
+        x_dm, tlf_m, thf_m = data_damp
         fig.add_trace(go.Scatter(x=x_dm, y=ghf_m, mode='markers',
                                  name='HF γ (эксп.)', marker=dict(color='blue', symbol='x', size=9)),
                       secondary_y=True)
