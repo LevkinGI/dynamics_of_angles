@@ -176,10 +176,10 @@ app.layout = html.Div([
             figure=go.Figure(
                 data=[
                     go.Surface(z=f1_GHz, x=H_vals, y=T_vals_1,
-                               colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
+                               colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                showscale=False, name='HF'),
                     go.Surface(z=f2_GHz, x=H_vals, y=T_vals_1,
-                               colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
+                               colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                showscale=False, name='LF')
                 ],
                 layout=go.Layout(
