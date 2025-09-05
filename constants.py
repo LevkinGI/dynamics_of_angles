@@ -94,8 +94,8 @@ def compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha):
         roots[0] = w1; roots[1] = w2; roots[2] = w3; roots[3] = w4
         roots = roots[np.argsort(roots.real)[::-1]][:2]
 
-        f1[i, j], t1[i, j] = roots[0].real / (2 * np.pi * 1e9), 1e9 / roots[0].imag
-        f2[i, j], t2[i, j] = roots[1].real / (2 * np.pi * 1e9), 1e9 / roots[1].imag
+        f1[i, j], t1[i, j] = roots[0].real / (2 * np.pi * 1e9), -1e9 / roots[0].imag
+        f2[i, j], t2[i, j] = roots[1].real / (2 * np.pi * 1e9), -1e9 / roots[1].imag
 
     return (f1, t1), (f2, t2)
 
@@ -200,8 +200,8 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
         roots[0] = w1; roots[1] = w2; roots[2] = w3; roots[3] = w4
         roots = roots[np.argsort(roots.real)[::-1]][:2]
 
-        f1[i], t1[i] = roots[0].real / (2.0 * np.pi * 1e9), 1e9 / roots[0].imag
-        f2[i], t2[i] = roots[1].real / (2.0 * np.pi * 1e9), 1e9 / roots[1].imag
+        f1[i], t1[i] = roots[0].real / (2.0 * np.pi * 1e9), -1e9 / roots[0].imag
+        f2[i], t2[i] = roots[1].real / (2.0 * np.pi * 1e9), -1e9 / roots[1].imag
 
     return (f1, t1), (f2, t2)
 
@@ -277,8 +277,8 @@ def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
         roots[0] = w1; roots[1] = w2; roots[2] = w3; roots[3] = w4
         roots = roots[np.argsort(roots.real)[::-1]][:2]
 
-        f1[i], t1[i] = roots[0].real / (2.0 * np.pi * 1e9), 1e9 / roots[0].imag
-        f2[i], t2[i] = roots[1].real / (2.0 * np.pi * 1e9), 1e9 / roots[1].imag
+        f1[i], t1[i] = roots[0].real / (2.0 * np.pi * 1e9), -1e9 / roots[0].imag
+        f2[i], t2[i] = roots[1].real / (2.0 * np.pi * 1e9), -1e9 / roots[1].imag
 
     return (f1, t1), (f2, t2)
 
