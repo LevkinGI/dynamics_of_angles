@@ -38,8 +38,8 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(1.0, 1.0, 1.0, 1.0)),
-            "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0)),
+            "1": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0)),
+            "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
 
@@ -119,6 +119,19 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
+        
+        html.Div([
+            html.Label(id='M-scale-label'),
+            dcc.Slider(id='M-scale-slider',
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
+                       marks=log_marks,
+                       updatemode="mouseup",
+                       vertical=True, verticalHeight=180,
+                      ),
+            ],
+            style={"marginLeft": "30px", "position": "relative"}
+        ),
+        
         daq.BooleanSwitch(
             id='auto-calc-switch',
             on=False,
@@ -326,44 +339,63 @@ def move_m_slider(logk):
     return f"{k:.2f} × m"
 
 @app.callback(
+    Output("M-scale-label", "children"),
+    Input("M-scale-slider", "drag_value"),
+    prevent_initial_call=True,
+)
+def move_M_slider(logk):
+    if logk is None:
+        raise PreventUpdate
+    k = 10**logk
+    return f"{k:.2f} × M"
+
+@app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure'),
      Output('phase-graph', 'figure')],
     [Input('H-slider', 'value'),
     Input('T-slider', 'value'),
+    Input("alpha-scale-slider", "value"),
     Input("chi-scale-slider", "value"),
     Input("k-scale-slider", "value"),
     Input("m-scale-slider", "value"),
+    Input("M-scale-slider", "value"),
     Input('material-dropdown', 'value')],
 )
-def live_fix_graphs(H, T, chi_val, k_val, m_val, material):
-    chi_scale = 10**chi_val
-    k_scale   = 10**k_val
-    m_scale   = 10**m_val
+def live_fix_graphs(H, T, a_val, chi_val, k_val, m_val, M_val, material):
+    alpha_scale = 10**a_val
+    chi_scale   = 10**chi_val
+    k_scale     = 10**k_val
+    m_scale     = 10**m_val
+    M_scale     = 10**M_val
     
     T_vals    = T_vals_1 if material == '1' else T_vals_2
     t_index   = np.abs(T_vals - T).argmin()
     m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
+    M_vec_T   = M_scale * (M_array_1 if material == '1' else M_array_2)
     K_vec_T   = k_scale * (K_array_1 if material == '1' else K_array_2)
     chi_vec_T = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
 
     m_T   = m_vec_T[t_index]
+    M_T   = M_vec_T[t_index]
     K_T   = K_vec_T[t_index]
     chi_T = chi_vec_T[t_index]
+    alpha = alpha_scale * (alpha_1 if material == '1' else alpha_2)
 
-    f1_T, f2_T = compute_frequencies_H_fix(H, m_vec_T, chi_vec_T, K_vec_T, gamma)
-    f1_H, f2_H = compute_frequencies_T_fix(H_vals, m_T, chi_T, K_T, gamma)
+    H_fix_res = compute_frequencies_H_fix(H, m_vec_T, M_vec_T, chi_vec_T, K_vec_T, gamma, alpha)
+    T_fix_res = compute_frequencies_T_fix(H_vals, m_T, M_T, chi_T, K_T, gamma, alpha)
     H_data = H_1000 if H==1000 and material == '1' else None
     T_data = T_293 if T==293 and material == '1' else None
 
     H_mesh = H_mesh_1 if material == '1' else H_mesh_2
     m_mesh = m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
+    M_mesh  = M_scale * (M_mesh_1 if material == '1' else M_mesh_2)
     K_mesh = k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
     theta_0 = compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh)
 
-    H_fix_fig = create_H_fix_fig(T_vals, (f1_T, f2_T), H, H_data)
-    T_fix_fig = create_T_fix_fig(H_vals, (f1_H, f2_H), T, T_data)
+    H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data_freq=H_data)
+    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data_freq=T_data)
     phase_fig = create_phase_fig(T_vals, H_vals, theta_0)
 
     return H_fix_fig, T_fix_fig, phase_fig
@@ -372,7 +404,8 @@ def live_fix_graphs(H, T, chi_val, k_val, m_val, material):
     [Output('alpha-scale-slider',      'value'),
     Output('chi-scale-slider',      'value'),
     Output('k-scale-slider',      'value'),
-    Output('m-scale-slider',      'value')],
+    Output('m-scale-slider',      'value'),
+    Output('M-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
     State('param-store',       'data'),   
     prevent_initial_call=True, 
@@ -380,7 +413,7 @@ def live_fix_graphs(H, T, chi_val, k_val, m_val, material):
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
     return (np.log10(p.alpha_scale), np.log10(p.chi_scale),
-            np.log10(p.k_scale), np.log10(p.m_scale))
+            np.log10(p.k_scale), np.log10(p.m_scale), np.log10(p.M_scale))
 
 @app.callback(
     Output('param-store', 'data'),
@@ -388,16 +421,18 @@ def sync_sliders_with_material(material, store):
     Input('alpha-scale-slider',      'value'),
     Input('chi-scale-slider',        'value'),
     Input('k-scale-slider',    'value'),
-    Input('m-scale-slider',    'value')],
+    Input('m-scale-slider',    'value'),
+    Input('M-scale-slider',    'value')],
     State('param-store',       'data'),
     prevent_initial_call=True,
 )
-def update_params(material, a_k, chi_k, k_k, m_k, store):
+def update_params(material, a_k, chi_k, k_k, m_k, M_k, store):
     p = SimParams(**store[material])
     p.alpha_scale = 10 ** a_k
     p.chi_scale = 10 ** chi_k
     p.k_scale = 10 ** k_k
     p.m_scale = 10 ** m_k
+    p.M_scale = 10 ** M_k
     store[material] = asdict(p)
     return store
 
@@ -443,9 +478,11 @@ def update_graphs(store, H, T, material, calc_on):
 
     H_mesh = H_mesh_1 if material == '1' else H_mesh_2
     m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
+    M_mesh = p.M_scale * (M_mesh_1 if material == '1' else M_mesh_2)
     K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
     chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
-    freq_array1, freq_array2 = compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma)
+    freq_res_grid = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
+    (freq_array1, _t1_grid), (freq_array1, _t2_grid) = freq_res_grid
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     sim_time, sol = run_simulation(H, m_val, M_val, K_val, chi_val, alpha, kappa)
@@ -537,11 +574,11 @@ def update_graphs(store, H, T, material, calc_on):
     if material_changed:
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
-        freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
+        freq_fig = create_freq_fig(T_vals, H_vals, freq_res_grid)
     elif params_changed or switch_on:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
-        freq_fig = create_freq_fig(T_vals, H_vals, freq_array1, freq_array2)
+        freq_fig = create_freq_fig(T_vals, H_vals, freq_res_grid)
     else:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
@@ -564,15 +601,15 @@ def download_hfix(n_clicks, H, store, material):
         """Возвращает bytes содержимого .npy для фиксированного H."""
         T_vals  = T_vals_1 if material == '1' else T_vals_2
         m_vec   = p.m_scale * (m_array_1 if material == '1' else m_array_2)
+        M_vec   = p.M_scale * (M_array_1 if material == '1' else M_array_2)
         chi_vec = p.chi_scale * (chi_array_1 if material == '1' else chi_array_2)
         K_vec   = p.k_scale * (K_array_1 if material == '1' else K_array_2)
+        alpha   = p.alpha_scale * (alpha_1 if material == '1' else alpha_2)
     
-        f1, f2 = compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma)
-        arr = np.vstack([T_vals, f1, f2])           # shape (3, N)
-    
+        (f1, t1), (f2, t2) = compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha)
+        arr = np.vstack([T_vals, f1, f2, t1, t2])           # shape (3, N)
         buf = io.BytesIO()
-        np.save(buf, arr)
-        buf.seek(0)
+        np.save(buf, arr); buf.seek(0)
         return buf.getvalue()
     p = SimParams(**store[material])
     content = _make_hfix_npy(H, p, material)
@@ -593,18 +630,17 @@ def download_tfix(n_clicks, T, store, material):
     def _make_tfix_npy(T, p, material):
         """Возвращает bytes содержимого .npy для фиксированной T."""
         H_vec = H_vals
-        # индексы и скаляры при выбранной температуре
         t_idx   = np.abs((T_vals_1 if material == '1' else T_vals_2) - T).argmin()
         m_val   = p.m_scale * (m_array_1 if material == '1' else m_array_2)[t_idx]
+        M_val   = p.M_scale * (M_array_1 if material == '1' else M_array_2)[t_idx]
         chi_val = p.chi_scale * (chi_array_1 if material == '1' else chi_array_2)[t_idx]
         K_val   = p.k_scale * (K_array_1  if material == '1' else K_array_2)[t_idx]
+        alpha   = p.alpha_scale * (alpha_1 if material == '1' else alpha_2)
     
-        f1, f2 = compute_frequencies_T_fix(H_vec, m_val, chi_val, K_val, gamma)
-        arr = np.vstack([H_vec/10, f1, f2])            # Η (mT), shape (3, N)
-    
+        (f1, t1), (f2, t2) = compute_frequencies_T_fix(H_vec, m_val, M_val, chi_val, K_val, gamma, alpha)
+        arr = np.vstack([H_vec/10, f1, f2, t1, t2])            # Η (mT), shape (3, N)
         buf = io.BytesIO()
-        np.save(buf, arr)
-        buf.seek(0)
+        np.save(buf, arr); buf.seek(0)
         return buf.getvalue()
     p = SimParams(**store[material])
     content = _make_tfix_npy(T, p, material)
