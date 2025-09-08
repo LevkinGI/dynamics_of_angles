@@ -149,14 +149,14 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
         shared_xaxes=True,
         vertical_spacing=0.12,
     )
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
     if data_freq is not None:
         x_m, lf_m, hf_m = data_freq
         fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
         fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
-    fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
-    fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
+    fig.add_trace(go.Scatter(x=H_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
+    fig.add_trace(go.Scatter(x=H_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
     if data_damp is not None:
         x_m, lf_m, hf_m = data_damp
         fig.add_trace(go.Scatter(x=x_dm, y=hf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
