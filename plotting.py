@@ -1,5 +1,6 @@
 # plotting.py
 import plotly.graph_objs as go
+from plotly.subplots import make_subplots
 import numpy as np
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
@@ -95,42 +96,34 @@ def create_yz_fig(y, z, time, anim_speed=5):
 
 
 dot_size = 8
-def create_H_fix_freq_fig(T_vals, H_fix_freqs, H, data_freq=None):
-    f1, f2 = H_fix_freqs
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
+def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
+    (f1, t1), (f2, t2) = H_fix_res
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.12,
+    )
+    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
     if data_freq is not None:
         x_m, lf_m, hf_m = data_freq
-        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
-        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
-    fig.update_layout(
-        title=f"Зависимость частот и затуханий от температуры при H = {H} Э",
-        xaxis_title="Температура (K)",
-        yaxis_title="Частота (ГГц)",
-        font=dict(size=18),
-        template="plotly_white",
-        showlegend=False
-    )
-    return fig
-
-def create_H_fix_damp_fig(T_vals, H_fix_damps, H, data_damp=None):
-    t1, t2 = H_fix_damps
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
+        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
+        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+    fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
+    fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
     if data_damp is not None:
-        x_dm, tlf_m, thf_m = data_damp
-        fig.add_trace(go.Scatter(x=x_dm, y=thf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)))
-        fig.add_trace(go.Scatter(x=x_dm, y=tlf_m, mode='markers', name='LF', marker=dict(color='red', size=dot_size)))
+        x_m, lf_m, hf_m = data_damp
+        fig.add_trace(go.Scatter(x=x_dm, y=hf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
+        fig.add_trace(go.Scatter(x=x_dm, y=lf_m, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
     fig.update_layout(
-        title=f"Зависимость частот и затуханий от температуры при H = {H} Э",
-        xaxis_title="Температура (K)",
-        yaxis_title="Время затухания (нс)",
+        title=f"H = {H} Э",
         font=dict(size=18),
         template="plotly_white",
         showlegend=False
     )
+    fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
+    fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
+    fig.update_xaxes(title_text="Температура (K)", row=2, col=1)
     return fig
     
 # def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
@@ -149,42 +142,34 @@ def create_H_fix_damp_fig(T_vals, H_fix_damps, H, data_damp=None):
 #     )
 #     return fig
 
-def create_T_fix_freq_fig(H_vals, T_fix_freqs, T, data_freq=None, data_damp=None):
-    f1, f2 = T_fix_freqs
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
+def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
+    (f1, t1), (f2, t2) = H_fix_res
+    fig = make_subplots(
+        rows=2, cols=1,
+        shared_xaxes=True,
+        vertical_spacing=0.12,
+    )
+    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
+    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
     if data_freq is not None:
         x_m, lf_m, hf_m = data_freq
-        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
-        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
-    fig.update_layout(
-        title=f"Зависимость частот и затуханий от магнитного поля при T = {T} K",
-        xaxis_title="Магнитное поле (Э)",
-        yaxis_title="Частота (ГГц)",
-        font=dict(size=18),
-        template="plotly_white",
-        showlegend=False
-    )
-    return fig
-
-def create_T_fix_damp_fig(H_vals, T_fix_damps, T, data_freq=None, data_damp=None):
-    t1, t2 = T_fix_damps
-    fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
+        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
+        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+    fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
+    fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
     if data_damp is not None:
-        x_dm, tlf_m, thf_m = data_damp
-        fig.add_trace(go.Scatter(x=x_dm, y=thf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)))
-        fig.add_trace(go.Scatter(x=x_dm, y=tlf_m, mode='markers', name='LF', marker=dict(color='red', size=dot_size)))
+        x_m, lf_m, hf_m = data_damp
+        fig.add_trace(go.Scatter(x=x_dm, y=hf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
+        fig.add_trace(go.Scatter(x=x_dm, y=lf_m, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
     fig.update_layout(
-        title=f"Зависимость частот и затуханий от магнитного поля при T = {T} K",
-        xaxis_title="Магнитное поле (Э)",
-        yaxis_title="Время затухания (нс)",
+        title=f"T = {T} K",
         font=dict(size=18),
         template="plotly_white",
         showlegend=False
     )
+    fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
+    fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
+    fig.update_xaxes(title_text="Магнитное поле (Э), row=2, col=1)
     return fig
 
 # def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
