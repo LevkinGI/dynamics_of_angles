@@ -465,51 +465,47 @@ def update_graphs(store, H, T, material, calc_on):
     switch_on = any('auto-calc-switch' in ti for ti in triggered_inputs)
         
     p = SimParams(**store[material])
-  
-    h_index = np.abs(H_vals - H).argmin()
     
-    # Выбор данных в зависимости от материала
-    T_vals = T_vals_1 if material=='1' else T_vals_2
-    t_index = np.abs(T_vals - T).argmin()
-    m_val = p.m_scale * (m_array_1 if material=='1' else m_array_2)[t_index]
-    M_val = p.M_scale * (M_array_1 if material=='1' else M_array_2)[t_index]
-    chi_val = p.chi_scale * (chi_array_1 if material=='1' else chi_array_2)[t_index]
-    K_val = p.k_scale * (K_array_1 if material=='1' else K_array_2)[t_index]
-    alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
-    amplitude_phi_static = phi_amplitude if material=='1' else phi_amplitude_2
-    amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
-    kappa = m_val / gamma
-
     m_array   = p.m_scale * (m_array_1 if material == '1' else m_array_2)
     M_array   = p.M_scale * (M_array_1 if material == '1' else M_array_2)
     K_array   = p.k_scale * (K_array_1 if material == '1' else K_array_2)
     chi_array = p.chi_scale * (chi_array_1 if material == '1' else chi_array_2)
-    alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
+    alpha     = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
     
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
-    _, M_mesh    = np.meshgrid(H_vals, M_array)
-    _, K_mesh    = np.meshgrid(H_vals, K_array)
-    _, chi_mesh  = np.meshgrid(H_vals, chi_array)
-    freq_res_grid = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
-    (freq_array1, _t1_grid), (freq_array1, _t2_grid) = freq_res_grid
+    _, M_mesh      = np.meshgrid(H_vals, M_array)
+    _, K_mesh      = np.meshgrid(H_vals, K_array)
+    _, chi_mesh    = np.meshgrid(H_vals, chi_array)
+    (freq_array1, _), (freq_array1, _) = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
+  
+    h_index = np.abs(H_vals - H).argmin()
+    T_vals  = T_vals_1 if material=='1' else T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
 
+    m_val   = m_array[t_index]
+    M_val   = M_array[t_index]
+    K_val   = K_array[t_index]
+    chi_val = chi_array[t_index]
+    kappa   = m_val / gamma
     sim_time, sol = run_simulation(H, m_val, M_val, K_val, chi_val, alpha, kappa)
-
     time_ns = sim_time * 1e9
-    theta = np.degrees(sol[0])
-    phi = np.degrees(sol[1])
+    theta   = np.degrees(sol[0])
+    phi     = np.degrees(sol[1])
 
+    amplitude_phi_static   = phi_amplitude if material=='1' else phi_amplitude_2
+    amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
+    
     # Выполнение аппроксимации
     if False:
         A1_theta = np.max(theta) / 2
         A2_theta = A1_theta
-        A1_phi = np.max(phi) / 2
-        A2_phi = A1_phi
+        A1_phi   = np.max(phi) / 2
+        A2_phi   = A1_phi
     
         initial_guess_stage1 = [0, 2, 0, 2, 0, 2, 0, 2, theor_freqs_GHz[0], theor_freqs_GHz[1]]
-        lower_bounds_stage1 = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
-        upper_bounds_stage1 = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 120, 120]
+        lower_bounds_stage1  = [-np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, -np.pi, 0.01, 0.1, 0.1]
+        upper_bounds_stage1  = [np.pi, 100, np.pi, 100, np.pi, 100, np.pi, 100, 120, 120]
     
         result_stage1 = least_squares(
             residuals_stage1,
@@ -626,9 +622,9 @@ def download_hfix(n_clicks, H, store, material):
 
 
 @app.callback(
-    Output('download-T-file', 'data'),
-    Input('download-T-btn',   'n_clicks'),
-    State('T-slider',         'value'),
+    Output('download-T-file',  'data'),
+    Input('download-T-btn',    'n_clicks'),
+    State('T-slider',          'value'),
     State('param-store',       'data'),
     State('material-dropdown', 'value'),
     prevent_initial_call=True,
