@@ -143,7 +143,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
 #     return fig
 
 def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
-    (f1, t1), (f2, t2) = H_fix_res
+    (f1, t1), (f2, t2) = T_fix_res
     fig = make_subplots(
         rows=2, cols=1,
         shared_xaxes=True,
@@ -169,7 +169,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
     )
     fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
     fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
-    fig.update_xaxes(title_text="Магнитное поле (Э), row=2, col=1)
+    fig.update_xaxes(title_text="Магнитное поле (Э)", row=2, col=1)
     return fig
 
 # def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
