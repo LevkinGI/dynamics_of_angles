@@ -121,7 +121,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'
-        }
+        },
         font=dict(size=18),
         template="plotly_white",
         showlegend=False
@@ -172,7 +172,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
             'x': 0.5,
             'xanchor': 'center',
             'yanchor': 'top'
-        }
+        },
         font=dict(size=18),
         template="plotly_white",
         showlegend=False
