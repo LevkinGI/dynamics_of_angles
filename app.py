@@ -476,12 +476,13 @@ def update_graphs(store, H, T, material, calc_on):
     _, M_mesh      = np.meshgrid(H_vals, M_array)
     _, K_mesh      = np.meshgrid(H_vals, K_array)
     _, chi_mesh    = np.meshgrid(H_vals, chi_array)
-    (freq_array1, _), (freq_array1, _) = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
-    theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
   
     h_index = np.abs(H_vals - H).argmin()
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
+    
+    (freq_array1, _), (freq_array1, _) = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
+    theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     m_val   = m_array[t_index]
     M_val   = M_array[t_index]
