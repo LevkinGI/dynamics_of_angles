@@ -387,11 +387,15 @@ def live_fix_graphs(H, T, a_val, chi_val, k_val, m_val, M_val, material):
     H_data = H_1000 if H==1000 and material == '1' else None
     T_data = T_293 if T==293 and material == '1' else None
 
-    H_mesh = H_mesh_1 if material == '1' else H_mesh_2
-    m_mesh = m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
-    M_mesh  = M_scale * (M_mesh_1 if material == '1' else M_mesh_2)
-    K_mesh = k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
-    chi_mesh = chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
+    m_array   = m_scale * (m_array_1 if material == '1' else m_array_2)
+    M_array   = M_scale * (M_array_1 if material == '1' else M_array_2)
+    K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
+    chi_array = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+    
+    H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
+    _, M_mesh    = np.meshgrid(H_vals, M_array)
+    _, K_mesh    = np.meshgrid(H_vals, K_array)
+    _, chi_mesh  = np.meshgrid(H_vals, chi_array)
     theta_0 = compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh)
 
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data_freq=H_data)
@@ -476,11 +480,15 @@ def update_graphs(store, H, T, material, calc_on):
     amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
 
-    H_mesh = H_mesh_1 if material == '1' else H_mesh_2
-    m_mesh = p.m_scale * (m_mesh_1 if material == '1' else m_mesh_2)
-    M_mesh = p.M_scale * (M_mesh_1 if material == '1' else M_mesh_2)
-    K_mesh = p.k_scale * (K_mesh_1 if material == '1' else K_mesh_2)
-    chi_mesh = p.chi_scale * (chi_mesh_1 if material == '1' else chi_mesh_2)
+    m_array   = m_scale * (m_array_1 if material == '1' else m_array_2)
+    M_array   = M_scale * (M_array_1 if material == '1' else M_array_2)
+    K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
+    chi_array = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+    
+    H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
+    _, M_mesh    = np.meshgrid(H_vals, M_array)
+    _, K_mesh    = np.meshgrid(H_vals, K_array)
+    _, chi_mesh  = np.meshgrid(H_vals, chi_array)
     freq_res_grid = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
     (freq_array1, _t1_grid), (freq_array1, _t2_grid) = freq_res_grid
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
