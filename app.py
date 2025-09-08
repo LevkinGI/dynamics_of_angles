@@ -481,7 +481,7 @@ def update_graphs(store, H, T, material, calc_on):
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
     
-    (freq_array1, _), (freq_array1, _) = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
+    (freq_array1, _), (freq_array2, _) = compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha)
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
     m_val   = m_array[t_index]
