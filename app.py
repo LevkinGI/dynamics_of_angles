@@ -472,7 +472,7 @@ def update_graphs(store, H, T, material, calc_on):
     T_vals = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
     m_val = p.m_scale * (m_array_1 if material=='1' else m_array_2)[t_index]
-    M_val = (M_array_1 if material=='1' else M_array_2)[t_index]
+    M_val = p.M_scale * (M_array_1 if material=='1' else M_array_2)[t_index]
     chi_val = p.chi_scale * (chi_array_1 if material=='1' else chi_array_2)[t_index]
     K_val = p.k_scale * (K_array_1 if material=='1' else K_array_2)[t_index]
     alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
@@ -480,10 +480,11 @@ def update_graphs(store, H, T, material, calc_on):
     amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     kappa = m_val / gamma
 
-    m_array   = m_scale * (m_array_1 if material == '1' else m_array_2)
-    M_array   = M_scale * (M_array_1 if material == '1' else M_array_2)
-    K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
-    chi_array = chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+    m_array   = p.m_scale * (m_array_1 if material == '1' else m_array_2)
+    M_array   = p.M_scale * (M_array_1 if material == '1' else M_array_2)
+    K_array   = p.k_scale * (K_array_1 if material == '1' else K_array_2)
+    chi_array = p.chi_scale * (chi_array_1 if material == '1' else chi_array_2)
+    alpha = p.alpha_scale * (alpha_1 if material=='1' else alpha_2)
     
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh    = np.meshgrid(H_vals, M_array)
