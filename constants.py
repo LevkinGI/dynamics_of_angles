@@ -77,8 +77,8 @@ def compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha):
     sorted_indices = np.argsort(roots.real, axis=-1)[:, :, ::-1]
     sorted_roots = np.take_along_axis(roots, sorted_indices, axis=-1)
 
-    f1, t1 = sorted_roots.real[:, :, 0] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, :, 0]
-    f2, t2 = sorted_roots.real[:, :, 1] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, :, 1]
+    f1, t1 = sorted_roots.real[:, :, 0] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, :, 0]
+    f2, t2 = sorted_roots.real[:, :, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, :, 1]
     return (f1, t1), (f2, t2)
 
 # @njit(parallel=False, fastmath=True, cache=True)
@@ -169,8 +169,8 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
     sorted_indices = np.argsort(roots.real, axis=-1)[:, ::-1]
     sorted_roots = np.take_along_axis(roots, sorted_indices, axis=-1)
 
-    f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 0]
-    f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 1]
+    f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 0]
+    f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 1]
 
     return (f1, t1), (f2, t2)
 
@@ -236,8 +236,8 @@ def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
     sorted_indices = np.argsort(roots.real, axis=-1)[:, ::-1]
     sorted_roots = np.take_along_axis(roots, sorted_indices, axis=-1)
 
-    f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 0]
-    f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 1]
+    f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 0]
+    f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 1]
 
     return (f1, t1), (f2, t2)
 
