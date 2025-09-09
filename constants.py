@@ -53,50 +53,32 @@ K_const = 13500
 chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
-@njit(parallel=False, fastmath=True, cache=True)
 def compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha):
-    nT, nH = H_mesh.shape
-    total = nT * nH
-    f1 = np.empty((nT, nH), np.float64)
-    f2 = np.empty((nT, nH), np.float64)
-    t1 = np.empty((nT, nH), np.float64)
-    t2 = np.empty((nT, nH), np.float64)
+    abs_m = np.abs(m_mesh)
 
-    for idx in prange(total):
-        i = idx // nH
-        j = idx % nH
-        H_ij   = H_mesh[i, j]
-        m_ij   = m_mesh[i, j]
-        M_ij   = M_mesh[i, j]
-        chi_ij = chi_mesh[i, j]
-        K_ij   = K_mesh[i, j]
+    w_H = gamma * H_mesh
+    w_0_sq = gamma**2 * 2 * K_mesh / chi_mesh
+    w_KK = gamma * abs_m / chi_mesh
 
-        abs_m = np.abs(m_ij)
+    w_sq = w_0_sq + w_KK**2 / 4
+    delta = w_H - w_KK / 2
 
-        w_H = gamma * H_ij
-        w_0_sq = gamma**2 * 2 * K_ij / chi_ij
-        w_KK = gamma * abs_m / chi_ij
-      
-        w_sq = w_0_sq + w_KK**2 / 4
-        delta = w_H - w_KK / 2
+    G = alpha * M_mesh * gamma / (2 * chi_mesh)
+    W2 = w_sq - delta**2
+    d_plus = delta - 1j * G
+    d_minus = -delta - 1j * G
 
-        G = alpha * M_ij * gamma / (2 * chi_ij)
-        W2 = w_sq - delta**2
-        d_plus = delta - 1j * G
-        d_minus = -delta - 1j * G
+    w1 = np.sqrt(W2 + d_plus**2) + d_plus
+    w2 = np.sqrt(W2 + d_minus**2) + d_minus
+    w3 = -np.sqrt(W2 + d_plus**2) + d_plus
+    w4 = -np.sqrt(W2 + d_minus**2) + d_minus
 
-        w1 = np.sqrt(W2 + d_plus**2) + d_plus
-        w2 = np.sqrt(W2 + d_minus**2) + d_minus
-        w3 = -np.sqrt(W2 + d_plus**2) + d_plus
-        w4 = -np.sqrt(W2 + d_minus**2) + d_minus
+    roots = np.stack((w1, w2, w3, w4), axis=-1)
+    sorted_indices = np.argsort(roots.real, axis=-1)[:, :, ::-1]
+    sorted_roots = np.take_along_axis(roots, sorted_indices, axis=-1)
 
-        roots = np.empty(4, np.complex128)
-        roots[0] = w1; roots[1] = w2; roots[2] = w3; roots[3] = w4
-        roots = roots[np.argsort(roots.real)[::-1]][:2]
-
-        f1[i, j], t1[i, j] = roots[0].real / (2 * np.pi * 1e9), -1e9 / roots[0].imag
-        f2[i, j], t2[i, j] = roots[1].real / (2 * np.pi * 1e9), -1e9 / roots[1].imag
-
+    f1, t1 = sorted_roots.real[:, :, 0] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, :, 0]
+    f2, t2 = sorted_roots.real[:, :, 1] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, :, 1]
     return (f1, t1), (f2, t2)
 
 # @njit(parallel=False, fastmath=True, cache=True)
@@ -164,44 +146,31 @@ _, chi_mesh_2 = np.meshgrid(H_vals, chi_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
-@njit(parallel=True, fastmath=True, cache=True)
 def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
-    n = m_vec.size
-    f1 = np.empty(n, np.float64)
-    t1 = np.empty(n, np.float64)
-    f2 = np.empty(n, np.float64)
-    t2 = np.empty(n, np.float64)
+    abs_m = np.abs(m_vec)
 
-    w_H = gamma * H
-    for i in prange(n):
-        m   = m_vec[i]
-        M   = M_vec[i]
-        chi = chi_vec[i]
-        K   = K_vec[i]
+    w_H  = gamma * H
+    w0_sq = gamma**2 * (2.0 * K_vec / chi_vec)
+    w_KK  = gamma * abs_m / chi_vec
 
-        abs_m = np.abs(m)
+    delta = w_H - w_KK / 2
+    W2    = (w0_sq + w_KK**2 / 4) - delta**2
 
-        w0_sq = gamma**2 * (2.0 * K / chi)
-        w_KK  = gamma * abs_m / chi
+    G = alpha * M_vec * gamma / (2.0 * chi_vec)
+    d_plus  =  delta - 1j * G
+    d_minus = -delta - 1j * G
 
-        delta = w_H - w_KK / 2
-        W2    = (w0_sq + w_KK**2 / 4) - delta**2
+    w1 =  np.sqrt(W2 + d_plus**2) + d_plus
+    w2 =  np.sqrt(W2 + d_minus**2) + d_minus
+    w3 = -np.sqrt(W2 + d_plus**2) + d_plus
+    w4 = -np.sqrt(W2 + d_minus**2) + d_minus
 
-        G = alpha * M * gamma / (2.0 * chi)
-        d_plus  =  delta - 1j * G
-        d_minus = -delta - 1j * G
+    roots = np.stack((w1, w2, w3, w4), axis=-1)
+    sorted_indices = np.argsort(roots.real, axis=-1)[:, ::-1]
+    sorted_roots = np.take_along_axis(roots, sorted_indices, axis=-1)
 
-        w1 =  np.sqrt(W2 + d_plus**2) + d_plus
-        w2 =  np.sqrt(W2 + d_minus**2) + d_minus
-        w3 = -np.sqrt(W2 + d_plus**2) + d_plus
-        w4 = -np.sqrt(W2 + d_minus**2) + d_minus
-
-        roots = np.empty(4, np.complex128)
-        roots[0] = w1; roots[1] = w2; roots[2] = w3; roots[3] = w4
-        roots = roots[np.argsort(roots.real)[::-1]][:2]
-
-        f1[i], t1[i] = roots[0].real / (2.0 * np.pi * 1e9), -1e9 / roots[0].imag
-        f2[i], t2[i] = roots[1].real / (2.0 * np.pi * 1e9), -1e9 / roots[1].imag
+    f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 0]
+    f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 1]
 
     return (f1, t1), (f2, t2)
 
@@ -244,41 +213,31 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
 
 
 # вектор по полю, T – скаляр
-@njit(parallel=True, fastmath=True, cache=True)
 def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
-    n = H_vec.size
-    f1 = np.empty(n, np.float64)
-    t1 = np.empty(n, np.float64)
-    f2 = np.empty(n, np.float64)
-    t2 = np.empty(n, np.float64)
-
     abs_m = np.abs(m)
-
-    # величины, не зависящие от H_j
+    
+    w_H   = gamma * H_vec
     w0_sq = gamma**2 * (2.0 * K / chi)
     w_KK  = gamma * abs_m / chi
     G     = alpha * M * gamma / (2.0 * chi)
-    for j in prange(n):
-        H = H_vec[j]
 
-        w_H  = gamma * H
-        delta = w_H - 0.5 * w_KK
-        W2    = (w0_sq + 0.25 * w_KK**2) - delta**2
+    delta = w_H - 0.5 * w_KK
+    W2    = (w0_sq + 0.25 * w_KK**2) - delta**2
 
-        d_plus  =  delta - 1j * G
-        d_minus = -delta - 1j * G
+    d_plus  =  delta - 1j * G
+    d_minus = -delta - 1j * G
 
-        w1 =  np.sqrt(W2 + d_plus**2) + d_plus
-        w2 =  np.sqrt(W2 + d_minus**2) + d_minus
-        w3 = -np.sqrt(W2 + d_plus**2) + d_plus
-        w4 = -np.sqrt(W2 + d_minus**2) + d_minus
+    w1 =  np.sqrt(W2 + d_plus**2) + d_plus
+    w2 =  np.sqrt(W2 + d_minus**2) + d_minus
+    w3 = -np.sqrt(W2 + d_plus**2) + d_plus
+    w4 = -np.sqrt(W2 + d_minus**2) + d_minus
 
-        roots = np.empty(4, np.complex128)
-        roots[0] = w1; roots[1] = w2; roots[2] = w3; roots[3] = w4
-        roots = roots[np.argsort(roots.real)[::-1]][:2]
+    roots = np.stack((w1, w2, w3, w4), axis=-1)
+    sorted_indices = np.argsort(roots.real, axis=-1)[:, ::-1]
+    sorted_roots = np.take_along_axis(roots, sorted_indices, axis=-1)
 
-        f1[j], t1[j] = roots[0].real / (2.0 * np.pi * 1e9), -1e9 / roots[0].imag
-        f2[j], t2[j] = roots[1].real / (2.0 * np.pi * 1e9), -1e9 / roots[1].imag
+    f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 0]
+    f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), 1e9 / sorted_roots.imag[:, 1]
 
     return (f1, t1), (f2, t2)
 
