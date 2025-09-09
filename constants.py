@@ -81,48 +81,6 @@ def compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha):
     f2, t2 = sorted_roots.real[:, :, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, :, 1]
     return (f1, t1), (f2, t2)
 
-# @njit(parallel=False, fastmath=True, cache=True)
-# def compute_frequencies(H_mesh, m_mesh, chi_mesh, K_mesh, gamma):
-#     nT, nH = H_mesh.shape
-#     total = nT * nH
-#     f1 = np.empty((nT, nH), np.float64)
-#     f2 = np.empty((nT, nH), np.float64)
-
-#     g2, g3, g4 = gamma**2, gamma**3, gamma**4
-
-#     for idx in prange(total):
-#         i = idx // nH
-#         j = idx % nH
-#         H_ij   = H_mesh[i, j]
-#         m_ij   = m_mesh[i, j]
-#         chi_ij = chi_mesh[i, j]
-#         K_ij   = K_mesh[i, j]
-
-#         abs_m = np.abs(m_ij)
-#         sign  = 1.0 if m_ij >= 0.0 else -1.0
-#         kappa = m_ij / gamma
-#         H2    = H_ij * H_ij
-
-#         common = (
-#             g2 * H2
-#             + 2 * K_ij * g2 / chi_ij
-#             + abs_m * H_ij * g2 / chi_ij
-#             - 2 * sign * kappa * g3 * H_ij / chi_ij
-#             + (kappa**2) * g4 / (2 * chi_ij**2)
-#         )
-#         term   = np.abs(2 * gamma * H_ij - sign * kappa * g2 / chi_ij)
-#         sqrt_t = np.sqrt(
-#             2 * K_ij * g2 / chi_ij
-#             + abs_m * H_ij * g2 / chi_ij
-#             - sign * kappa * g3 * H_ij / chi_ij
-#             + (kappa**2) * g4 / (4 * chi_ij**2)
-#         )
-
-#         f1[i, j] = np.sqrt(common + term * sqrt_t) / (2 * np.pi * 1e9)
-#         f2[i, j] = np.sqrt(common - term * sqrt_t) / (2 * np.pi * 1e9)
-
-#     return f1, f2
-
 # Вычисление частот
 # --- FeFe ---
 H_mesh_1, m_mesh_1 = np.meshgrid(H_vals, m_array_1)
@@ -174,44 +132,6 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
 
     return (f1, t1), (f2, t2)
 
-# @njit(parallel=True, cache=True, fastmath=True)
-# def compute_frequencies_H_fix(H, m_vec, chi_vec, K_vec, gamma):
-#     n = m_vec.size
-#     f1 = np.empty(n, np.float64)
-#     f2 = np.empty(n, np.float64)
-#     g2, g3, g4 = gamma**2, gamma**3, gamma**4
-#     H2 = H * H
-
-#     # Параллельно проходим по всем i
-#     for i in prange(n):
-#         m_i   = m_vec[i]
-#         chi_i = chi_vec[i]
-#         K_i   = K_vec[i]
-#         abs_m = np.abs(m_i)
-#         sign  = -1.0 if m_i < 0.0 else 1.0
-#         kappa = m_i / gamma
-
-#         common = (
-#             g2 * H2
-#             + 2 * K_i * g2 / chi_i
-#             + abs_m * H * g2 / chi_i
-#             - 2 * sign * kappa * g3 * H / chi_i
-#             + (kappa**2) * g4 / (2 * chi_i**2)
-#         )
-#         term   = np.abs(2 * gamma * H - sign * kappa * g2 / chi_i)
-#         sqrt_t = np.sqrt(
-#             2 * K_i * g2 / chi_i
-#             + abs_m * H * g2 / chi_i
-#             - sign * kappa * g3 * H / chi_i
-#             + (kappa**2) * g4 / (4 * chi_i**2)
-#         )
-
-#         f1[i] = np.sqrt(common + term * sqrt_t) / (2 * np.pi * 1e9)
-#         f2[i] = np.sqrt(common - term * sqrt_t) / (2 * np.pi * 1e9)
-
-#     return f1, f2
-
-
 # вектор по полю, T – скаляр
 def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
     abs_m = np.abs(m)
@@ -241,61 +161,10 @@ def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
 
     return (f1, t1), (f2, t2)
 
-# @njit(parallel=True, cache=True, fastmath=True)
-# def compute_frequencies_T_fix(H_vec, m, chi, K, gamma):
-#     n = H_vec.size
-#     f1 = np.empty(n, np.float64)
-#     f2 = np.empty(n, np.float64)
-#     g2, g3, g4 = gamma**2, gamma**3, gamma**4
-#     sign = 1.0 if m > 0 else -1.0
-#     kappa = m / gamma
-
-#     # Параллельно по всем j
-#     for j in prange(n):
-#         H_j   = H_vec[j]
-#         abs_m = np.abs(m)
-#         H2    = H_j * H_j
-
-#         common = (
-#             g2 * H2
-#             + 2 * K * g2 / chi
-#             + abs_m * H_j * g2 / chi
-#             - 2 * sign * kappa * g3 * H_j / chi
-#             + (kappa**2) * g4 / (2 * chi**2)
-#         )
-#         term   = np.abs(2 * gamma * H_j - sign * kappa * g2 / chi)
-#         sqrt_t = np.sqrt(
-#             2 * K * g2 / chi
-#             + abs_m * H_j * g2 / chi
-#             - sign * kappa * g3 * H_j / chi
-#             + (kappa**2) * g4 / (4 * chi**2)
-#         )
-
-#         f1[j] = np.sqrt(common + term * sqrt_t) / (2 * np.pi * 1e9)
-#         f2[j] = np.sqrt(common - term * sqrt_t) / (2 * np.pi * 1e9)
-
-#     return f1, f2
-
-@njit(parallel=True, cache=True, fastmath=True)
 def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
-    nT, nH = H_mesh.shape
-    total = nT * nH
-    theta_0 = np.empty((nT, nH), np.float64)
-
-    for idx in prange(total):
-        i = idx // nH
-        j = idx % nH
-        H_ij = H_mesh[i, j]
-        if H_ij == 0:
-            theta_0[i, j] = np.nan
-            continue
-        m_ij   = m_mesh[i, j]
-        abs_m = np.abs(m_ij)
-        chi_ij = chi_mesh[i, j]
-        K_ij   = K_mesh[i, j]
-
-        m_cr = chi_ij * H_ij + (2 * K_ij) / H_ij
-        theta_0[i, j] = 0.0 if abs_m > m_cr else np.arccos(abs_m / m_cr)
+    abs_m = np.abs(m_mesh)
+    m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
+    theta_0 = np.where(H_mesh==0, np.nan, np.where(abs_m > m_cr, 0.0, np.arccos(abs_m / m_cr)))
       
     return theta_0
 
