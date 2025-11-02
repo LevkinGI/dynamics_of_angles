@@ -96,7 +96,7 @@ def create_yz_fig(y, z, time, anim_speed=5):
 
 
 dot_size = 8
-def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
+def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     (f1, t1), (f2, t2) = H_fix_res
     fig = make_subplots(
         rows=2, cols=1,
@@ -105,16 +105,14 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
     )
     fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
     fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
-    if data_freq is not None:
-        x_m, lf_m, hf_m = data_freq
-        fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+    if data is not None:
+        x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
+        fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
+        fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+        fig.add_trace(go.Scatter(x=x_dm, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
+        fig.add_trace(go.Scatter(x=x_dm, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
     fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
     fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
-    if data_damp is not None:
-        x_m, lf_m, hf_m = data_damp
-        fig.add_trace(go.Scatter(x=x_dm, y=hf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
-        fig.add_trace(go.Scatter(x=x_dm, y=lf_m, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
     fig.update_layout(
         title={
             'text': f"H = {H} Э",
@@ -147,7 +145,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data_freq=None, data_damp=None):
 #     )
 #     return fig
 
-def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
+def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     (f1, t1), (f2, t2) = T_fix_res
     fig = make_subplots(
         rows=2, cols=1,
@@ -156,16 +154,14 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data_freq=None, data_damp=None):
     )
     fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
     fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
-    if data_freq is not None:
-        x_m, lf_m, hf_m = data_freq
+    if data is not None:
+        x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
         fig.add_trace(go.Scatter(x=x_m, y=hf_m, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
         fig.add_trace(go.Scatter(x=x_m, y=lf_m, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+        fig.add_trace(go.Scatter(x=x_dm, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
+        fig.add_trace(go.Scatter(x=x_dm, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
     fig.add_trace(go.Scatter(x=H_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
     fig.add_trace(go.Scatter(x=H_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
-    if data_damp is not None:
-        x_m, lf_m, hf_m = data_damp
-        fig.add_trace(go.Scatter(x=x_dm, y=hf_m, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
-        fig.add_trace(go.Scatter(x=x_dm, y=lf_m, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
     fig.update_layout(
         title={
             'text': f"T = {T} K",
