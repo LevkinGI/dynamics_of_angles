@@ -403,8 +403,8 @@ def live_fix_graphs(H, T, a_val, chi_val, k_val, m_val, M_val, material):
     _, chi_mesh  = np.meshgrid(H_vals, chi_array)
     theta_0 = compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh)
 
-    H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data_freq=H_data)
-    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data_freq=T_data)
+    H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
+    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
     phase_fig = create_phase_fig(T_vals, H_vals, theta_0)
 
     return H_fix_fig, T_fix_fig, phase_fig
