@@ -15,7 +15,7 @@ def _dynamics_factory(a: float, b: float, c: float, sign: int):
     # ➜ вернём Python-обёртку — она вызывает уже скомпилированный код
     return dynamics_const.py_func
 
-@njit(cache=True, fastmath=True)
+@njit(cache=False, fastmath=True)
 def calc_coef(H: float, m: float, M: float, K: float,
               chi: float, alpha: float, kappa: float):
     a = alpha * M * gamma / chi
