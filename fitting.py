@@ -2,7 +2,7 @@
 import numpy as np
 from numba import njit
 
-@njit(cache=True, fastmath=True)
+@njit(cache=False, fastmath=True)
 def fit_function_theta(t, A1_theta, f1_theta, n1_theta, A2_theta, f2_theta, n2_theta, f1_GHz, f2_GHz):
     w1 = 2 * np.pi * f1_GHz * 1e9
     w2 = 2 * np.pi * f2_GHz * 1e9
@@ -14,7 +14,7 @@ def fit_function_theta(t, A1_theta, f1_theta, n1_theta, A2_theta, f2_theta, n2_t
                   np.exp(-w2 * t[i] / (2 * np.pi) / n2_theta))
     return res
 
-@njit(cache=True, fastmath=True)
+@njit(cache=False, fastmath=True)
 def fit_function_phi(t, A1_phi, f1_phi, n1_phi, A2_phi, f2_phi, n2_phi, f1_GHz, f2_GHz):
     w1 = 2 * np.pi * f1_GHz * 1e9
     w2 = 2 * np.pi * f2_GHz * 1e9
