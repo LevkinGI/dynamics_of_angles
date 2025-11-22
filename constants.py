@@ -50,7 +50,7 @@ def chi_T(T):
 # Загрузка данных для материала 1
 m_array_1 = np.load('m_array_18.07.2025.npy')
 M_array_1 = np.load('M_array_18.07.2025.npy')
-chi_array_1 = chi_T(T_vals_1) if False else np.full_like(m_array_1, 8e-5)
+chi_array_1 = chi_T(T_vals_1) if False else np.full_like(m_array_1, 8e-5) * 3.3
 K_array_1 = K_T(T_vals_1)
 phi_amplitude = np.load('phi_amplitude.npy')
 theta_amplitude = np.load('theta_amplitude.npy')
