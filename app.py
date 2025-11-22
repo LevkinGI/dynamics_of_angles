@@ -314,7 +314,7 @@ def move_chi_slider(logk):
     if logk is None:
         raise PreventUpdate
     k = 10**logk
-    return f"{k:.2f} × χ"
+    return f"{k:.2f} × 3.3χ"
 
 @app.callback(
     Output("k-scale-label", "children"),
