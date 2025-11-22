@@ -39,11 +39,11 @@ h_IFE = 7500                # Ое
 delta_t = 250e-15           # с
 
 # Функции, зависящие от температуры (Материал 1)
-@njit(cache=True)
+@njit(cache=False)
 def K_T(T):
     return 0.525 * (T - 370)**2
 
-@njit(cache=True)
+@njit(cache=False)
 def chi_T(T):
     return 4.2e-7 * np.abs(T - 358)
 
