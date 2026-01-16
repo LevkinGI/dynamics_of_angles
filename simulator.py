@@ -2,7 +2,7 @@
 import numpy as np
 from scipy.integrate import solve_ivp
 from numba import njit
-from constants import gamma, h_IFE, delta_t
+from constants import gamma, h_IFE, delta_t, chi_func
 
 def _dynamics_factory(a: float, b: float, c: float, sign: int):
     @njit(cache=True, fastmath=True)
@@ -17,7 +17,8 @@ def _dynamics_factory(a: float, b: float, c: float, sign: int):
 
 @njit(cache=False, fastmath=True)
 def calc_coef(H: float, m: float, M: float, K: float,
-              chi: float, alpha: float, kappa: float):
+              alpha: float, kappa: float):
+    chi = chi_func(m, M)
     a = alpha * M * gamma / chi
     b = (np.abs(m) * gamma**2 * H / chi - gamma**2 * H**2 + 2 * K * gamma**2 / chi)
     sign = 1 if m > 0 else -1
@@ -30,7 +31,6 @@ def run_simulation(
         m: float,
         M: float,
         K: float,
-        chi: float,
         alpha: float,
         kappa: float,
         simulation_time: float = 0.3e-9,
@@ -39,6 +39,7 @@ def run_simulation(
         rtol: float = 1e-10,
         atol: float = 1e-12,
 ):
+    chi = chi_func(m, M)
     # Начальные условия (в радианах и рад/с)
     theta_initial = 0.0
     phi_initial = 0.0
