@@ -118,7 +118,7 @@ _, M_mesh_2 = np.meshgrid(H_vals, M_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
-def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
+def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha):
     chi_vec = chi_func(m_vec, M_vec)
     abs_m = np.abs(m_vec)
 
