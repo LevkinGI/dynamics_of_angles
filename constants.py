@@ -38,19 +38,23 @@ alpha_2 = 1.7e-2
 h_IFE = 7500                # Ое
 delta_t = 250e-15           # с
 
-# Функции, зависящие от температуры (Материал 1)
-@njit(cache=False)
-def K_T(T):
-    return 0.525 * (T - 370)**2
+# Материал 1
+def k_T(temperature: Iterable[float] | float) -> np.ndarray:
+    """Анизотропия как функция температуры."""
+    T = np.asarray(temperature, dtype=float)
+    return 0.522 * (T - 370.0) ** 2
 
-@njit(cache=False)
-def chi_T(T):
-    return 4.2e-7 * np.abs(T - 358)
+def chi(m: np.ndarray, M: np.ndarray) -> np.ndarray:
+    """Вычисление магнитной восприимчивости."""
+    m = np.asarray(m, dtype=float)
+    M = np.asarray(M, dtype=float)
+    denom = 1.0 - (m**2) / (M**2 + 1e-16)
+    denom = np.where(denom == 0, np.nan, denom)
+    return 1.0 / (12500.0 * denom)
 
 # Загрузка данных для материала 1
 m_array_1 = np.load('m_array_18.07.2025.npy')
 M_array_1 = np.load('M_array_18.07.2025.npy')
-chi_array_1 = chi_T(T_vals_1) if False else np.full_like(m_array_1, 8e-5) * 3.3
 K_array_1 = K_T(T_vals_1)
 phi_amplitude = np.load('phi_amplitude.npy')
 theta_amplitude = np.load('theta_amplitude.npy')
@@ -62,12 +66,11 @@ phi_amplitude_2 = np.load('phi_amplitude_2.npy')
 theta_amplitude_2 = np.load('theta_amplitude_2.npy')
 
 # Для материала 2 зависимости K(T) и chi(T) заменяем константами
-chi_const = 3.7e-4
 K_const = 13500
-chi_array_2 = np.full_like(m_array_2, chi_const)
 K_array_2 = np.full_like(m_array_2, K_const)
 
-def compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha):
+def compute_frequencies(H_mesh, m_mesh, M_mesh, K_mesh, gamma, alpha):
+    chi_mesh = chi(m_mesh, M_mesh)
     abs_m = np.abs(m_mesh)
 
     w_H = gamma * H_mesh
@@ -99,14 +102,12 @@ def compute_frequencies(H_mesh, m_mesh, M_mesh, chi_mesh, K_mesh, gamma, alpha):
 # --- FeFe ---
 H_mesh_1, m_mesh_1 = np.meshgrid(H_vals, m_array_1)
 _, M_mesh_1 = np.meshgrid(H_vals, M_array_1)
-_, chi_mesh_1 = np.meshgrid(H_vals, chi_array_1)
 _, K_mesh_1 = np.meshgrid(H_vals, K_array_1)
 
 (f1_GHz, _), (f2_GHz, _) = compute_frequencies(
         H_mesh_1,
         m_mesh_1,
         M_mesh_1,
-        chi_mesh_1,
         K_mesh_1,
         gamma,
         alpha_1)
@@ -114,11 +115,11 @@ _, K_mesh_1 = np.meshgrid(H_vals, K_array_1)
 # --- GdFe ---
 H_mesh_2, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
 _, M_mesh_2 = np.meshgrid(H_vals, M_array_2)
-_, chi_mesh_2 = np.meshgrid(H_vals, chi_array_2)
 _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
 def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
+    chi_vec = chi(m_vec, M_vec)
     abs_m = np.abs(m_vec)
 
     w_H  = gamma * H
@@ -147,7 +148,9 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
     return (f1, t1), (f2, t2)
 
 # вектор по полю, T – скаляр
-def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
+def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
+    denom = 1.0 - (m**2) / (M**2 + 1e-16)
+    chi = 1 / (12500 * denom)
     abs_m = np.abs(m)
     
     w_H   = gamma * H_vec
@@ -175,7 +178,8 @@ def compute_frequencies_T_fix(H_vec, m, M, chi, K, gamma, alpha):
 
     return (f1, t1), (f2, t2)
 
-def compute_phases(H_mesh, m_mesh, K_mesh, chi_mesh):
+def compute_phases(H_mesh, m_mesh, K_mesh):
+    chi_mesh = chi(m_mesh, M_mesh)
     abs_m = np.abs(m_mesh)
     m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
     theta_0 = np.where(H_mesh==0, np.nan, np.where(abs_m > m_cr, 0.0, np.arccos(abs_m / m_cr)))
