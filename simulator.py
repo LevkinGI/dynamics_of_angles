@@ -17,8 +17,7 @@ def _dynamics_factory(a: float, b: float, c: float, sign: int):
 
 @njit(cache=False, fastmath=True)
 def calc_coef(H: float, m: float, M: float, K: float,
-              alpha: float, kappa: float):
-    chi = chi_func(m, M)
+              chi:float, alpha: float, kappa: float):
     a = alpha * M * gamma / chi
     b = (np.abs(m) * gamma**2 * H / chi - gamma**2 * H**2 + 2 * K * gamma**2 / chi)
     sign = 1 if m > 0 else -1
