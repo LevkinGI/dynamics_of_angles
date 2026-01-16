@@ -44,10 +44,8 @@ def k_T(temperature: Iterable[float] | float) -> np.ndarray:
     T = np.asarray(temperature, dtype=float)
     return 0.522 * (T - 370.0) ** 2
 
-def chi(m: np.ndarray, M: np.ndarray) -> np.ndarray:
+def chi(m: np.ndarray | float, M: np.ndarray | float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
-    m = np.asarray(m, dtype=float)
-    M = np.asarray(M, dtype=float)
     denom = 1.0 - (m**2) / (M**2 + 1e-16)
     denom = np.where(denom == 0, np.nan, denom)
     return 1.0 / (12500.0 * denom)
@@ -149,8 +147,7 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
 
 # вектор по полю, T – скаляр
 def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
-    denom = 1.0 - (m**2) / (M**2 + 1e-16)
-    chi = 1 / (12500 * denom)
+    chi = chi(m, M)
     abs_m = np.abs(m)
     
     w_H   = gamma * H_vec
@@ -190,7 +187,9 @@ def compute_phases(H_mesh, m_mesh, K_mesh):
 __all__ = [
     # сетки и оси
     'H_vals', 'T_vals_1', 'T_vals_2', 'T_init',
-    # исходные одномерные массивы (нужны графикам)
+    # Функции для расчета зависимых параметров
+    'chi',
+    # исходные одномерные массивы
     'm_array_1', 'M_array_1', 'm_array_2', 'M_array_2',
     'chi_array_1', 'K_array_1', 'chi_array_2', 'K_array_2',
     # физические константы
