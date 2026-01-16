@@ -44,7 +44,7 @@ def k_T(temperature: Iterable[float] | float) -> np.ndarray:
     T = np.asarray(temperature, dtype=float)
     return 0.522 * (T - 370.0) ** 2
 
-def chi(m: np.ndarray | float, M: np.ndarray | float) -> np.ndarray | float:
+def chi_func(m: np.ndarray | float, M: np.ndarray | float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
     denom = 1.0 - (m**2) / (M**2 + 1e-16)
     denom = np.where(denom == 0, np.nan, denom)
@@ -68,7 +68,7 @@ K_const = 13500
 K_array_2 = np.full_like(m_array_2, K_const)
 
 def compute_frequencies(H_mesh, m_mesh, M_mesh, K_mesh, gamma, alpha):
-    chi_mesh = chi(m_mesh, M_mesh)
+    chi_mesh = chi_func(m_mesh, M_mesh)
     abs_m = np.abs(m_mesh)
 
     w_H = gamma * H_mesh
@@ -117,7 +117,7 @@ _, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
 def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
-    chi_vec = chi(m_vec, M_vec)
+    chi_vec = chi_func(m_vec, M_vec)
     abs_m = np.abs(m_vec)
 
     w_H  = gamma * H
@@ -147,7 +147,7 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, chi_vec, K_vec, gamma, alpha):
 
 # вектор по полю, T – скаляр
 def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
-    chi = chi(m, M)
+    chi = chi_func(m, M)
     abs_m = np.abs(m)
     
     w_H   = gamma * H_vec
@@ -176,7 +176,7 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
     return (f1, t1), (f2, t2)
 
 def compute_phases(H_mesh, m_mesh, K_mesh):
-    chi_mesh = chi(m_mesh, M_mesh)
+    chi_mesh = chi_func(m_mesh, M_mesh)
     abs_m = np.abs(m_mesh)
     m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
     theta_0 = np.where(H_mesh==0, np.nan, np.where(abs_m > m_cr, 0.0, np.arccos(abs_m / m_cr)))
