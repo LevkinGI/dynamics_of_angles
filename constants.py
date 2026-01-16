@@ -41,7 +41,7 @@ delta_t = 250e-15           # с
 
 # Материал 1
 @njit(cache=False, fastmath=True)
-def k_T(temperature: Iterable[float] | float) -> np.ndarray:
+def K_T(temperature: Iterable[float] | float) -> np.ndarray:
     """Анизотропия как функция температуры."""
     T = np.asarray(temperature, dtype=float)
     return 0.522 * (T - 370.0) ** 2
