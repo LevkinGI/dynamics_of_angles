@@ -187,8 +187,6 @@ def compute_phases(H_mesh, m_mesh, K_mesh):
 __all__ = [
     # сетки и оси
     'H_vals', 'T_vals_1', 'T_vals_2', 'T_init',
-    # Функции для расчета зависимых параметров
-    'chi',
     # исходные одномерные массивы
     'm_array_1', 'M_array_1', 'm_array_2', 'M_array_2',
     'chi_array_1', 'K_array_1', 'chi_array_2', 'K_array_2',
