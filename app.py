@@ -372,7 +372,7 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, material):
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh    = np.meshgrid(H_vals, M_array)
     _, K_mesh    = np.meshgrid(H_vals, K_array)
-    theta_0 = compute_phases(H_mesh, m_mesh, K_mesh)
+    theta_0 = compute_phases(H_mesh, m_mesh, M_mesh, K_mesh)
 
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
