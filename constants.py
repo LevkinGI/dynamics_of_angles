@@ -189,9 +189,9 @@ __all__ = [
     'H_vals', 'T_vals_1', 'T_vals_2', 'T_init',
     # исходные одномерные массивы
     'm_array_1', 'M_array_1', 'm_array_2', 'M_array_2',
-    'chi_array_1', 'K_array_1', 'chi_array_2', 'K_array_2',
+    'K_array_1', 'K_array_2',
     # физические константы
-    'gamma', 'alpha_1', 'alpha_2', 'K_const', 'chi_const',
+    'gamma', 'alpha_1', 'alpha_2', 'K_const',
     'h_IFE', 'delta_t',
     # JIT-функция для частот
     'compute_frequencies', 'compute_phases',
