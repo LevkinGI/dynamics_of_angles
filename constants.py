@@ -172,8 +172,12 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
 
     return (f1, t1), (f2, t2)
 
-def compute_phases(H_mesh, m_mesh, M_mesh, K_mesh):
+def compute_phases(H_vals, m_array, M_array, K_array):
+    H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
+    _, M_mesh = np.meshgrid(H_vals, M_array)
+    _, K_mesh = np.meshgrid(H_vals, K_array)
     chi_mesh = chi_func(m_mesh, M_mesh)
+  
     abs_m = np.abs(m_mesh)
     m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
     theta_0 = np.where(H_mesh==0, np.nan, np.where(abs_m > m_cr, 0.0, np.arccos(abs_m / m_cr)))
