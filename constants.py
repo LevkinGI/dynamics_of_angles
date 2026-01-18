@@ -70,6 +70,10 @@ K_const = 13500
 K_array_2 = np.full_like(m_array_2, K_const)
 
 def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha):
+    H_vals = H_vals[::4]
+    m_array = m_array[::6]
+    M_array = M_array[::6]
+    K_array = K_array[::6]
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh = np.meshgrid(H_vals, M_array)
     _, K_mesh = np.meshgrid(H_vals, K_array)
@@ -173,6 +177,11 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
     return (f1, t1), (f2, t2)
 
 def compute_phases(H_vals, m_array, M_array, K_array):
+    H_vals = H_vals[::4]
+    m_array = m_array[::6]
+    M_array = M_array[::6]
+    K_array = K_array[::6]
+
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh = np.meshgrid(H_vals, M_array)
     _, K_mesh = np.meshgrid(H_vals, K_array)
