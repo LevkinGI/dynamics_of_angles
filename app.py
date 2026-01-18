@@ -163,10 +163,10 @@ app.layout = html.Div([
                    'width': '25%', 'height': 'calc(25vw)'},
             figure=go.Figure(
                 data=[
-                    go.Surface(z=f1_GHz[::4, ::6], x=H_vals[::4], y=T_vals_1[::6],
+                    go.Surface(z=f1_GHz[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
                                colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                showscale=False, name='HF'),
-                    go.Surface(z=f2_GHz[::4, ::6], x=H_vals[::4], y=T_vals_1[::6],
+                    go.Surface(z=f2_GHz[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
                                colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                showscale=False, name='LF')
                 ],
@@ -211,7 +211,7 @@ app.layout = html.Div([
             id='phi-amplitude-graph',
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
-                data=[go.Surface(z=phi_amplitude[::4, ::6], x=H_vals[::4], y=T_vals_1[::6],
+                data=[go.Surface(z=phi_amplitude[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
                                  colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                  showscale=False, name='LF')],
                 layout=go.Layout(
@@ -229,7 +229,7 @@ app.layout = html.Div([
             id='theta-amplitude-graph',
             style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
             figure=go.Figure(
-                data=[go.Surface(z=theta_amplitude[::4, ::6], x=H_vals[::4], y=T_vals_1[::6],
+                data=[go.Surface(z=theta_amplitude[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
                                  colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                  showscale=False, name='HF')],
                 layout=go.Layout(
