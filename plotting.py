@@ -197,9 +197,9 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
 def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
     fig = go.Figure(
         data=[go.Surface(
-            z=amplitude_phi_static,
-            x=H_vals,
-            y=T_vals,
+            z=amplitude_phi_static[::4, ::6],
+            x=H_vals[::4],
+            y=T_vals[::6],
             colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
             showscale=False,
             name='LF'
@@ -219,9 +219,9 @@ def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
 def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     fig = go.Figure(
         data=[go.Surface(
-            z=amplitude_theta_static,
-            x=H_vals,
-            y=T_vals,
+            z=amplitude_theta_static[::4, ::6],
+            x=H_vals[::4],
+            y=T_vals[::6],
             colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
             showscale=False,
             name='HF'
@@ -244,12 +244,12 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     fig = go.Figure(
         data=[
             go.Surface(
-                z=f1_grid, x=H_vals, y=T_vals,
+                z=f1_grid[::4, ::6], x=H_vals[::4], y=T_vals[::6],
                 colorscale=[[0, 'rgb(173,216,230)'], [1, 'rgb(0,0,255)']],
                 showscale=False, name='HF'
             ),
             go.Surface(
-                z=f2_grid, x=H_vals, y=T_vals,
+                z=f2_grid[::4, ::6], x=H_vals[::4], y=T_vals[::6],
                 colorscale=[[0, 'rgb(255,182,193)'], [1, 'rgb(255,0,0)']],
                 showscale=False, name='LF'
             ),
@@ -300,9 +300,9 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         [1.00, 'rgb(255, 255, 255)']   # white
     ]
     heat = go.Heatmap(
-        x=T_vals,
-        y=H_vals,
-        z=theta_0,
+        x=T_vals[::6],
+        y=H_vals[::4],
+        z=theta_0[::6, ::4],
         colorscale=custom_colorscale,
         colorbar=dict(
             title=dict(
