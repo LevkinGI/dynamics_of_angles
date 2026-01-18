@@ -222,6 +222,6 @@ __all__ = [
     # амплитуды
     'phi_amplitude', 'theta_amplitude', 'phi_amplitude_2', 'theta_amplitude_2',
     # данные
-    'T_293', 'T_298', 'T_310', 'T_320', 'T_323',
+    'T_293', 'T_298', 'T_308', 'T_310', 'T_320', 'T_323',
     'H_1000', 'H_1700',
 ]
