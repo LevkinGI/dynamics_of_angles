@@ -244,12 +244,12 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     fig = go.Figure(
         data=[
             go.Surface(
-                z=f1_grid[::6, ::4], x=H_vals[::4], y=T_vals[::6],
+                z=f1_grid, x=H_vals, y=T_vals,
                 colorscale=[[0, 'rgb(173,216,230)'], [1, 'rgb(0,0,255)']],
                 showscale=False, name='HF'
             ),
             go.Surface(
-                z=f2_grid[::6, ::4], x=H_vals[::4], y=T_vals[::6],
+                z=f2_grid, x=H_vals, y=T_vals,
                 colorscale=[[0, 'rgb(255,182,193)'], [1, 'rgb(255,0,0)']],
                 showscale=False, name='LF'
             ),
@@ -300,9 +300,9 @@ def create_phase_fig(T_vals, H_vals, theta_0):
         [1.00, 'rgb(255, 255, 255)']   # white
     ]
     heat = go.Heatmap(
-        x=T_vals[::6],
-        y=H_vals[::4],
-        z=theta_0[::4, ::6],
+        x=T_vals,
+        y=H_vals,
+        z=theta_0,
         colorscale=custom_colorscale,
         colorbar=dict(
             title=dict(
