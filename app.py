@@ -550,11 +550,11 @@ def update_graphs(store, H, T, material, calc_on):
     if material_changed:
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
-        freq_fig = create_freq_fig(T_vals, H_vals, freq_res_grid)
+        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
     elif params_changed or switch_on:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
-        freq_fig = create_freq_fig(T_vals, H_vals, freq_res_grid)
+        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
     else:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
