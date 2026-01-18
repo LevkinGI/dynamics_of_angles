@@ -125,10 +125,10 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha):
 # Вычисление частот
 # --- FeFe ---
 (f1_GHz, _), (f2_GHz, _) = compute_frequencies(
-        H_vals,
-        m_array_1,
-        M_array_1,
-        K_array_1,
+        H_vals[::4],
+        m_array_1[::6],
+        M_array_1[::6],
+        K_array_1[::6],
         gamma,
         alpha_1)
 
