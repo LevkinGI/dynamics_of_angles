@@ -179,8 +179,8 @@ def compute_phases(H_vals, m_array, M_array, K_array):
     chi_mesh = chi_func(m_mesh, M_mesh)
   
     abs_m = np.abs(m_mesh)
-    m_cr = chi_mesh * H_mesh + (2 * K_mesh) / H_mesh
-    theta_0 = np.where(H_mesh==0, np.nan, np.where(abs_m > m_cr, 0.0, np.arccos(abs_m / (m_cr + 1e-16))))
+    m_cr = np.where(H_mesh==0, np.nan, chi_mesh * H_mesh + (2 * K_mesh) / H_mesh)
+    theta_0 = np.where(H_mesh==0, np.nan, np.where(abs_m > m_cr, 0.0, np.arccos(abs_m / m_cr)))
       
     return theta_0
 
