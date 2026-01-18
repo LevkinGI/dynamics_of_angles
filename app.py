@@ -451,9 +451,9 @@ def update_graphs(store, H, T, material, calc_on):
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
 
-    freq_res_grid = compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha)
+    freq_res_grid = compute_frequencies(H_vals[::4], m_array[::6], M_array[::6], K_array[::6], gamma, alpha)
     (freq_array1, _), (freq_array2, _) = freq_res_grid
-    theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
+    theor_freqs_GHz = sorted(np.round([freq_array1[np.abs(T_vals[::6] - T).argmin(), np.abs(H_vals[::4] - H).argmin()], freq_array2[np.abs(T_vals[::6] - T).argmin(), np.abs(H_vals[::4] - H).argmin()]], 1), reverse=True)
 
     m_val   = m_array[t_index]
     M_val   = M_array[t_index]
@@ -550,11 +550,11 @@ def update_graphs(store, H, T, material, calc_on):
     if material_changed:
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
-        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid[::6, ::4])
+        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
     elif params_changed or switch_on:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
-        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid[::6, ::4])
+        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
     else:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
