@@ -69,8 +69,12 @@ theta_amplitude_2 = np.load('theta_amplitude_2.npy')
 K_const = 13500
 K_array_2 = np.full_like(m_array_2, K_const)
 
-def compute_frequencies(H_mesh, m_mesh, M_mesh, K_mesh, gamma, alpha):
+def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha):
+    H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
+    _, M_mesh = np.meshgrid(H_vals, M_array)
+    _, K_mesh = np.meshgrid(H_vals, K_array)
     chi_mesh = chi_func(m_mesh, M_mesh)
+  
     abs_m = np.abs(m_mesh)
 
     w_H = gamma * H_mesh
@@ -100,22 +104,13 @@ def compute_frequencies(H_mesh, m_mesh, M_mesh, K_mesh, gamma, alpha):
 
 # Вычисление частот
 # --- FeFe ---
-H_mesh_1, m_mesh_1 = np.meshgrid(H_vals, m_array_1)
-_, M_mesh_1 = np.meshgrid(H_vals, M_array_1)
-_, K_mesh_1 = np.meshgrid(H_vals, K_array_1)
-
 (f1_GHz, _), (f2_GHz, _) = compute_frequencies(
-        H_mesh_1,
-        m_mesh_1,
-        M_mesh_1,
-        K_mesh_1,
+        H_vals,
+        m_array_1,
+        M_array_1,
+        K_array_1,
         gamma,
         alpha_1)
-
-# --- GdFe ---
-H_mesh_2, m_mesh_2 = np.meshgrid(H_vals, m_array_2)
-_, M_mesh_2 = np.meshgrid(H_vals, M_array_2)
-_, K_mesh_2 = np.meshgrid(H_vals, K_array_2)
 
 # вектор по температуре, H – скаляр
 def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha):
