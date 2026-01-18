@@ -163,10 +163,10 @@ app.layout = html.Div([
                    'width': '25%', 'height': 'calc(25vw)'},
             figure=go.Figure(
                 data=[
-                    go.Surface(z=f1_GHz[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
+                    go.Surface(z=f1_GHz, x=H_vals[::4], y=T_vals_1[::6],
                                colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
                                showscale=False, name='HF'),
-                    go.Surface(z=f2_GHz[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
+                    go.Surface(z=f2_GHz, x=H_vals[::4], y=T_vals_1[::6],
                                colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
                                showscale=False, name='LF')
                 ],
@@ -376,11 +376,11 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, material):
     M_array   = M_scale * (M_array_1 if material == '1' else M_array_2)
     K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
     
-    theta_0 = compute_phases(H_vals, m_array, M_array, K_array)
+    theta_0 = compute_phases(H_vals[::4], m_array[::6], M_array[::6], K_array[::6])
     
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
-    phase_fig = create_phase_fig(T_vals, H_vals, theta_0)
+    phase_fig = create_phase_fig(T_vals[::6], H_vals[::4], theta_0)
 
     return H_fix_fig, T_fix_fig, phase_fig
 
@@ -451,7 +451,7 @@ def update_graphs(store, H, T, material, calc_on):
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
 
-    freq_res_grid = compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha)
+    freq_res_grid = compute_frequencies(H_vals[::4], m_array[::6], M_array[::6], K_array[::6], gamma, alpha)
     (freq_array1, _), (freq_array2, _) = freq_res_grid
     theor_freqs_GHz = sorted(np.round([freq_array1[t_index, h_index], freq_array2[t_index, h_index]], 1), reverse=True)
 
