@@ -6,3 +6,4 @@ class SimParams:
     k_scale:  float  # множитель для K(T)
     m_scale: float  # множитель массива m
     M_scale: float  # множитель массива M
+    lam_scale: float  # множитель константы Вейсса
