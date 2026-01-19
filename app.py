@@ -489,7 +489,7 @@ def update_graphs(store, H, T, material, calc_on):
     M_val   = M_array[t_index]
     K_val   = K_array[t_index]
     kappa   = m_val / gamma
-    sim_time, sol = run_simulation(H, m_val, M_val, K_val, alpha, kappa)
+    sim_time, sol = run_simulation(H, m_val, M_val, K_val, alpha, lam, kappa)
     time_ns = sim_time * 1e9
     theta   = np.degrees(sol[0])
     phi     = np.degrees(sol[1])
