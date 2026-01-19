@@ -53,6 +53,7 @@ T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
 T_init = 293
 
+lam = 12500
 gamma = 1.76e7              # рад/(с·Oe)
 alpha_1 = 1e-3
 alpha_2 = 1.7e-2
@@ -66,11 +67,11 @@ def K_T(T: Iterable[float] | float) -> np.ndarray:
     return 0.522 * (T - 370.0) ** 2
 
 @njit(cache=False, fastmath=True)
-def chi_func(m: np.ndarray | float, M: np.ndarray | float) -> np.ndarray | float:
+def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
     denom = 1.0 - (m**2) / (M**2 + 1e-16)
     denom = np.where(denom == 0, np.nan, denom)
-    return 1.0 / (12500.0 * denom)
+    return 1.0 / (lam * denom)
 
 # Загрузка данных для материала 1
 m_array_1 = np.load('m_array_18.07.2025.npy')
@@ -89,11 +90,11 @@ theta_amplitude_2 = np.load('theta_amplitude_2.npy')
 K_const = 13500
 K_array_2 = np.full_like(m_array_2, K_const)
 
-def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha):
+def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh = np.meshgrid(H_vals, M_array)
     _, K_mesh = np.meshgrid(H_vals, K_array)
-    chi_mesh = chi_func(m_mesh, M_mesh)
+    chi_mesh = chi_func(m_mesh, M_mesh, lam)
   
     abs_m = np.abs(m_mesh)
 
@@ -133,8 +134,8 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha):
         alpha_1)
 
 # вектор по температуре, H – скаляр
-def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha):
-    chi_vec = chi_func(m_vec, M_vec)
+def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
+    chi_vec = chi_func(m_vec, M_vec, lam)
     abs_m = np.abs(m_vec)
 
     w_H  = gamma * H
@@ -163,8 +164,8 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha):
     return (f1, t1), (f2, t2)
 
 # вектор по полю, T – скаляр
-def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
-    chi = chi_func(m, M)
+def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha, lam):
+    chi = chi_func(m, M, lam)
     abs_m = np.abs(m)
     
     w_H   = gamma * H_vec
@@ -192,11 +193,11 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha):
 
     return (f1, t1), (f2, t2)
 
-def compute_phases(H_vals, m_array, M_array, K_array):
+def compute_phases(H_vals, m_array, M_array, K_array, lam):
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh = np.meshgrid(H_vals, M_array)
     _, K_mesh = np.meshgrid(H_vals, K_array)
-    chi_mesh = chi_func(m_mesh, M_mesh)
+    chi_mesh = chi_func(m_mesh, M_mesh, lam)
   
     abs_m = np.abs(m_mesh)
     m_cr = np.where(H_mesh==0, np.nan, chi_mesh * H_mesh + (2 * K_mesh) / H_mesh)
@@ -212,8 +213,8 @@ __all__ = [
     'm_array_1', 'M_array_1', 'm_array_2', 'M_array_2',
     'K_array_1', 'K_array_2',
     # физические константы
-    'gamma', 'alpha_1', 'alpha_2', 'K_const',
-    'h_IFE', 'delta_t',
+    'lam', 'gamma', 'alpha_1', 'alpha_2',
+    'K_const', 'h_IFE', 'delta_t',
     # JIT-функция для частот
     'compute_frequencies', 'compute_phases',
     'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
