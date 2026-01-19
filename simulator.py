@@ -31,6 +31,7 @@ def run_simulation(
         M: float,
         K: float,
         alpha: float,
+        lam: float,
         kappa: float,
         simulation_time: float = 0.3e-9,
         num_points: int = 1001,
@@ -38,7 +39,7 @@ def run_simulation(
         rtol: float = 1e-10,
         atol: float = 1e-12,
 ):
-    chi = chi_func(m, M)
+    chi = chi_func(m, M, lam)
     # Начальные условия (в радианах и рад/с)
     theta_initial = 0.0
     phi_initial = 0.0
