@@ -53,8 +53,9 @@ T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
 T_init = 293
 
-lam = 12500
 gamma = 1.76e7              # рад/(с·Oe)
+lam_1 = 12500
+lam_2 = 10000 # Заглушка!
 alpha_1 = 1e-3
 alpha_2 = 1.7e-2
 h_IFE = 7500                # Ое
@@ -131,7 +132,8 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
         M_array_1[::6],
         K_array_1[::6],
         gamma,
-        alpha_1)
+        alpha_1,
+        lam_1)
 
 # вектор по температуре, H – скаляр
 def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
@@ -213,7 +215,7 @@ __all__ = [
     'm_array_1', 'M_array_1', 'm_array_2', 'M_array_2',
     'K_array_1', 'K_array_2',
     # физические константы
-    'lam', 'gamma', 'alpha_1', 'alpha_2',
+    'gamma', 'lam_1', 'lam_2', 'alpha_1', 'alpha_2',
     'K_const', 'h_IFE', 'delta_t',
     # JIT-функция для частот
     'compute_frequencies', 'compute_phases',
