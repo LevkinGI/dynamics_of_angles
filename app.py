@@ -482,8 +482,7 @@ def update_graphs(store, H, T, material, calc_on):
     t_index = np.abs(T_vals - T).argmin()
 
     freq_res_grid = compute_frequencies(H_vals[::4], m_array[::6], M_array[::6], K_array[::6], gamma, alpha, lam)
-    (freq_array1, _), (freq_array2, _) = freq_res_grid
-    theor_freqs_GHz = sorted(np.round([freq_array1[np.abs(T_vals[::6] - T).argmin(), np.abs(H_vals[::4] - H).argmin()], freq_array2[np.abs(T_vals[::6] - T).argmin(), np.abs(H_vals[::4] - H).argmin()]], 1), reverse=True)
+    theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
 
     m_val   = m_array[t_index]
     M_val   = M_array[t_index]
