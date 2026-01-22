@@ -137,7 +137,7 @@ def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
     fig.update_layout(
-        title=f"Зависимость частот от температуры при H = {H} Э",
+        title=f"H = {H} Э",
         xaxis_title="Температура (K)",
         yaxis_title="Частота (ГГц)",
         font=dict(size=18),
@@ -186,7 +186,7 @@ def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
     fig.update_layout(
-        title=f"Зависимость частот от магнитного поля при T = {T} K",
+        title=f"T = {T} K",
         xaxis_title="Магнитное поле (Э)",
         yaxis_title="Частота (ГГц)",
         font=dict(size=18),
