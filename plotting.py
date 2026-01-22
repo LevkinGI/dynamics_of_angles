@@ -96,103 +96,103 @@ def create_yz_fig(y, z, time, anim_speed=5):
 
 
 dot_size = 8
-def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
-    (f1, t1), (f2, t2) = H_fix_res
-    fig = make_subplots(
-        rows=2, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.1,
-    )
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
-    if data is not None:
-        x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
-        fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
-    fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
-    fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
-    fig.update_layout(
-        title={
-            'text': f"H = {H} Э",
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'
-        },
-        font=dict(size=18),
-        template="plotly_white",
-        showlegend=False
-    )
-    fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
-    fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
-    fig.update_xaxes(title_text="Температура (K)", row=2, col=1)
-    return fig
+# def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
+#     (f1, t1), (f2, t2) = H_fix_res
+#     fig = make_subplots(
+#         rows=2, cols=1,
+#         shared_xaxes=True,
+#         vertical_spacing=0.1,
+#     )
+#     fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
+#     fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
+#     if data is not None:
+#         x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
+#         fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
+#         fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+#         fig.add_trace(go.Scatter(x=x_m, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
+#         fig.add_trace(go.Scatter(x=x_m, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
+#     fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
+#     fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
+#     fig.update_layout(
+#         title={
+#             'text': f"H = {H} Э",
+#             'x': 0.5,
+#             'xanchor': 'center',
+#             'yanchor': 'top'
+#         },
+#         font=dict(size=18),
+#         template="plotly_white",
+#         showlegend=False
+#     )
+#     fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
+#     fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
+#     fig.update_xaxes(title_text="Температура (K)", row=2, col=1)
+#     return fig
     
-# def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
-#     fig = go.Figure()
-#     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
-#     fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
-#     if data is not None:
-#         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
-#         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
-#     fig.update_layout(
-#         title=f"Зависимость частот от температуры при H = {H} Э",
-#         xaxis_title="Температура (K)",
-#         yaxis_title="Частота (ГГц)",
-#         font=dict(size=18),
-#         template="plotly_white"
-#     )
-#     return fig
-
-def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
-    (f1, t1), (f2, t2) = T_fix_res
-    fig = make_subplots(
-        rows=2, cols=1,
-        shared_xaxes=True,
-        vertical_spacing=0.1,
-    )
-    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
-    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
+def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
+    fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
     if data is not None:
-        x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
-        fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
-        fig.add_trace(go.Scatter(x=x_m, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
-    fig.add_trace(go.Scatter(x=H_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
-    fig.add_trace(go.Scatter(x=H_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
     fig.update_layout(
-        title={
-            'text': f"T = {T} K",
-            'x': 0.5,
-            'xanchor': 'center',
-            'yanchor': 'top'
-        },
+        title=f"Зависимость частот от температуры при H = {H} Э",
+        xaxis_title="Температура (K)",
+        yaxis_title="Частота (ГГц)",
         font=dict(size=18),
-        template="plotly_white",
-        showlegend=False
+        template="plotly_white"
     )
-    fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
-    fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
-    fig.update_xaxes(title_text="Магнитное поле (Э)", row=2, col=1)
     return fig
 
-# def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
-#     fig = go.Figure()
-#     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
-#     fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
-#     if data is not None:
-#         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF', line=dict(color='red')))
-#         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF', line=dict(color='blue')))
-#     fig.update_layout(
-#         title=f"Зависимость частот от магнитного поля при T = {T} K",
-#         xaxis_title="Магнитное поле (Э)",
-#         yaxis_title="Частота (ГГц)",
-#         font=dict(size=18),
-#         template="plotly_white"
+# def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
+#     (f1, t1), (f2, t2) = T_fix_res
+#     fig = make_subplots(
+#         rows=2, cols=1,
+#         shared_xaxes=True,
+#         vertical_spacing=0.1,
 #     )
+#     fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
+#     fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
+#     if data is not None:
+#         x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
+#         fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
+#         fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
+#         fig.add_trace(go.Scatter(x=x_m, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
+#         fig.add_trace(go.Scatter(x=x_m, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
+#     fig.add_trace(go.Scatter(x=H_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
+#     fig.add_trace(go.Scatter(x=H_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
+#     fig.update_layout(
+#         title={
+#             'text': f"T = {T} K",
+#             'x': 0.5,
+#             'xanchor': 'center',
+#             'yanchor': 'top'
+#         },
+#         font=dict(size=18),
+#         template="plotly_white",
+#         showlegend=False
+#     )
+#     fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
+#     fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
+#     fig.update_xaxes(title_text="Магнитное поле (Э)", row=2, col=1)
 #     return fig
+
+def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
+    fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+    if data is not None:
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
+    fig.update_layout(
+        title=f"Зависимость частот от магнитного поля при T = {T} K",
+        xaxis_title="Магнитное поле (Э)",
+        yaxis_title="Частота (ГГц)",
+        font=dict(size=18),
+        template="plotly_white"
+    )
+    return fig
 
 def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
     fig = go.Figure(
