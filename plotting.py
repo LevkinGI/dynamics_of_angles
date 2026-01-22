@@ -129,10 +129,11 @@ dot_size = 8
 #     fig.update_xaxes(title_text="Температура (K)", row=2, col=1)
 #     return fig
     
-def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
+def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
+    (f1, t1), (f2, t2) = H_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=H_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
+    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
     if data is not None:
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
@@ -178,10 +179,11 @@ def create_H_fix_fig(T_vals, H_fix_freqs, H, data=None):
 #     fig.update_xaxes(title_text="Магнитное поле (Э)", row=2, col=1)
 #     return fig
 
-def create_T_fix_fig(H_vals, T_fix_freqs, T, data=None):
+def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
+    (f1, t1), (f2, t2) = T_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[0], mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=H_vals, y=T_fix_freqs[1], mode='lines', name='LF', line=dict(color='red')))
+    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
+    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
     if data is not None:
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
