@@ -138,11 +138,17 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
     fig.update_layout(
-        title=f"H = {H} Э",
+        title={
+            'text': f"H = {H} Э",
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
         xaxis_title="Температура (K)",
         yaxis_title="Частота (ГГц)",
         font=dict(size=18),
-        template="plotly_white"
+        template="plotly_white",
+        showlegend=False
     )
     return fig
 
@@ -188,11 +194,17 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
     fig.update_layout(
-        title=f"T = {T} K",
+        title={
+            'text': f"T = {T} K",
+            'x': 0.5,
+            'xanchor': 'center',
+            'yanchor': 'top'
+        },
         xaxis_title="Магнитное поле (Э)",
         yaxis_title="Частота (ГГц)",
         font=dict(size=18),
-        template="plotly_white"
+        template="plotly_white",
+        showlegend=False
     )
     return fig
 
