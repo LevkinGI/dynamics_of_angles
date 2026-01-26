@@ -141,8 +141,10 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         title={
             'text': f"H = {H} Э",
             'x': 0.5,
+            'y': 0.95,
+            'yref': 'paper',
             'xanchor': 'center',
-            'yanchor': 'top'
+            'yanchor': 'top',
         },
         xaxis_title="Температура (K)",
         yaxis_title="Частота (ГГц)",
@@ -197,6 +199,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         title={
             'text': f"T = {T} K",
             'x': 0.5,
+            'y': 0.95,
+            'yref': 'paper',
             'xanchor': 'center',
             'yanchor': 'top'
         },
