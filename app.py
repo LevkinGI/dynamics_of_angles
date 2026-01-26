@@ -137,34 +137,20 @@ app.layout = html.Div([
                 id='auto-calc-switch',
                 on=False,
                 label='Моделирование при изменении параметров',
-                labelPosition='right',
+                labelPosition='top',
                 color='#119DFF',
-                style={
-                    "marginLeft": "60px",
-                    "display": "flex",
-                    "alignItems": "center"
-                },
+                style={"marginLeft": "60px"}
                 ),
             daq.BooleanSwitch(
                 id='exp-view-switch',
                 on=True,
                 label='Отображать экспериментальные данные',
-                labelPosition='right',
+                labelPosition='top',
                 color='#119DFF',
-                style={
-                    "marginLeft": "60px",
-                    "display": "flex",
-                    "alignItems": "center"
-                },
+                style={"marginLeft": "60px"}
                 ),
             ],
-            style={
-                "marginLeft": "30px", 
-                "position": "relative",
-                "display": "flex",
-                "flexDirection": "column",
-                "justifyContent": "top"
-            },
+            style={"marginLeft": "30px", "position": "relative"}
         ),
         ],
         style={
