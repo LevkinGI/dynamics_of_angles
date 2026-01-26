@@ -139,7 +139,11 @@ app.layout = html.Div([
                 label='Моделирование при изменении параметров',
                 labelPosition='right',
                 color='#119DFF',
-                style={"marginLeft": "60px"}
+                style={
+                    "marginLeft": "60px",
+                    "display": "flex",
+                    "alignItems": "center"
+                },
                 ),
             daq.BooleanSwitch(
                 id='exp-view-switch',
@@ -147,14 +151,19 @@ app.layout = html.Div([
                 label='Отображать экспериментальные данные',
                 labelPosition='right',
                 color='#119DFF',
-                style={"marginLeft": "60px"}
+                style={
+                    "marginLeft": "60px",
+                    "display": "flex",
+                    "alignItems": "center"
+                },
                 ),
             ],
             style={
-            "marginLeft": "30px", 
-            "position": "relative",
-            "minWidth": "600px",
-            "marginTop": "30px"
+                "marginLeft": "30px", 
+                "position": "relative",
+                "display": "flex",
+                "flexDirection": "column",
+                "justifyContent": "top"
             },
         ),
         ],
