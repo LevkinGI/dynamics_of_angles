@@ -142,7 +142,7 @@ app.layout = html.Div([
                 style={"marginLeft": "60px"}
                 ),
             daq.BooleanSwitch(
-                id='auto-calc-switch',
+                id='exp-view-switch',
                 on=True,
                 label='Отображать экспериментальные данные',
                 labelPosition='right',
