@@ -150,7 +150,12 @@ app.layout = html.Div([
                 style={"marginLeft": "60px"}
                 ),
             ],
-            style={"marginLeft": "30px", "position": "relative"}
+            style={
+            "marginLeft": "30px", 
+            "position": "relative",
+            "minWidth": "400px",
+            "marginTop": "20px"
+            },
         ),
         ],
         style={
