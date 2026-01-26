@@ -153,8 +153,8 @@ app.layout = html.Div([
             style={
             "marginLeft": "30px", 
             "position": "relative",
-            "minWidth": "400px",
-            "marginTop": "20px"
+            "minWidth": "600px",
+            "marginTop": "30px"
             },
         ),
         ],
