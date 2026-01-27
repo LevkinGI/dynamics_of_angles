@@ -382,7 +382,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
 #     return fig
 
 def create_phase_fig(T_vals, theta_0):
-    H_kOe = np.arange(0, 4001, 10) / 1000
+    H_kOe = np.arange(0, 4001, 50) / 1000
     theta_0 = theta_0.T
     custom_colorscale = [
         [0.00, 'rgb(0, 0, 0)'],        # black
