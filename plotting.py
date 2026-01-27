@@ -308,7 +308,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
         hoverinfo="skip"
     ))
 
-    title_pad_lines = 3
+    title_pad_lines = 10
     pad = "<br>" * int(title_pad_lines)
 
     fig.add_trace(go.Surface(
