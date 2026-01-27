@@ -263,7 +263,7 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     )
     return fig
 
-def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
+def create_freq_fig(T_vals, H_vals, freq_res_grid):
     T_vals = np.asarray(T_vals, dtype=float)
     H_kOe  = np.asarray(H_vals, dtype=float) / 1000.0
     (f1_grid, _), (f2_grid, _) = freq_res_grid
@@ -272,7 +272,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
     zmax = float(np.nanmax([np.nanmax(f1_grid), np.nanmax(f2_grid)]))
 
     x_plane = np.tile(H_kOe, (2, 1))
-    y_plane = np.full((2, H_kOe.size), float(T_plane))
+    y_plane = np.full((2, H_kOe.size), float(333))
     z_plane = np.vstack([
         np.full(H_kOe.size, zmin),
         np.full(H_kOe.size, zmax)
@@ -300,8 +300,8 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
         x=x_plane, y=y_plane, z=z_plane,
         colorscale=[[0, PLANE_COLOR], [1, PLANE_COLOR]],
         showscale=False,
-        opacity=0.25,
-        name=f"T = {T_plane} K",
+        opacity=0.3,
+        name=f"T = {333} K",
         hoverinfo="skip"
     ))
 
