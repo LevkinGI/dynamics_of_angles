@@ -138,28 +138,111 @@ dot_size = 8
 #     return fig
     
 def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
+    T_plane = 333.0
+
+    T_vals = np.asarray(T_vals, dtype=float)
     (f1, t1), (f2, t2) = H_fix_res
+    f1 = np.asarray(f1, dtype=float)
+    f2 = np.asarray(f2, dtype=float)
+
+    # сортировка по T (важно для линий)
+    order = np.argsort(T_vals)
+    T_vals = T_vals[order]
+    f1 = f1[order]
+    f2 = f2[order]
+
+    # маски вокруг плоскости (оставляем точку на шве в обеих частях)
+    mask_lo = T_vals <= T_plane
+    mask_hi = T_vals >= T_plane
+
+    T_lo, T_hi = T_vals[mask_lo], T_vals[mask_hi]
+    f1_lo, f1_hi = f1[mask_lo], f1[mask_hi]
+    f2_lo, f2_hi = f2[mask_lo], f2[mask_hi]
+
+    title_font = dict(family="Times New Roman, Times, serif", size=18)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=14)
+
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(width=2, color=HF_COLOR)))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(width=2, color=LF_COLOR)))
+
+    # Вертикальная линия T=333 (без прозрачности)
+    fig.add_vline(
+        x=T_plane,
+        line_width=2,
+        line_dash="dash",
+        line_color="#7f7f7f"
+    )
+
+    # До плоскости: HF=f1, LF=f2
+    fig.add_trace(go.Scatter(
+        x=T_lo, y=f1_lo, mode='lines', name='HF',
+        line=dict(width=2, color=HF_COLOR)
+    ))
+    fig.add_trace(go.Scatter(
+        x=T_lo, y=f2_lo, mode='lines', name='LF',
+        line=dict(width=2, color=LF_COLOR)
+    ))
+
+    # После плоскости: МЕНЯЕМ МЕСТАМИ (HF=f2, LF=f1)
+    fig.add_trace(go.Scatter(
+        x=T_hi, y=f2_hi, mode='lines', name='HF',
+        line=dict(width=2, color=HF_COLOR)
+    ))
+    fig.add_trace(go.Scatter(
+        x=T_hi, y=f1_hi, mode='lines', name='LF',
+        line=dict(width=2, color=LF_COLOR)
+    ))
+
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
+        T_exp = np.asarray(data[0], dtype=float)
+        lf_exp = np.asarray(data[1], dtype=float)
+        hf_exp = np.asarray(data[2], dtype=float)
+
+        # Чтобы эксперимент визуально соответствовал swap после 333 — тоже делим по T_plane
+        m_lo = T_exp <= T_plane
+        m_hi = T_exp > T_plane
+
+        # До плоскости: LF как LF, HF как HF
+        fig.add_trace(go.Scatter(
+            x=T_exp[m_lo], y=lf_exp[m_lo], mode='markers', name='LF (эксп.)',
+            marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
+        ))
+        fig.add_trace(go.Scatter(
+            x=T_exp[m_lo], y=hf_exp[m_lo], mode='markers', name='HF (эксп.)',
+            marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
+        ))
+
+        # После плоскости: меняем местами, чтобы цвета соответствовали линиям
+        fig.add_trace(go.Scatter(
+            x=T_exp[m_hi], y=hf_exp[m_hi], mode='markers', name='LF (эксп.)',
+            marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
+        ))
+        fig.add_trace(go.Scatter(
+            x=T_exp[m_hi], y=lf_exp[m_hi], mode='markers', name='HF (эксп.)',
+            marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
+        ))
+
     fig.update_layout(
-        title={
-            'text': f"H = {H/1000} kOe",
-            'x': 0.5,
-            'y': 0.95,
-            'yref': 'paper',
-            'xanchor': 'center',
-            'yanchor': 'top',
-        },
-        xaxis_title="Temperature (K)",
-        yaxis_title="Frequency (GHz)",
-        font=dict(size=18),
         template="plotly_white",
+        font=dict(family="Times New Roman, Times, serif", size=14),
+        title=dict(
+            text=f"H = {H/1000} kOe",
+            x=0.5, y=0.95, yref='paper',
+            xanchor='center', yanchor='top',
+            font=title_font
+        ),
+        xaxis=dict(
+            title=dict(text="Temperature (K)", font=title_font, standoff=18),
+            tickfont=tick_font,
+            tickangle=0
+        ),
+        yaxis=dict(
+            title=dict(text="Frequency (GHz)", font=title_font, standoff=18),
+            tickfont=tick_font,
+            tickangle=0
+        ),
         showlegend=False
     )
+
     return fig
 
 # def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
@@ -196,29 +279,65 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
 #     return fig
 
 def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
-    H_kOe = H_vals / 1000
+    H_kOe = np.asarray(H_vals, dtype=float) / 1000.0
     (f1, t1), (f2, t2) = T_fix_res
+    f1 = np.asarray(f1, dtype=float)
+    f2 = np.asarray(f2, dtype=float)
+
+    # на всякий случай сортировка по H
+    order = np.argsort(H_kOe)
+    H_kOe = H_kOe[order]
+    f1 = f1[order]
+    f2 = f2[order]
+
+    title_font = dict(family="Times New Roman, Times, serif", size=18)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=14)
+
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=H_kOe, y=f1, mode='lines', name='HF', line=dict(width=2, color=HF_COLOR)))
-    fig.add_trace(go.Scatter(x=H_kOe, y=f2, mode='lines', name='LF', line=dict(width=2, color=LF_COLOR)))
+
+    fig.add_trace(go.Scatter(
+        x=H_kOe, y=f1, mode='lines', name='HF',
+        line=dict(width=2, color=HF_COLOR)
+    ))
+    fig.add_trace(go.Scatter(
+        x=H_kOe, y=f2, mode='lines', name='LF',
+        line=dict(width=2, color=LF_COLOR)
+    ))
+
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0]/1000, y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
-        fig.add_trace(go.Scatter(x=data[0]/1000, y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
+        fig.add_trace(go.Scatter(
+            x=np.asarray(data[0], dtype=float)/1000.0, y=np.asarray(data[1], dtype=float),
+            mode='markers', name='LF (эксп.)',
+            marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
+        ))
+        fig.add_trace(go.Scatter(
+            x=np.asarray(data[0], dtype=float)/1000.0, y=np.asarray(data[2], dtype=float),
+            mode='markers', name='HF (эксп.)',
+            marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
+        ))
+
     fig.update_layout(
-        title={
-            'text': f"T = {T} K",
-            'x': 0.5,
-            'y': 0.95,
-            'yref': 'paper',
-            'xanchor': 'center',
-            'yanchor': 'top'
-        },
-        xaxis_title="Magnetic field (kOe)",
-        yaxis_title="Frequency (GHz)",
-        font=dict(size=18),
         template="plotly_white",
+        font=dict(family="Times New Roman, Times, serif", size=14),
+        title=dict(
+            text=f"T = {T} K",
+            x=0.5, y=0.95, yref='paper',
+            xanchor='center', yanchor='top',
+            font=title_font
+        ),
+        xaxis=dict(
+            title=dict(text="Magnetic field (kOe)", font=title_font, standoff=18),
+            tickfont=tick_font,
+            tickangle=0
+        ),
+        yaxis=dict(
+            title=dict(text="Frequency (GHz)", font=title_font, standoff=18),
+            tickfont=tick_font,
+            tickangle=0
+        ),
         showlegend=False
     )
+
     return fig
 
 def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
@@ -354,7 +473,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.6),
+            aspectratio=dict(x=1, y=1, z=0.5),
         ),
         legend=dict(
             font=dict(family="Times New Roman, Times, serif", size=12),
