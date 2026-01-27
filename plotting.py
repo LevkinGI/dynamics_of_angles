@@ -135,8 +135,8 @@ dot_size = 8
 def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     (f1, t1), (f2, t2) = H_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
+    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(width=2, color=HF_COLOR)))
+    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(width=2, color=LF_COLOR)))
     if data is not None:
         fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
@@ -194,8 +194,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     H_kOe = H_vals / 1000
     (f1, t1), (f2, t2) = T_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=H_kOe, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
-    fig.add_trace(go.Scatter(x=H_kOe, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
+    fig.add_trace(go.Scatter(x=H_kOe, y=f1, mode='lines', name='HF', line=dict(width=2, color=HF_COLOR)))
+    fig.add_trace(go.Scatter(x=H_kOe, y=f2, mode='lines', name='LF', line=dict(width=2, color=LF_COLOR)))
     if data is not None:
         fig.add_trace(go.Scatter(x=data[0]/1000, y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
         fig.add_trace(go.Scatter(x=data[0]/1000, y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
