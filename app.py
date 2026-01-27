@@ -185,6 +185,15 @@ app.layout = html.Div([
             id='frequency-surface-graph',
             style={'display': 'inline-block', 'verticalAlign': 'top',
                    'width': '25%', 'height': 'calc(25vw)'},
+            config={
+                'toImageButtonOptions': {
+                    'format': 'svg',       # Формат: 'svg', 'png', 'jpeg', 'webp'
+                    'filename': 'Частоты 3D', # Имя файла при скачивании
+                    'height': 900,         # Высота (опционально, для лучшего качества)
+                    'width': 1200,         # Ширина (опционально)
+                    'scale': 1             # Масштаб (для растра), для svg не так важно
+                }
+            },
             ),
         html.Div([
             html.Button('Скачать данные', id='download-H-btn',
