@@ -159,8 +159,8 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     f1_lo, f1_hi = f1[mask_lo], f1[mask_hi]
     f2_lo, f2_hi = f2[mask_lo], f2[mask_hi]
 
-    title_font = dict(family="Times New Roman, Times, serif", size=20)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=16)
+    title_font = dict(family="Times New Roman, Times, serif", size=28)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=20)
 
     fig = go.Figure()
 
@@ -304,8 +304,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     f1 = f1[order]
     f2 = f2[order]
 
-    title_font = dict(family="Times New Roman, Times, serif", size=18)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=14)
+    title_font = dict(family="Times New Roman, Times, serif", size=28)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=20)
 
     fig = go.Figure()
 
