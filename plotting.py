@@ -273,7 +273,6 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
             ),
         ],
         layout=go.Layout(
-            title="Частоты LF и HF в зависимости от H и T",
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
