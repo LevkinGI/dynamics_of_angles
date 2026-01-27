@@ -303,7 +303,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
         x=x_plane, y=y_plane, z=z_plane,
         colorscale=[[0, PLANE_COLOR], [1, PLANE_COLOR]],
         showscale=False,
-        opacity=0.3,
+        opacity=0.25,
         name=f"T = {T_plane} K",
         hoverinfo="skip"
     ))
