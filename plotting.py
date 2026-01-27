@@ -266,7 +266,7 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     return fig
 
 def create_freq_fig(T_vals, H_vals, freq_res_grid):
-    T_plane = 333
+    T_plane = 333.0
     
     T_vals = np.asarray(T_vals, dtype=float)
     H_kOe  = np.asarray(H_vals, dtype=float) / 1000.0
