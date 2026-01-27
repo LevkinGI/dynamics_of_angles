@@ -195,7 +195,6 @@ app.layout = html.Div([
                                showscale=False, name='LF')
                 ],
                 layout=go.Layout(
-                    title="Частоты LF и HF в зависимости от H и T",
                     scene=dict(
                         xaxis_title='Магнитное поле (Э)',
                         yaxis_title='Температура (K)',
