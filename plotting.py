@@ -282,8 +282,8 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=
 
     pad = "<br>" * int(title_pad_lines)
 
-    title_font = dict(family="Times New Roman, Times, serif", size=16)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=12)
+    title_font = dict(family="Times New Roman, Times, serif", size=18)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=14)
 
     fig = go.Figure()
 
@@ -291,14 +291,12 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=
         z=f1_grid, x=H_kOe, y=T_vals,
         colorscale=[[0.0, HF_LIGHT], [0.55, HF_MID], [1.0, HF_COLOR]],
         showscale=False, name='HF',
-        opacity=0.98
     ))
 
     fig.add_trace(go.Surface(
         z=f2_grid, x=H_kOe, y=T_vals,
         colorscale=[[0.0, LF_LIGHT], [0.55, LF_MID], [1.0, LF_COLOR]],
         showscale=False, name='LF',
-        opacity=0.98
     ))
 
     # полупрозрачная плоскость T = 333 K
@@ -319,20 +317,14 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=
             xaxis=dict(
                 title=dict(text=pad + "Magnetic field (kOe)", font=title_font),
                 tickfont=tick_font,
-                ticks="outside",
-                ticklen=4
             ),
             yaxis=dict(
                 title=dict(text=pad + "Temperature (K)", font=title_font),
                 tickfont=tick_font,
-                ticks="outside",
-                ticklen=4
             ),
             zaxis=dict(
                 title=dict(text=pad + "Frequency (GHz)", font=title_font),
                 tickfont=tick_font,
-                ticks="outside",
-                ticklen=4
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
