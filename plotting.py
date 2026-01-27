@@ -138,8 +138,8 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
     fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size)))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
     fig.update_layout(
         title={
             'text': f"H = {H} Э",
@@ -196,8 +196,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
     fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size)))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
     fig.update_layout(
         title={
             'text': f"T = {T} K",
