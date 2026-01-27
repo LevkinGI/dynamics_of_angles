@@ -342,15 +342,15 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
         margin=dict(l=45, r=45, t=20, b=45),  # ключевое для борьбы с наложениями
         scene=dict(
             xaxis=dict(
-                title=dict(text="pad + Magnetic field (kOe)", font=title_font),
+                title=dict(text=pad + "Magnetic field (kOe)", font=title_font),
                 tickfont=tick_font,
             ),
             yaxis=dict(
-                title=dict(text="pad + Temperature (K)", font=title_font),
+                title=dict(text=pad + "Temperature (K)", font=title_font),
                 tickfont=tick_font,
             ),
             zaxis=dict(
-                title=dict(text="pad + Frequency (GHz)", font=title_font),
+                title=dict(text=pad + "Frequency (GHz)", font=title_font),
                 tickfont=tick_font,
             ),
             camera=dict(projection=dict(type='orthographic')),
