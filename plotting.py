@@ -277,7 +277,10 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
             scene=dict(
                 xaxis_title='Магнитное поле (Э)',
                 yaxis_title='Температура (K)',
-                zaxis_title='Частота (ГГц)'
+                zaxis_title='Частота (ГГц)',
+                camera=dict(
+                    projection=dict(type='orthographic'),
+                ),
             ),
             font=dict(size=14),
             template="plotly_white"
