@@ -339,7 +339,6 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     fig.update_layout(
         template="plotly_white",
         font=dict(family="Times New Roman, Times, serif", size=14),
-        margin=dict(l=45, r=45, t=20, b=45),  # ключевое для борьбы с наложениями
         scene=dict(
             xaxis=dict(
                 title=dict(text=pad + f"Magnetic field (kOe)", font=title_font),
@@ -355,7 +354,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.7),
+            aspectratio=dict(x=1, y=1, z=0.6),
         ),
         legend=dict(
             font=dict(family="Times New Roman, Times, serif", size=12),
