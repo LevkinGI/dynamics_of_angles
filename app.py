@@ -369,7 +369,8 @@ def move_lam_slider(logk):
 @app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure'),
-     Output('phase-graph', 'figure')],
+     Output('phase-graph', 'figure'),
+     Output('frequency-surface-graph', 'figure')],
     [Input('H-slider', 'value'),
     Input('T-slider', 'value'),
     Input("alpha-scale-slider", "value"),
@@ -420,13 +421,15 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     M_array   = M_scale * (M_array_1 if material == '1' else M_array_2)
     K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
     
+    freq_res_grid = compute_frequencies(H_vals[::4], m_array[::6], M_array[::6], K_array[::6], gamma, alpha, lam)
     theta_0 = compute_phases(H_vals[::4], m_array[::6], M_array[::6], K_array[::6], lam)
     
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
+    freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
     phase_fig = create_phase_fig(T_vals[::6], H_vals[::4], theta_0)
 
-    return H_fix_fig, T_fix_fig, phase_fig
+    return H_fix_fig, T_fix_fig, phase_fig, freq_fig
 
 @app.callback(
     [Output('alpha-scale-slider',      'value'),
@@ -468,8 +471,7 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Output('theta-graph', 'figure'),
      Output('yz-graph', 'figure'),
      Output('phi-amplitude-graph', 'figure'),
-     Output('theta-amplitude-graph', 'figure'),
-     Output('frequency-surface-graph', 'figure')],
+     Output('theta-amplitude-graph', 'figure')],
     [Input('param-store', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
@@ -499,7 +501,6 @@ def update_graphs(store, H, T, material, calc_on):
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
 
-    freq_res_grid = compute_frequencies(H_vals[::4], m_array[::6], M_array[::6], K_array[::6], gamma, alpha, lam)
     theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
 
     m_val   = m_array[t_index]
@@ -597,17 +598,11 @@ def update_graphs(store, H, T, material, calc_on):
     if material_changed:
         phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
         theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
-        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
-    elif params_changed or switch_on:
-        phi_amp_fig = no_update
-        theta_amp_fig = no_update
-        freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
     else:
         phi_amp_fig = no_update
         theta_amp_fig = no_update
-        freq_fig = no_update
 
-    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig, freq_fig
+    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig
 
 @app.callback(
     Output('download-H-file', 'data'),
