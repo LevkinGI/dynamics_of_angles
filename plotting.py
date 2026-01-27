@@ -159,8 +159,8 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     f1_lo, f1_hi = f1[mask_lo], f1[mask_hi]
     f2_lo, f2_hi = f2[mask_lo], f2[mask_hi]
 
-    title_font = dict(family="Times New Roman, Times, serif", size=18)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=14)
+    title_font = dict(family="Times New Roman, Times, serif", size=20)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=16)
 
     fig = go.Figure()
 
@@ -233,12 +233,26 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         xaxis=dict(
             title=dict(text="Temperature (K)", font=title_font, standoff=18),
             tickfont=tick_font,
-            tickangle=0
+            tickangle=0,
+            showline=True,
+            linewidth=1,
+            linecolor="black",
+            mirror=True,
+            showgrid=True,
+            gridcolor="#cccccc",
+            gridwidth=1,
         ),
         yaxis=dict(
             title=dict(text="Frequency (GHz)", font=title_font, standoff=18),
             tickfont=tick_font,
-            tickangle=0
+            tickangle=0,
+            showline=True,
+            linewidth=1,
+            linecolor="black",
+            mirror=True,
+            showgrid=True,
+            gridcolor="#cccccc",
+            gridwidth=1,
         ),
         showlegend=False
     )
@@ -328,12 +342,26 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         xaxis=dict(
             title=dict(text="Magnetic field (kOe)", font=title_font, standoff=18),
             tickfont=tick_font,
-            tickangle=0
+            tickangle=0,
+            showline=True,
+            linewidth=1,
+            linecolor="black",
+            mirror=True,
+            showgrid=True,
+            gridcolor="#cccccc",
+            gridwidth=1,
         ),
         yaxis=dict(
             title=dict(text="Frequency (GHz)", font=title_font, standoff=18),
             tickfont=tick_font,
-            tickangle=0
+            tickangle=0,
+            showline=True,
+            linewidth=1,
+            linecolor="black",
+            mirror=True,
+            showgrid=True,
+            gridcolor="#cccccc",
+            gridwidth=1,
         ),
         showlegend=False
     )
