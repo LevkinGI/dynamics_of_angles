@@ -453,7 +453,7 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
     freq_fig = create_freq_fig(T_vals[::6], H_vals[::4], freq_res_grid)
-    phase_fig = create_phase_fig(T_vals[::6], H_vals[::4], theta_0)
+    phase_fig = create_phase_fig(T_vals[::6], theta_0)
 
     return H_fix_fig, T_fix_fig, phase_fig, freq_fig
 
