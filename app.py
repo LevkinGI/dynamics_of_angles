@@ -698,7 +698,7 @@ def download_tfix(n_clicks, T, store, material):
      Output('phi-graph', 'config'),
      Output('theta-graph', 'config'),
      Output('yz-graph', 'config')],
-    Input('exp-view-switch', 'on')
+    Input('png-svg-switch', 'on')
 )
 def update_graph_config(svg_on):
     format = 'svg' if svg_on else 'png'
