@@ -126,8 +126,9 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
     f1, f2 = np.where(delta <= 0, f1, f2), np.where(delta <= 0, f2, f1)
     t1, t2 = np.where(delta <= 0, t1, t2), np.where(delta <= 0, t2, t1)
 
-    f1, f2 = np.where(m_mesh >= 0, f1, f2), np.where(m_mesh >= 0, f2, f1)
-    t1, t2 = np.where(m_mesh >= 0, t1, t2), np.where(m_mesh >= 0, t2, t1)
+    Tm_idx = np.argmin(abs_m)
+    f1[Tm_idx:, :], f2[Tm_idx:, :] = f2[Tm_idx:, :], f1[Tm_idx:, :]
+    t1[Tm_idx:, :], t2[Tm_idx:, :] = t2[Tm_idx:, :], t1[Tm_idx:, :]
     
     return (f1, t1), (f2, t2)
 
@@ -173,8 +174,9 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
     f1, f2 = np.where(delta <= 0, f1, f2), np.where(delta <= 0, f2, f1)
     t1, t2 = np.where(delta <= 0, t1, t2), np.where(delta <= 0, t2, t1)
 
-    f1, f2 = np.where(m_vec >= 0, f1, f2), np.where(m_vec >= 0, f2, f1)
-    t1, t2 = np.where(m_vec >= 0, t1, t2), np.where(m_vec >= 0, t2, t1)
+    Tm_idx = np.argmin(abs_m)
+    f1[Tm_idx:], f2[Tm_idx:] = f2[Tm_idx:], f1[Tm_idx:]
+    t1[Tm_idx:], t2[Tm_idx:] = t2[Tm_idx:], t1[Tm_idx:]
 
     return (f1, t1), (f2, t2)
 
@@ -209,7 +211,7 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha, lam):
     f1, f2 = np.where(delta <= 0, f1, f2), np.where(delta <= 0, f2, f1)
     t1, t2 = np.where(delta <= 0, t1, t2), np.where(delta <= 0, t2, t1)
 
-    if m < 0: f1, f2, t1, t2 = f2, f1, t2, t1
+    if K < K_T(333): f1, f2, t1, t2 = f2, f1, t2, t1
 
     return (f1, t1), (f2, t2)
 
