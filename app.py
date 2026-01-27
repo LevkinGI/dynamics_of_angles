@@ -185,31 +185,7 @@ app.layout = html.Div([
             id='frequency-surface-graph',
             style={'display': 'inline-block', 'verticalAlign': 'top',
                    'width': '25%', 'height': 'calc(25vw)'},
-            figure=go.Figure(
-                data=[
-                    go.Surface(z=f1_GHz, x=H_vals[::4], y=T_vals_1[::6],
-                               colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
-                               showscale=False, name='HF'),
-                    go.Surface(z=f2_GHz, x=H_vals[::4], y=T_vals_1[::6],
-                               colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
-                               showscale=False, name='LF')
-                ],
-                layout=go.Layout(
-                    scene=dict(
-                        xaxis_title='Магнитное поле (Э)',
-                        yaxis_title='Температура (K)',
-                        zaxis_title='Частота (ГГц)',
-                        camera=dict(
-                            projection=dict(type='orthographic'),
-                        ),
-                        aspectmode='manual',
-                        aspectratio=dict(x=1, y=1, z=0.7),
-                    ),
-                    font=dict(size=14),
-                    template="plotly_white"
-                )
-            )
-        ),
+            ),
         html.Div([
             html.Button('Скачать данные', id='download-H-btn',
                         style={'margin-bottom': '5px'}),
