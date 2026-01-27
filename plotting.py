@@ -160,7 +160,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     f2_lo, f2_hi = f2[mask_lo], f2[mask_hi]
 
     title_font = dict(family="Times New Roman, Times, serif", size=28)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=20)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=24)
 
     fig = go.Figure()
 
@@ -231,7 +231,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
             font=title_font
         ),
         xaxis=dict(
-            title=dict(text="Temperature (K)", font=title_font, standoff=18),
+            title=dict(text="Temperature (K)", font=title_font, standoff=16),
             tickfont=tick_font,
             tickangle=0,
             showline=True,
@@ -243,7 +243,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
             gridwidth=1,
         ),
         yaxis=dict(
-            title=dict(text="Frequency (GHz)", font=title_font, standoff=18),
+            title=dict(text="Frequency (GHz)", font=title_font, standoff=16),
             tickfont=tick_font,
             tickangle=0,
             showline=True,
@@ -305,7 +305,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     f2 = f2[order]
 
     title_font = dict(family="Times New Roman, Times, serif", size=28)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=20)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=24)
 
     fig = go.Figure()
 
@@ -340,7 +340,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
             font=title_font
         ),
         xaxis=dict(
-            title=dict(text="Magnetic field (kOe)", font=title_font, standoff=18),
+            title=dict(text="Magnetic field (kOe)", font=title_font, standoff=16),
             tickfont=tick_font,
             tickangle=0,
             showline=True,
@@ -352,7 +352,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
             gridwidth=1,
         ),
         yaxis=dict(
-            title=dict(text="Frequency (GHz)", font=title_font, standoff=18),
+            title=dict(text="Frequency (GHz)", font=title_font, standoff=16),
             tickfont=tick_font,
             tickangle=0,
             showline=True,
