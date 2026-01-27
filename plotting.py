@@ -4,9 +4,11 @@ from plotly.subplots import make_subplots
 import numpy as np
 
 LF_COLOR = '#e74c3c'
-LF_LIGHT = '#f5b7b1'
+LF_LIGHT = '#fdecea'
+LF_MID   = '#f5b7b1'
 HF_COLOR = '#1f77b4'
-HF_LIGHT = '#9cc7e6'
+HF_LIGHT = '#e8f2fb'
+HF_MID   = '#9cc7e6'
 PLANE_COLOR = '#c7cfd6'
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
@@ -308,22 +310,22 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
 
     fig.add_trace(go.Surface(
         z=f1_lo, x=H_kOe, y=T_lo,
-        colorscale=[[0.0, HF_LIGHT], [1.0, HF_COLOR]],
+        colorscale=[[0.0, HF_LIGHT], [0.45, HF_MID], [1.0, HF_COLOR]],
         showscale=False, name='HF'
     ))
     fig.add_trace(go.Surface(
         z=f2_hi, x=H_kOe, y=T_hi,
-        colorscale=[[0.0, HF_LIGHT], [1.0, HF_COLOR]],
+        colorscale=[[0.0, HF_LIGHT], [0.45, HF_MID], [1.0, HF_COLOR]],
         showscale=False, name='HF'
     ))
     fig.add_trace(go.Surface(
         z=f2_lo, x=H_kOe, y=T_lo,
-        colorscale=[[0.0, LF_LIGHT], [1.0, LF_COLOR]],
+        colorscale=[[0.0, LF_LIGHT], [0.45, LF_MID], [1.0, LF_COLOR]],
         showscale=False, name='LF'
     ))
     fig.add_trace(go.Surface(
         z=f1_hi, x=H_kOe, y=T_hi,
-        colorscale=[[0.0, LF_LIGHT], [1.0, LF_COLOR]],
+        colorscale=[[0.0, LF_LIGHT], [0.45, LF_MID], [1.0, LF_COLOR]],
         showscale=False, name='LF'
     ))
 
