@@ -4,7 +4,12 @@ from plotly.subplots import make_subplots
 import numpy as np
 
 LF_COLOR = '#e74c3c'
+LF_LIGHT = '#fdecea'
+LF_MID   = '#f5b7b1'
 HF_COLOR = '#1f77b4'
+HF_LIGHT = '#e8f2fb'
+HF_MID   = '#9cc7e6'
+PLANE_COLOR = '#c7cfd6'
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
     fig = go.Figure()
@@ -260,38 +265,83 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     )
     return fig
 
-def create_freq_fig(T_vals, H_vals, freq_res_grid):
-    H_kOe = H_vals / 1000
+def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
+    T_vals = np.asarray(T_vals, dtype=float)
+    H_kOe  = np.asarray(H_vals, dtype=float) / 1000.0
     (f1_grid, _), (f2_grid, _) = freq_res_grid
 
-    fig = go.Figure(
-        data=[
-            go.Surface(
-                z=f1_grid, x=H_kOe, y=T_vals,
-                colorscale=[[0, 'rgb(173,216,230)'], [1, HF_COLOR]],
-                showscale=False, name='HF'
+    zmin = float(np.nanmin([np.nanmin(f1_grid), np.nanmin(f2_grid)]))
+    zmax = float(np.nanmax([np.nanmax(f1_grid), np.nanmax(f2_grid)]))
+
+    x_plane = np.tile(H_kOe, (2, 1))
+    y_plane = np.full((2, H_kOe.size), float(T_plane))
+    z_plane = np.vstack([
+        np.full(H_kOe.size, zmin),
+        np.full(H_kOe.size, zmax)
+    ])
+
+    fig = go.Figure()
+
+    fig.add_trace(go.Surface(
+        z=f1_grid, x=H_kOe, y=T_vals,
+        colorscale=[[0.0, HF_LIGHT], [0.55, HF_MID], [1.0, HF_COLOR]],
+        showscale=False, name='HF',
+        opacity=0.98
+    ))
+
+    fig.add_trace(go.Surface(
+        z=f2_grid, x=H_kOe, y=T_vals,
+        colorscale=[[0.0, LF_LIGHT], [0.55, LF_MID], [1.0, LF_COLOR]],
+        showscale=False, name='LF',
+        opacity=0.98
+    ))
+
+    # полупрозрачная плоскость T = 333 K
+    fig.add_trace(go.Surface(
+        x=x_plane, y=y_plane, z=z_plane,
+        colorscale=[[0, PLANE_COLOR], [1, PLANE_COLOR]],
+        showscale=False,
+        opacity=0.25,
+        name=f"T = {T_plane} K",
+        hoverinfo="skip"
+    ))
+
+    title_font = dict(family="Times New Roman, Times, serif", size=16)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=13)
+
+    fig.update_layout(
+        template="plotly_white",
+        font=dict(family="Times New Roman, Times, serif", size=14),
+        margin=dict(l=12, r=12, t=12, b=12),
+        scene=dict(
+            xaxis=dict(
+                title=dict(text='Magnetic field (kOe)', font=title_font, standoff=18),
+                tickfont=tick_font,
+                ticks="outside",
+                ticklen=5
             ),
-            go.Surface(
-                z=f2_grid, x=H_kOe, y=T_vals,
-                colorscale=[[0, 'rgb(255,182,193)'], [1, LF_COLOR]],
-                showscale=False, name='LF'
+            yaxis=dict(
+                title=dict(text='Temperature (K)', font=title_font, standoff=18),
+                tickfont=tick_font,
+                ticks="outside",
+                ticklen=5
             ),
-        ],
-        layout=go.Layout(
-            scene=dict(
-                xaxis_title='Magnetic field (kOe)',
-                yaxis_title='Temperature (K)',
-                zaxis_title='Frequency (GHz)',
-                camera=dict(
-                    projection=dict(type='orthographic'),
-                ),
-                aspectmode='manual',
-                aspectratio=dict(x=1, y=1, z=0.7),
+            zaxis=dict(
+                title=dict(text='Frequency (GHz)', font=title_font, standoff=18),
+                tickfont=tick_font,
+                ticks="outside",
+                ticklen=5
             ),
-            font=dict(size=14),
-            template="plotly_white"
+            camera=dict(projection=dict(type='orthographic')),
+            aspectmode='manual',
+            aspectratio=dict(x=1, y=1, z=0.7),
+        ),
+        legend=dict(
+            font=dict(family="Times New Roman, Times, serif", size=13),
+            bgcolor="rgba(255,255,255,0.7)"
         )
     )
+
     return fig
 
 # def create_freq_fig(T_vals, H_vals, freq_array1, freq_array2):
