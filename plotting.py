@@ -280,7 +280,6 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
                 zaxis_title='Частота (ГГц)',
                 camera=dict(
                     projection=dict(type='orthographic'),
-                    eye=dict(x=0, z=0),
                 ),
                 aspectmode='manual',
                 aspectratio=dict(x=1, y=1, z=0.7),
