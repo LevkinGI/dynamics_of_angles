@@ -123,8 +123,8 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
     f1, t1 = sorted_roots.real[:, :, 0] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, :, 0]
     f2, t2 = sorted_roots.real[:, :, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, :, 1]
 
-    f1, f2 = np.where(delta >= 0, f1, f2), np.where(delta >= 0, f2, f1)
-    t1, t2 = np.where(delta >= 0, t1, t2), np.where(delta >= 0, t2, t1)
+    f1, f2 = np.where(delta <= 0, f1, f2), np.where(delta <= 0, f2, f1)
+    t1, t2 = np.where(delta <= 0, t1, t2), np.where(delta <= 0, t2, t1)
     
     return (f1, t1), (f2, t2)
 
