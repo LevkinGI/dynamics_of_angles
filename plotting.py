@@ -4,7 +4,7 @@ from plotly.subplots import make_subplots
 import numpy as np
 
 LF_COLOR = '#e74c3c'
-HF_color = '#e74c3c'
+HF_COLOR = '#e74c3c'
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
     fig = go.Figure()
