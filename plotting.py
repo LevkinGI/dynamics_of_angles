@@ -142,15 +142,15 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
     fig.update_layout(
         title={
-            'text': f"H = {H} Э",
+            'text': f"H = {H/1000} kOe",
             'x': 0.5,
             'y': 0.95,
             'yref': 'paper',
             'xanchor': 'center',
             'yanchor': 'top',
         },
-        xaxis_title="Температура (K)",
-        yaxis_title="Частота (ГГц)",
+        xaxis_title="Temperature (K)",
+        yaxis_title="Frequency (GHz)",
         font=dict(size=18),
         template="plotly_white",
         showlegend=False
@@ -191,13 +191,14 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
 #     return fig
 
 def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
+    H_kOe = H_vals / 1000
     (f1, t1), (f2, t2) = T_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
-    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
+    fig.add_trace(go.Scatter(x=H_kOe, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
+    fig.add_trace(go.Scatter(x=H_kOe, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
+        fig.add_trace(go.Scatter(x=data[0]/1000, y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
+        fig.add_trace(go.Scatter(x=data[0]/1000, y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))))
     fig.update_layout(
         title={
             'text': f"T = {T} K",
@@ -207,8 +208,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
             'xanchor': 'center',
             'yanchor': 'top'
         },
-        xaxis_title="Магнитное поле (Э)",
-        yaxis_title="Частота (ГГц)",
+        xaxis_title="Magnetic field (kOe)",
+        yaxis_title="Frequency (GHz)",
         font=dict(size=18),
         template="plotly_white",
         showlegend=False
@@ -260,26 +261,27 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     return fig
 
 def create_freq_fig(T_vals, H_vals, freq_res_grid):
+    H_kOe = H_vals / 1000
     (f1_grid, _), (f2_grid, _) = freq_res_grid
 
     fig = go.Figure(
         data=[
             go.Surface(
-                z=f1_grid, x=H_vals, y=T_vals,
+                z=f1_grid, x=H_kOe, y=T_vals,
                 colorscale=[[0, 'rgb(173,216,230)'], [1, HF_COLOR]],
                 showscale=False, name='HF'
             ),
             go.Surface(
-                z=f2_grid, x=H_vals, y=T_vals,
+                z=f2_grid, x=H_kOe, y=T_vals,
                 colorscale=[[0, 'rgb(255,182,193)'], [1, LF_COLOR]],
                 showscale=False, name='LF'
             ),
         ],
         layout=go.Layout(
             scene=dict(
-                xaxis_title='Магнитное поле (Э)',
-                yaxis_title='Температура (K)',
-                zaxis_title='Частота (ГГц)',
+                xaxis_title='Magnetic field (kOe)',
+                yaxis_title='Temperature (K)',
+                zaxis_title='Frequency (GHz)',
                 camera=dict(
                     projection=dict(type='orthographic'),
                 ),
@@ -316,6 +318,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
 #     return fig
 
 def create_phase_fig(T_vals, H_vals, theta_0):
+    H_kOe = H_vals / 1000
     theta_0 = theta_0.T
     custom_colorscale = [
         [0.00, 'rgb(0, 0, 0)'],        # black
@@ -326,7 +329,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     ]
     heat = go.Heatmap(
         x=T_vals,
-        y=H_vals,
+        y=H_kOe,
         z=theta_0,
         colorscale=custom_colorscale,
         colorbar=dict(
@@ -347,7 +350,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
 
     contour = go.Contour(
         x=T_vals,
-        y=H_vals,
+        y=H_kOe,
         z=theta_0,
         showscale=False,
         contours=dict(
@@ -361,8 +364,8 @@ def create_phase_fig(T_vals, H_vals, theta_0):
     mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.1)
     if np.any(mask):
         idx_min, idx_max = np.where(mask)[0][[0, -1]]
-        y_noncol = H_vals[idx_max] + 300
-        y_col    = H_vals[idx_min] - 300
+        y_noncol = H_kOe[idx_max] + 0.3
+        y_col    = H_kOe[idx_min] - 0.3
         fig.add_annotation(x=T_vals[0], y=y_noncol,
                            text='non‑collinear',
                            showarrow=False, font=dict(color='white', size=14),
@@ -374,7 +377,7 @@ def create_phase_fig(T_vals, H_vals, theta_0):
 
     fig.update_layout(
         xaxis=dict(title='T (K)', range=[T_vals.min(), T_vals.max()]),
-        yaxis=dict(title='H (Oe)', range=[H_vals.min(), H_vals.max()]),
+        yaxis=dict(title='H (kOe)', range=[H_kOe.min(), H_kOe.max()]),
         template='plotly_white',
         margin=dict(l=60, r=40, t=40, b=60)
     )
