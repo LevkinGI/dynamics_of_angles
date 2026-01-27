@@ -265,7 +265,7 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     )
     return fig
 
-def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
+def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=2):
     T_vals = np.asarray(T_vals, dtype=float)
     H_kOe  = np.asarray(H_vals, dtype=float) / 1000.0
     (f1_grid, _), (f2_grid, _) = freq_res_grid
@@ -279,6 +279,11 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
         np.full(H_kOe.size, zmin),
         np.full(H_kOe.size, zmax)
     ])
+
+    pad = "<br>" * int(title_pad_lines)
+
+    title_font = dict(family="Times New Roman, Times, serif", size=16)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=12)
 
     fig = go.Figure()
 
@@ -306,38 +311,35 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333):
         hoverinfo="skip"
     ))
 
-    title_font = dict(family="Times New Roman, Times, serif", size=16)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=13)
-
     fig.update_layout(
         template="plotly_white",
         font=dict(family="Times New Roman, Times, serif", size=14),
-        margin=dict(l=12, r=12, t=12, b=12),
+        margin=dict(l=45, r=45, t=20, b=45),  # ключевое для борьбы с наложениями
         scene=dict(
             xaxis=dict(
-                title=dict(text='Magnetic field (kOe)', font=title_font, standoff=18),
+                title=dict(text=pad + "Magnetic field (kOe)", font=title_font),
                 tickfont=tick_font,
                 ticks="outside",
-                ticklen=5
+                ticklen=4
             ),
             yaxis=dict(
-                title=dict(text='Temperature (K)', font=title_font, standoff=18),
+                title=dict(text=pad + "Temperature (K)", font=title_font),
                 tickfont=tick_font,
                 ticks="outside",
-                ticklen=5
+                ticklen=4
             ),
             zaxis=dict(
-                title=dict(text='Frequency (GHz)', font=title_font, standoff=18),
+                title=dict(text=pad + "Frequency (GHz)", font=title_font),
                 tickfont=tick_font,
                 ticks="outside",
-                ticklen=5
+                ticklen=4
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.7),
         ),
         legend=dict(
-            font=dict(family="Times New Roman, Times, serif", size=13),
+            font=dict(family="Times New Roman, Times, serif", size=12),
             bgcolor="rgba(255,255,255,0.7)"
         )
     )
