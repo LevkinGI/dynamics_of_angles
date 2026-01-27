@@ -264,36 +264,37 @@ def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
     return fig
 
 def create_freq_fig(T_vals, H_vals, freq_res_grid):
+    T_plane = 333
+    
     T_vals = np.asarray(T_vals, dtype=float)
     H_kOe  = np.asarray(H_vals, dtype=float) / 1000.0
+    
     (f1_grid, _), (f2_grid, _) = freq_res_grid
+    
+    mask_lo = T_vals <= T_plane
+    mask_hi = T_vals > T_plane
+    T_lo = T_vals[mask_lo]
+    T_hi = T_vals[mask_hi]
+    f1_lo = f1_grid[mask_lo, :]
+    f1_hi = f1_grid[mask_hi, :]
+    f2_lo = f2_grid[mask_lo, :]
+    f2_hi = f2_grid[mask_hi, :]
 
     zmin = float(np.nanmin([np.nanmin(f1_grid), np.nanmin(f2_grid)]))
     zmax = float(np.nanmax([np.nanmax(f1_grid), np.nanmax(f2_grid)]))
 
-    x_plane = np.tile(H_kOe, (2, 1))
-    y_plane = np.full((2, H_kOe.size), float(333))
-    z_plane = np.vstack([
-        np.full(H_kOe.size, zmin),
-        np.full(H_kOe.size, zmax)
-    ])
+    Hmin, Hmax = float(np.nanmin(H_kOe)), float(np.nanmax(H_kOe))
+    x_plane = np.array([[Hmin, Hmax],
+                        [Hmin, Hmax]])
+    y_plane = np.array([[T_plane, T_plane],
+                        [T_plane, T_plane]])
+    z_plane = np.array([[zmin, zmin],
+                        [zmax, zmax]])
 
     title_font = dict(family="Times New Roman, Times, serif", size=18)
     tick_font  = dict(family="Times New Roman, Times, serif", size=14)
 
     fig = go.Figure()
-
-    fig.add_trace(go.Surface(
-        z=f1_grid, x=H_kOe, y=T_vals,
-        colorscale=[[0.0, HF_LIGHT], [1.0, HF_COLOR]],
-        showscale=False, name='HF',
-    ))
-
-    fig.add_trace(go.Surface(
-        z=f2_grid, x=H_kOe, y=T_vals,
-        colorscale=[[0.0, LF_LIGHT], [1.0, LF_COLOR]],
-        showscale=False, name='LF',
-    ))
 
     # полупрозрачная плоскость T = 333 K
     fig.add_trace(go.Surface(
@@ -301,8 +302,29 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
         colorscale=[[0, PLANE_COLOR], [1, PLANE_COLOR]],
         showscale=False,
         opacity=0.3,
-        name=f"T = {333} K",
+        name=f"T = {T_plane} K",
         hoverinfo="skip"
+    ))
+
+    fig.add_trace(go.Surface(
+        z=f1_lo, x=H_kOe, y=T_lo,
+        colorscale=[[0.0, HF_LIGHT], [1.0, HF_COLOR]],
+        showscale=False, name='HF'
+    ))
+    fig.add_trace(go.Surface(
+        z=f2_hi, x=H_kOe, y=T_hi,
+        colorscale=[[0.0, HF_LIGHT], [1.0, HF_COLOR]],
+        showscale=False, name='HF'
+    ))
+    fig.add_trace(go.Surface(
+        z=f2_lo, x=H_kOe, y=T_lo,
+        colorscale=[[0.0, LF_LIGHT], [1.0, LF_COLOR]],
+        showscale=False, name='LF'
+    ))
+    fig.add_trace(go.Surface(
+        z=f1_hi, x=H_kOe, y=T_hi,
+        colorscale=[[0.0, LF_LIGHT], [1.0, LF_COLOR]],
+        showscale=False, name='LF'
     ))
 
     fig.update_layout(
