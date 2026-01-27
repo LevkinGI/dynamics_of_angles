@@ -75,7 +75,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
             dcc.Slider(id='alpha-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.17),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
@@ -123,7 +123,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='lam-scale-label'),
             dcc.Slider(id='lam-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.4),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
