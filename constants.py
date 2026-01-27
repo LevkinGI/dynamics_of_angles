@@ -167,6 +167,9 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
     f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 0]
     f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 1]
 
+    f1, f2 = np.where(delta <= 0, f1, f2), np.where(delta <= 0, f2, f1)
+    t1, t2 = np.where(delta <= 0, t1, t2), np.where(delta <= 0, t2, t1)
+
     return (f1, t1), (f2, t2)
 
 # вектор по полю, T – скаляр
@@ -196,6 +199,9 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha, lam):
 
     f1, t1 = sorted_roots.real[:, 0] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 0]
     f2, t2 = sorted_roots.real[:, 1] / (2 * np.pi * 1e9), -1e9 / sorted_roots.imag[:, 1]
+
+    f1, f2 = np.where(delta <= 0, f1, f2), np.where(delta <= 0, f2, f1)
+    t1, t2 = np.where(delta <= 0, t1, t2), np.where(delta <= 0, t2, t1)
 
     return (f1, t1), (f2, t2)
 
