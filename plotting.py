@@ -311,21 +311,25 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     fig.add_trace(go.Surface(
         z=f1_lo, x=H_kOe, y=T_lo,
         colorscale=[[0.0, HF_LIGHT], [0.45, HF_MID], [1.0, HF_COLOR]],
+        cmin=f1_grid.min(), cmax=f1_grid.max(),
         showscale=False, name='HF'
     ))
     fig.add_trace(go.Surface(
         z=f2_hi, x=H_kOe, y=T_hi,
         colorscale=[[0.0, HF_LIGHT], [0.45, HF_MID], [1.0, HF_COLOR]],
+        cmin=f1_grid.min(), cmax=f1_grid.max(),
         showscale=False, name='HF'
     ))
     fig.add_trace(go.Surface(
         z=f2_lo, x=H_kOe, y=T_lo,
         colorscale=[[0.0, LF_LIGHT], [0.45, LF_MID], [1.0, LF_COLOR]],
+        cmin=f2_grid.min(), cmax=f2_grid.max(),
         showscale=False, name='LF'
     ))
     fig.add_trace(go.Surface(
         z=f1_hi, x=H_kOe, y=T_hi,
         colorscale=[[0.0, LF_LIGHT], [0.45, LF_MID], [1.0, LF_COLOR]],
+        cmin=f2_grid.min(), cmax=f2_grid.max(),
         showscale=False, name='LF'
     ))
 
