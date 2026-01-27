@@ -202,7 +202,10 @@ app.layout = html.Div([
                         zaxis_title='Частота (ГГц)',
                         camera=dict(
                             projection=dict(type='orthographic'),
+                            eye=dict(x=0, z=0),
                         ),
+                        aspectmode='manual',
+                        aspectratio=dict(x=1, y=1, z=0.7),
                     ),
                     font=dict(size=14),
                     template="plotly_white"
