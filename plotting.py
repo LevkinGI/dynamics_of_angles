@@ -3,6 +3,9 @@ import plotly.graph_objs as go
 from plotly.subplots import make_subplots
 import numpy as np
 
+LF_COLOR = '#e74c3c'
+HF_color = '#e74c3c'
+
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=time, y=phi, mode='lines', name='Численное решение', line=dict(color='red')))
@@ -132,11 +135,11 @@ dot_size = 8
 def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     (f1, t1), (f2, t2) = H_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
+    fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
+    fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size)))
     fig.update_layout(
         title={
             'text': f"H = {H} Э",
@@ -190,11 +193,11 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
 def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     (f1, t1), (f2, t2) = T_fix_res
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')))
-    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')))
+    fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color=HF_COLOR)))
+    fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color=LF_COLOR)))
     if data is not None:
-        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)))
-        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[1], mode='markers', name='LF (эксп.)', marker=dict(color=LF_COLOR, size=dot_size)))
+        fig.add_trace(go.Scatter(x=data[0], y=data[2], mode='markers', name='HF (эксп.)', marker=dict(color=HF_COLOR, size=dot_size)))
     fig.update_layout(
         title={
             'text': f"T = {T} K",
@@ -263,12 +266,12 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
         data=[
             go.Surface(
                 z=f1_grid, x=H_vals, y=T_vals,
-                colorscale=[[0, 'rgb(173,216,230)'], [1, 'rgb(0,0,255)']],
+                colorscale=[[0, 'rgb(173,216,230)'], [1, HF_COLOR]],
                 showscale=False, name='HF'
             ),
             go.Surface(
                 z=f2_grid, x=H_vals, y=T_vals,
-                colorscale=[[0, 'rgb(255,182,193)'], [1, 'rgb(255,0,0)']],
+                colorscale=[[0, 'rgb(255,182,193)'], [1, LF_COLOR]],
                 showscale=False, name='LF'
             ),
         ],
