@@ -274,7 +274,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     (f1_grid, _), (f2_grid, _) = freq_res_grid
     
     mask_lo = T_vals <= T_plane
-    mask_hi = T_vals > T_plane
+    mask_hi = T_vals >= T_plane
     T_lo = T_vals[mask_lo]
     T_hi = T_vals[mask_hi]
     f1_lo = f1_grid[mask_lo, :]
