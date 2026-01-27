@@ -4,11 +4,11 @@ from plotly.subplots import make_subplots
 import numpy as np
 
 LF_COLOR = '#e74c3c'
-LF_LIGHT = '#fdecea'
-LF_MID   = '#f5b7b1'
+LF_LIGHT = '#f8c9c5'
+LF_MID   = '#f19a93'
 HF_COLOR = '#1f77b4'
-HF_LIGHT = '#e8f2fb'
-HF_MID   = '#9cc7e6'
+HF_LIGHT = '#bfd7ee'
+HF_MID   = '#7fb0da'
 PLANE_COLOR = '#c7cfd6'
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
