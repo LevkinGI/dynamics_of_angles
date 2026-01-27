@@ -271,7 +271,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
             ),
             go.Surface(
                 z=f2_grid, x=H_vals, y=T_vals,
-                colorscale=[[0, 'rgb(255,182,193)'], [0.3, LF_COLOR]],
+                colorscale=[[0, 'rgb(255,182,193)'], [1, LF_COLOR]],
                 showscale=False, name='LF'
             ),
         ],
