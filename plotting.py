@@ -4,11 +4,9 @@ from plotly.subplots import make_subplots
 import numpy as np
 
 LF_COLOR = '#e74c3c'
-LF_LIGHT = '#fdecea'
-LF_MID   = '#f5b7b1'
+LF_LIGHT = '#f5b7b1'
 HF_COLOR = '#1f77b4'
-HF_LIGHT = '#e8f2fb'
-HF_MID   = '#9cc7e6'
+HF_LIGHT = '#9cc7e6'
 PLANE_COLOR = '#c7cfd6'
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
@@ -280,8 +278,6 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=
         np.full(H_kOe.size, zmax)
     ])
 
-    pad = "<br>" * int(title_pad_lines)
-
     title_font = dict(family="Times New Roman, Times, serif", size=18)
     tick_font  = dict(family="Times New Roman, Times, serif", size=14)
 
@@ -289,13 +285,13 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=
 
     fig.add_trace(go.Surface(
         z=f1_grid, x=H_kOe, y=T_vals,
-        colorscale=[[0.0, HF_LIGHT], [0.55, HF_MID], [1.0, HF_COLOR]],
+        colorscale=[[0.0, HF_LIGHT], [1.0, HF_COLOR]],
         showscale=False, name='HF',
     ))
 
     fig.add_trace(go.Surface(
         z=f2_grid, x=H_kOe, y=T_vals,
-        colorscale=[[0.0, LF_LIGHT], [0.55, LF_MID], [1.0, LF_COLOR]],
+        colorscale=[[0.0, LF_LIGHT], [1.0, LF_COLOR]],
         showscale=False, name='LF',
     ))
 
@@ -315,15 +311,15 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, T_plane=333, title_pad_lines=
         margin=dict(l=45, r=45, t=20, b=45),  # ключевое для борьбы с наложениями
         scene=dict(
             xaxis=dict(
-                title=dict(text=pad + "Magnetic field (kOe)", font=title_font),
+                title=dict(text="Magnetic field (kOe)", font=title_font),
                 tickfont=tick_font,
             ),
             yaxis=dict(
-                title=dict(text=pad + "Temperature (K)", font=title_font),
+                title=dict(text="Temperature (K)", font=title_font),
                 tickfont=tick_font,
             ),
             zaxis=dict(
-                title=dict(text=pad + "Frequency (GHz)", font=title_font),
+                title=dict(text="Frequency (GHz)", font=title_font),
                 tickfont=tick_font,
             ),
             camera=dict(projection=dict(type='orthographic')),
