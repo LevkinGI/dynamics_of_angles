@@ -47,7 +47,7 @@ H_1700 = np.array([[298,	303,	308,	313,	318,	323,	328,	333],
 
 # Исходные параметры (Материал 1)
 H_step = 10
-H_lim = 4000
+H_lim = 2000
 H_vals = np.arange(0, H_lim + 1, H_step)
 T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
