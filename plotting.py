@@ -263,6 +263,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     fig.update_layout(
         template="plotly_white",
         font=dict(family="Times New Roman, Times, serif", size=14),
+        margin=dict(l=90, r=10, t=10, b=70),
         title=dict(
             text=f"H = {H/1000} kOe",
             x=0.5, y=0.95, yref='paper',
@@ -481,6 +482,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     fig.update_layout(
         template="plotly_white",
         font=dict(family="Times New Roman, Times, serif", size=14),
+        margin=dict(l=90, r=10, t=10, b=70),
         scene=dict(
             xaxis=dict(
                 title=dict(text=pad + f"Magnetic field (kOe)", font=title_font),
