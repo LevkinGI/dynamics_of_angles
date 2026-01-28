@@ -473,7 +473,7 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('png-svg-switch', 'on'),],
     [State('phi-graph', 'figure'),
      State('theta-graph', 'figure'),
-     State('yz-graph', 'figure')]
+     State('yz-graph', 'figure')],
     prevent_initial_call=True,
 )
 def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz_fig):
