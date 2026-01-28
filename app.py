@@ -634,7 +634,7 @@ def download_tfix(n_clicks, T, store, material):
      Output('phi-graph', 'config'),
      Output('theta-graph', 'config'),
      Output('yz-graph', 'config')],
-    Input('png-svg-switch', 'on')
+    Input('png-svg-switch', 'on'),
     prevent_initial_call=True,
 )
 def update_graph_config(svg_on):
