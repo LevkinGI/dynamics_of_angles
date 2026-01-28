@@ -124,17 +124,6 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
     
     return (f1, t1), (f2, t2)
 
-# Вычисление частот
-# --- FeFe ---
-(f1_GHz, _), (f2_GHz, _) = compute_frequencies(
-        H_vals[::4],
-        m_array_1[::6],
-        M_array_1[::6],
-        K_array_1[::6],
-        gamma,
-        alpha_1,
-        lam_1)
-
 # вектор по температуре, H – скаляр
 def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
     chi_vec = chi_func(m_vec, M_vec, lam)
@@ -229,8 +218,6 @@ __all__ = [
     # JIT-функция для частот
     'compute_frequencies', 'compute_phases',
     'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
-    # частоты
-    'f1_GHz', 'f2_GHz',
     # данные
     'T_293', 'T_298', 'T_308', 'T_310', 'T_320', 'T_323',
     'H_1000', 'H_1700',
