@@ -25,7 +25,7 @@ from fitting import residuals_stage1, residuals_stage2, combined_residuals
 from plotting import *
 from copy import deepcopy
 
-w_fix, h_fix = 510, 400
+w_fix, h_fix = 600, 400
 w_freq, h_freq = 900, 400
 w_anles, h_angles = 900, 400
 w_square, h_square = 400, 400
