@@ -407,50 +407,6 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
 
     return fig
 
-def create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static):
-    fig = go.Figure(
-        data=[go.Surface(
-            z=amplitude_phi_static[::6, ::4],
-            x=H_vals[::4],
-            y=T_vals[::6],
-            colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
-            showscale=False,
-            name='LF'
-        )],
-        layout=go.Layout(
-            scene=dict(
-                xaxis_title='Магнитное поле (Э)',
-                yaxis_title='Температура (K)',
-                zaxis_title='Амплитуда φ (°)'
-            ),
-            font=dict(size=14),
-            template="plotly_white"
-        )
-    )
-    return fig
-
-def create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static):
-    fig = go.Figure(
-        data=[go.Surface(
-            z=amplitude_theta_static[::6, ::4],
-            x=H_vals[::4],
-            y=T_vals[::6],
-            colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
-            showscale=False,
-            name='HF'
-        )],
-        layout=go.Layout(
-            scene=dict(
-                xaxis_title='Магнитное поле (Э)',
-                yaxis_title='Температура (K)',
-                zaxis_title='Амплитуда θ (°)'
-            ),
-            font=dict(size=14),
-            template="plotly_white"
-        )
-    )
-    return fig
-
 def create_freq_fig(T_vals, H_vals, freq_res_grid):
     T_plane = 333.0
     
@@ -643,5 +599,5 @@ def create_phase_fig(T_vals, theta_0):
     
 __all__ = [
     'create_phi_fig', 'create_theta_fig', 'create_yz_fig', 'create_H_fix_fig', 'create_phase_fig',
-    'create_T_fix_fig', 'create_phi_amp_fig', 'create_theta_amp_fig', 'create_freq_fig',
+    'create_T_fix_fig', 'create_freq_fig',
 ]
