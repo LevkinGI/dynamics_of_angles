@@ -1,6 +1,5 @@
 # constants.py
 import numpy as np
-from numba import njit, prange
 from typing import Iterable
 
 # Данные
@@ -62,12 +61,10 @@ h_IFE = 7500                # Ое
 delta_t = 250e-15           # с
 
 # Материал 1
-@njit(cache=False, fastmath=True)
 def K_T(T: Iterable[float] | float) -> np.ndarray:
     """Анизотропия как функция температуры."""
     return 0.522 * (T - 370.0) ** 2
 
-@njit(cache=False, fastmath=True)
 def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
     denom = 1.0 - (m**2) / (M**2 + 1e-16)
