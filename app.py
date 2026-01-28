@@ -27,7 +27,7 @@ from copy import deepcopy
 
 w_fix, h_fix = 600, 400
 w_freq, h_freq = 900, 400
-w_anles, h_angles = 900, 400
+w_angles, h_angles = 900, 400
 w_square, h_square = 400, 400
 
 sliders_range = 5
@@ -263,8 +263,8 @@ app.layout = html.Div([
     
     html.Div([
         html.Div([
-            dcc.Graph(id='phi-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика phi','width': w_anles,'height': h_anles,'scale': 2}}),
-            dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','width': w_anles,'height': h_anles,'scale': 2}}),
+            dcc.Graph(id='phi-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика phi','width': w_angles,'height': h_angles,'scale': 2}}),
+            dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','width': w_angles,'height': h_angles,'scale': 2}}),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '60%', 'height': 'calc(40vw)'}),
         dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_square,'height': w_square,'scale': 2}})
@@ -675,8 +675,8 @@ def update_graph_config(svg_on):
     freq_conf = {'toImageButtonOptions': {'format': format,'filename': 'Частоты 3D','width': w_freq, 'height': h_freq,'scale': 1 if format == 'svg' else 3}}
     H_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'H_fix','width': w_fix, 'height': h_fix,'scale': 1 if format == 'svg' else 2}}
     T_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'T_fix','width': w_fix, 'height': h_fix,'scale': 1 if format == 'svg' else 2}}
-    phi_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика phi','width': w_anles,'height': h_anles,'scale': 1 if format == 'svg' else 2}}
-    theta_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика theta','width': w_anles,'height': h_anles,'scale': 1 if format == 'svg' else 2}}
+    phi_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика phi','width': w_angles,'height': h_angles,'scale': 1 if format == 'svg' else 2}}
+    theta_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика theta','width': w_angles,'height': h_angles,'scale': 1 if format == 'svg' else 2}}
     yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','width': w_square, 'height': w_square,'scale': 1 if format == 'svg' else 2}}
 
     return phase_conf, freq_conf, H_fix_conf, T_fix_conf, phi_conf, theta_conf, yz_conf
