@@ -26,9 +26,9 @@ from plotting import *
 from copy import deepcopy
 
 w_fix, h_fix = 600, 400
-w_freq, h_freq = 900, 400
+w_freq, h_freq = 600, 600
 w_angles, h_angles = 900, 400
-w_square, h_square = 400, 400
+w_square, h_square = 600, 600
 
 sliders_range = 5
 log_marks = {}
