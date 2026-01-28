@@ -460,10 +460,11 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
-     Input('auto-calc-switch',  'on')],
+     Input('auto-calc-switch',  'on'),
+    Input('png-svg-switch', 'on'),],
     prevent_initial_call=True,
 )
-def update_graphs(store, H, T, material, calc_on):
+def update_graphs(store, H, T, material, calc_on, svg_on):
     if not calc_on: raise PreventUpdate
         
     # Определяем, какой input вызвал callback
