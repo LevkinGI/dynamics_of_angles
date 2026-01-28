@@ -420,7 +420,6 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     Output('lam-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
     State('param-store',       'data'),
-    prevent_initial_call=True,
 )
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
@@ -642,6 +641,7 @@ def download_tfix(n_clicks, T, store, material):
      Output('theta-graph', 'config'),
      Output('yz-graph', 'config')],
     Input('png-svg-switch', 'on'),
+    prevent_initial_call=True,
 )
 def update_graph_config(svg_on):
     format = 'svg' if svg_on else 'png'
