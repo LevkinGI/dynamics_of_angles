@@ -1,6 +1,5 @@
 # constants.py
 import numpy as np
-from numba import njit
 from typing import Iterable
 
 # Данные
@@ -61,12 +60,10 @@ alpha_2 = 1.7e-2
 h_IFE = 7500                # Ое
 delta_t = 250e-15           # с
 
-@njit(cache=True, fastmath=True)
 def K_T(T: Iterable[float] | float) -> np.ndarray:
     """Анизотропия как функция температуры."""
     return 0.522 * (T - 370.0) ** 2
 
-@njit(cache=True, fastmath=True)
 def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
     denom = 1.0 - (m**2) / (M**2 + 1e-16)
@@ -123,7 +120,6 @@ def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
     
     return (f1, t1), (f2, t2)
 
-@njit(cache=True, fastmath=True)
 def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
     chi_vec = chi_func(m_vec, M_vec, lam)
     abs_m = np.abs(m_vec)
@@ -190,7 +186,6 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha, lam):
 
     return (f1, t1), (f2, t2)
 
-@njit(cache=True, fastmath=True)
 def compute_phases(m_array, M_array, K_array, lam):
     H_vals = np.arange(0, 4001, 50)
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
