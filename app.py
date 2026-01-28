@@ -223,6 +223,7 @@ app.layout = html.Div([
                     'toImageButtonOptions': {
                         'format': 'png',
                         'filename': 'H_fix',
+                        'width': 600, 'height': 450,
                         'scale': 2
                     }
                 },
@@ -239,6 +240,7 @@ app.layout = html.Div([
                     'toImageButtonOptions': {
                         'format': 'png',
                         'filename': 'T_fix',
+                        'width': 600, 'height': 450,
                         'scale': 2
                     }
                 },
@@ -647,13 +649,45 @@ def update_graph_config(svg_on):
     format = 'svg' if svg_on else 'png'
     phase_conf = {'toImageButtonOptions': {'format': format,'filename': 'ФД','scale': 1 if format == 'svg' else 2}}
     freq_conf = {'toImageButtonOptions': {'format': format,'filename': 'Частоты 3D','scale': 1 if format == 'svg' else 3}}
-    H_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'H_fix','scale': 1 if format == 'svg' else 2}}
-    T_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'T_fix','scale': 1 if format == 'svg' else 2}}
+    H_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'H_fix','width': 600, 'height': 450,'scale': 1 if format == 'svg' else 2}}
+    T_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'T_fix','width': 600, 'height': 450,'scale': 1 if format == 'svg' else 2}}
     phi_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика phi','scale': 1 if format == 'svg' else 2}}
     theta_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика theta','scale': 1 if format == 'svg' else 2}}
     yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','scale': 1 if format == 'svg' else 2}}
 
     return phase_conf, freq_conf, H_fix_conf, T_fix_conf, phi_conf, theta_conf, yz_conf
+
+@app.callback(
+    [Output('phase-graph', 'figure'),
+     Output('frequency-surface-graph', 'figure'),
+     Output('H_fix-graph', 'figure'),
+     Output('T_fix-graph', 'figure'),
+     Output('phi-graph', 'figure'),
+     Output('theta-graph', 'figure'),
+     Output('yz-graph', 'figure')],
+    Input('png-svg-switch', 'on'),
+    [State('phase-graph', 'figure'),
+     State('frequency-surface-graph', 'figure'),
+     State('H_fix-graph', 'figure'),
+     State('T_fix-graph', 'figure'),
+     State('phi-graph', 'figure'),
+     State('theta-graph', 'figure'),
+     State('yz-graph', 'figure')],
+    prevent_initial_call=True,
+)
+def _force_modebar_rebuild(svg_on, f_phase, f_freq, f_h, f_t, f_phi, f_theta, f_yz):
+    fmt = 'svg' if svg_on else 'png'
+    rev = f"export-{fmt}"   # меняется при переключении
+
+    def bump(fig):
+        if fig is None:
+            return no_update
+        fig = deepcopy(fig)
+        fig.setdefault('layout', {})
+        fig['layout']['uirevision'] = rev
+        return fig
+
+    return tuple(bump(f) for f in (f_phase, f_freq, f_h, f_t, f_phi, f_theta, f_yz))
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
