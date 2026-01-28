@@ -244,53 +244,18 @@ app.layout = html.Div([
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '25%', 'height': 'calc(25vw)'}),
     ]),
-                      
 
 
 
     
+    
     html.Div([
-        dcc.Graph(id='phi-graph', style={'display': 'inline-block', 'width': '50%'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика phi','scale': 2}}),
-        dcc.Graph(id='theta-graph', style={'display': 'inline-block', 'width': '50%'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','scale': 2}})
-    ]),
-    html.Div([
-        dcc.Graph(
-            id='phi-amplitude-graph',
-            style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
-            figure=go.Figure(
-                data=[go.Surface(z=phi_amplitude[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
-                                 colorscale=[[0, 'rgb(173, 216, 230)'], [1, 'rgb(0, 0, 255)']],
-                                 showscale=False, name='LF')],
-                layout=go.Layout(
-                    scene=dict(
-                        xaxis_title='Магнитное поле (Э)',
-                        yaxis_title='Температура (K)',
-                        zaxis_title='Амплитуда φ (°)'
-                    ),
-                    font=dict(size=14),
-                    template="plotly_white"
-                )
-            )
-        ),
-        dcc.Graph(
-            id='theta-amplitude-graph',
-            style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'},
-            figure=go.Figure(
-                data=[go.Surface(z=theta_amplitude[::6, ::4], x=H_vals[::4], y=T_vals_1[::6],
-                                 colorscale=[[0, 'rgb(255, 182, 193)'], [1, 'rgb(255, 0, 0)']],
-                                 showscale=False, name='HF')],
-                layout=go.Layout(
-                    scene=dict(
-                        xaxis_title='Магнитное поле (Э)',
-                        yaxis_title='Температура (K)',
-                        zaxis_title='Амплитуда θ (°)'
-                    ),
-                    font=dict(size=14),
-                    template="plotly_white"
-                )
-            )
-        ),
-        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '33%', 'height': 'calc(33vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','scale': 2}})
+        html.Div([
+            dcc.Graph(id='phi-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика phi','scale': 2}}),
+            dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','scale': 2}}),
+        ], style={'display': 'inline-block', 'verticalAlign': 'top',
+                  'width': '50%', 'height': 'calc(50vw)'}),
+        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '50%', 'height': 'calc(50vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','scale': 2}})
     ]),
 ])
 
@@ -487,9 +452,7 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
 @app.callback(
     [Output('phi-graph', 'figure'),
      Output('theta-graph', 'figure'),
-     Output('yz-graph', 'figure'),
-     Output('phi-amplitude-graph', 'figure'),
-     Output('theta-amplitude-graph', 'figure')],
+     Output('yz-graph', 'figure'),],
     [Input('param-store', 'data'),
      Input('H-slider', 'value'),
      Input('T-slider', 'value'),
@@ -529,9 +492,6 @@ def update_graphs(store, H, T, material, calc_on):
     time_ns = sim_time * 1e9
     theta   = np.degrees(sol[0])
     phi     = np.degrees(sol[1])
-
-    amplitude_phi_static   = phi_amplitude if material=='1' else phi_amplitude_2
-    amplitude_theta_static = theta_amplitude if material=='1' else theta_amplitude_2
     
     # Выполнение аппроксимации
     if False:
@@ -607,20 +567,13 @@ def update_graphs(store, H, T, material, calc_on):
         theta_fit = None
         phi_fit = None
     
-    # Далее строим графики
     phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
     theta_fig = create_theta_fig(time_ns, theta, theta_fit)
     yz_fig = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
                            np.cos(np.pi/2 + np.radians(theta)),
                            time_ns)
-    if material_changed:
-        phi_amp_fig = create_phi_amp_fig(T_vals, H_vals, amplitude_phi_static)
-        theta_amp_fig = create_theta_amp_fig(T_vals, H_vals, amplitude_theta_static)
-    else:
-        phi_amp_fig = no_update
-        theta_amp_fig = no_update
 
-    return phi_fig, theta_fig, yz_fig, phi_amp_fig, theta_amp_fig
+    return phi_fig, theta_fig, yz_fig
 
 @app.callback(
     Output('download-H-file', 'data'),
