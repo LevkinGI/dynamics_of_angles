@@ -78,14 +78,10 @@ def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.nda
 m_array_1 = np.load('m_array_18.07.2025.npy')
 M_array_1 = np.load('M_array_18.07.2025.npy')
 K_array_1 = K_T(T_vals_1)
-phi_amplitude = np.load('phi_amplitude.npy')
-theta_amplitude = np.load('theta_amplitude.npy')
 
 # Альтернативные данные для Материала 2
 m_array_2 = np.load('m_array_2.npy')
 M_array_2 = np.load('M_array_2.npy')
-phi_amplitude_2 = np.load('phi_amplitude_2.npy')
-theta_amplitude_2 = np.load('theta_amplitude_2.npy')
 
 # Для материала 2 зависимости K(T) и chi(T) заменяем константами
 K_const = 13500
@@ -235,8 +231,6 @@ __all__ = [
     'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
     # частоты
     'f1_GHz', 'f2_GHz',
-    # амплитуды
-    'phi_amplitude', 'theta_amplitude', 'phi_amplitude_2', 'theta_amplitude_2',
     # данные
     'T_293', 'T_298', 'T_308', 'T_310', 'T_320', 'T_323',
     'H_1000', 'H_1700',
