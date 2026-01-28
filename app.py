@@ -26,10 +26,12 @@ from plotting import *
 
 sliders_range = 5
 log_marks = {}
-for i in  range(1, sliders_range+1):
-    if i > 10 and i % 10 != 0: continue
-    log_marks[np.log10(i)]  = str(i)
-    log_marks[-np.log10(i)] = '1/'+str(i)
+for i in range(1, sliders_range + 1):
+    if i > 10 and i % 10 != 0:
+        continue
+    v = float(np.log10(i))
+    log_marks[f"{v:g}"]  = str(i)
+    log_marks[f"{-v:g}"] = f"1/{i}"
 
 app = dash.Dash(__name__)
 server = app.server
@@ -51,7 +53,7 @@ app.layout = html.Div([
         max=H_vals[-1],
         step=10,
         value=1000,
-        marks={i: str(i) for i in range(0, H_vals[-1] + 1, 500)},
+        marks={str(i): str(i) for i in range(0, int(H_vals[-1]) + 1, 500)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
     html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
@@ -62,7 +64,7 @@ app.layout = html.Div([
         max=350,
         step=0.1,
         value=T_init,
-        marks={i: str(i) for i in range(290, 351, 10)},
+        marks={str(i): str(i) for i in range(290, 351, 10)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
     html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
@@ -291,7 +293,7 @@ def update_T_slider(material, T):
     max_val = t_vals[-1]
     step = np.round(t_vals[1] - t_vals[0], decimals=1) 
     value = t_vals[t_index]
-    marks = {float(val): str(val) for val in t_vals if val % 10 == 0}
+    marks = {f"{float(val):g}": str(val) for val in t_vals if val % 10 == 0}
     return min_val, max_val, step, value, marks
     
 @app.callback(
