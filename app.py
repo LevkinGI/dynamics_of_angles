@@ -363,7 +363,6 @@ def move_lam_slider(logk):
     Input("lam-scale-slider", "value"),
     Input('material-dropdown', 'value'),
     Input('exp-view-switch',  'on')],
-    prevent_initial_call=True,
 )
 def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on):
     alpha_scale = 10**a_val
