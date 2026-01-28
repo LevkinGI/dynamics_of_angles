@@ -11,4 +11,3 @@ cython
 numba
 gunicorn
 scikit-image
-kaleido
