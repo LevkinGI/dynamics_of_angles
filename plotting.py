@@ -266,7 +266,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         margin=dict(l=90, r=20, t=10, b=70),
         title=dict(
             text=f"H = {H/1000} kOe",
-            x=0.5, y=0.9,
+            x=0.5, y=0.98,
             xref='paper',
             yref='paper',
             xanchor='center', yanchor='top',
@@ -378,7 +378,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         margin=dict(l=90, r=20, t=10, b=70),
         title=dict(
             text=f"T = {T} K",
-            x=0.5, y=0.9,
+            x=0.5, y=0.98,
             xref='paper',
             yref='paper',
             xanchor='center', yanchor='top',
