@@ -299,6 +299,18 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         showlegend=False
     )
 
+    fig.add_annotation(
+        x=T_plane + 1,
+        y=0.5,
+        xref="x",
+        yref="paper",
+        text=r"$T_M$",
+        showarrow=False,
+        font=dict(family="Times New Roman, Times, serif", size=title_font),
+        xanchor="left",
+        yanchor="middle"
+    )
+
     return fig
 
 # def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
