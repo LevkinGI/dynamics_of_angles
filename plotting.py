@@ -306,7 +306,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         yref="paper",
         text=r"$T_M$",
         showarrow=False,
-        font=dict(family="Times New Roman, Times, serif", size=title_font),
+        font=dict(family="Times New Roman, Times, serif", size=28),
         xanchor="left",
         yanchor="middle"
     )
