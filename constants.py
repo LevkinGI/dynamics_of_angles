@@ -61,11 +61,12 @@ alpha_2 = 1.7e-2
 h_IFE = 7500                # Ое
 delta_t = 250e-15           # с
 
-# Материал 1
+@njit(cache=True, fastmath=True)
 def K_T(T: Iterable[float] | float) -> np.ndarray:
     """Анизотропия как функция температуры."""
     return 0.522 * (T - 370.0) ** 2
 
+@njit(cache=True, fastmath=True)
 def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
     denom = 1.0 - (m**2) / (M**2 + 1e-16)
@@ -85,7 +86,6 @@ M_array_2 = np.load('M_array_2.npy')
 K_const = 13500
 K_array_2 = np.full_like(m_array_2, K_const)
 
-@njit(cache=True, fastmath=True)
 def compute_frequencies(H_vals, m_array, M_array, K_array, gamma, alpha, lam):
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh = np.meshgrid(H_vals, M_array)
@@ -156,7 +156,6 @@ def compute_frequencies_H_fix(H, m_vec, M_vec, K_vec, gamma, alpha, lam):
 
     return (f1, t1), (f2, t2)
 
-@njit(cache=True, fastmath=True)
 def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha, lam):
     chi = chi_func(m, M, lam)
     abs_m = np.abs(m)
