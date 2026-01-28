@@ -232,6 +232,7 @@ app.layout = html.Div([
             dcc.Download(id='download-H-file'),
             dcc.Graph(
                 id='H_fix-graph',
+                mathjax=True,
                 config={
                     'toImageButtonOptions': {
                         'format': 'png',
