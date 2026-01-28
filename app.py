@@ -362,7 +362,8 @@ def move_lam_slider(logk):
     Input("M-scale-slider", "value"),
     Input("lam-scale-slider", "value"),
     Input('material-dropdown', 'value'),
-    Input('exp-view-switch',  'on')],   
+    Input('exp-view-switch',  'on')],
+    prevent_initial_call=True,
 )
 def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on):
     alpha_scale = 10**a_val
@@ -418,6 +419,7 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     Output('lam-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
     State('param-store',       'data'),
+    prevent_initial_call=True,
 )
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
@@ -432,6 +434,7 @@ def sync_sliders_with_material(material, store):
     Input('M-scale-slider',    'value'),
     Input('lam-scale-slider',    'value')],
     State('param-store',       'data'),
+    prevent_initial_call=True,
 )
 def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
     p = SimParams(**store[material])
@@ -452,6 +455,7 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on')],
+    prevent_initial_call=True,
 )
 def update_graphs(store, H, T, material, calc_on):
     if not calc_on: raise PreventUpdate
@@ -574,6 +578,7 @@ def update_graphs(store, H, T, material, calc_on):
     State('H-slider',        'value'),
     State('param-store',       'data'),
     State('material-dropdown', 'value'),
+    prevent_initial_call=True,
 )
 def download_hfix(n_clicks, H, store, material):
     if not n_clicks:
@@ -603,6 +608,7 @@ def download_hfix(n_clicks, H, store, material):
     State('T-slider',          'value'),
     State('param-store',       'data'),
     State('material-dropdown', 'value'),
+    prevent_initial_call=True,
 )
 def download_tfix(n_clicks, T, store, material):
     if not n_clicks:
