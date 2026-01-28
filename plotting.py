@@ -200,7 +200,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         # --- 1) базовый swap эксп. по плоскости T_plane (это остаётся) ---
         y_lf = lf_exp.copy()
         y_hf = hf_exp.copy()
-        m_plane = (T_exp >= T_plane)
+        m_plane = (T_exp > T_plane)
         tmp = y_lf[m_plane].copy()
         y_lf[m_plane] = y_hf[m_plane]
         y_hf[m_plane] = tmp
