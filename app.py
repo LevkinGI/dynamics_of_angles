@@ -23,6 +23,7 @@ from simulator import run_simulation
 from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
 from plotting import *
+from copy import deepcopy
 
 sliders_range = 5
 log_marks = {}
