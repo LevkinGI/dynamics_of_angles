@@ -197,6 +197,7 @@ app.layout = html.Div([
                 'toImageButtonOptions': {
                     'format': 'png',
                     'filename': 'ФД',
+                    'width': 600, 'height': 600,
                     'scale': 2
                 }
             },
@@ -209,6 +210,7 @@ app.layout = html.Div([
                 'toImageButtonOptions': {
                     'format': 'png',       # Формат: 'svg', 'png', 'jpeg', 'webp'
                     'filename': 'Частоты 3D', # Имя файла при скачивании
+                    'width': 600, 'height': 600,
                     'scale': 3             # Масштаб (для растра), для svg не так важно
                 }
             },
@@ -259,7 +261,7 @@ app.layout = html.Div([
             dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','scale': 2}}),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '60%', 'height': 'calc(40vw)'}),
-        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','scale': 2}})
+        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': 600,'height': 600,'scale': 2}})
     ]),
 ])
 
@@ -647,13 +649,13 @@ def download_tfix(n_clicks, T, store, material):
 )
 def update_graph_config(svg_on):
     format = 'svg' if svg_on else 'png'
-    phase_conf = {'toImageButtonOptions': {'format': format,'filename': 'ФД','scale': 1 if format == 'svg' else 2}}
-    freq_conf = {'toImageButtonOptions': {'format': format,'filename': 'Частоты 3D','scale': 1 if format == 'svg' else 3}}
+    phase_conf = {'toImageButtonOptions': {'format': format,'filename': 'ФД','width': 600, 'height': 600,'scale': 1 if format == 'svg' else 2}}
+    freq_conf = {'toImageButtonOptions': {'format': format,'filename': 'Частоты 3D','width': 600, 'height': 600,'scale': 1 if format == 'svg' else 3}}
     H_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'H_fix','width': 600, 'height': 450,'scale': 1 if format == 'svg' else 2}}
     T_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'T_fix','width': 600, 'height': 450,'scale': 1 if format == 'svg' else 2}}
     phi_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика phi','scale': 1 if format == 'svg' else 2}}
     theta_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика theta','scale': 1 if format == 'svg' else 2}}
-    yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','scale': 1 if format == 'svg' else 2}}
+    yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','width': 600, 'height': 600,'scale': 1 if format == 'svg' else 2}}
 
     return phase_conf, freq_conf, H_fix_conf, T_fix_conf, phi_conf, theta_conf, yz_conf
 
