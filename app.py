@@ -371,20 +371,23 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     M_scale     = 10**M_val
     lam_scale   = 10**lam_val
     
-    T_vals    = T_vals_1 if material == '1' else T_vals_2
-    t_index   = np.abs(T_vals - T).argmin()
-    m_vec_T   = m_scale * (m_array_1 if material == '1' else m_array_2)
-    M_vec_T   = M_scale * (M_array_1 if material == '1' else M_array_2)
-    K_vec_T   = k_scale * (K_array_1 if material == '1' else K_array_2)
+    T_vals  = T_vals_1 if material == '1' else T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
+    m_array = m_scale * (m_array_1 if material == '1' else m_array_2)
+    M_array = M_scale * (M_array_1 if material == '1' else M_array_2)
+    K_array = k_scale * (K_array_1 if material == '1' else K_array_2)
+    alpha   = alpha_scale * (alpha_1 if material == '1' else alpha_2)
+    lam     = lam_scale * (lam_1 if material == '1' else lam_2)
 
-    m_T   = m_vec_T[t_index]
-    M_T   = M_vec_T[t_index]
-    K_T   = K_vec_T[t_index]
-    alpha = alpha_scale * (alpha_1 if material == '1' else alpha_2)
-    lam   = lam_scale * (lam_1 if material == '1' else lam_2)
+    m_T = m_array[t_index]
+    M_T = M_array[t_index]
+    K_T = K_array[t_index]
 
-    H_fix_res = compute_frequencies_H_fix(H, m_vec_T, M_vec_T, K_vec_T, gamma, alpha, lam)
+    H_fix_res = compute_frequencies_H_fix(H, m_array, M_array, K_array, gamma, alpha, lam)
     T_fix_res = compute_frequencies_T_fix(H_vals, m_T, M_T, K_T, gamma, alpha, lam)
+    freq_res_grid = compute_frequencies(H_vals[::2], m_array[4::6], M_array[4::6], K_array[4::6], gamma, alpha, lam)
+    theta_0 = compute_phases(m_array[::6], M_array[::6], K_array[::6], lam)
+    
     if material == '1' and exp_on:
         if T==293: T_data = T_293
         elif T==298: T_data = T_298
@@ -399,17 +402,10 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     else:
         T_data = None
         H_data = None
-
-    m_array   = m_scale * (m_array_1 if material == '1' else m_array_2)
-    M_array   = M_scale * (M_array_1 if material == '1' else M_array_2)
-    K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
-    
-    freq_res_grid = compute_frequencies(H_vals[::4], m_array[4::6], M_array[4::6], K_array[4::6], gamma, alpha, lam)
-    theta_0 = compute_phases(m_array[::6], M_array[::6], K_array[::6], lam)
     
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
-    freq_fig = create_freq_fig(T_vals[4::6], H_vals[::4], freq_res_grid)
+    freq_fig = create_freq_fig(T_vals[4::6], H_vals[::2], freq_res_grid)
     phase_fig = create_phase_fig(T_vals[::6], theta_0)
 
     return H_fix_fig, T_fix_fig, phase_fig, freq_fig
@@ -421,8 +417,7 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     Output('M-scale-slider',      'value'),
     Output('lam-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
-    State('param-store',       'data'),   
-    prevent_initial_call=True, 
+    State('param-store',       'data'),
 )
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
@@ -437,7 +432,6 @@ def sync_sliders_with_material(material, store):
     Input('M-scale-slider',    'value'),
     Input('lam-scale-slider',    'value')],
     State('param-store',       'data'),
-    prevent_initial_call=True,
 )
 def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
     p = SimParams(**store[material])
@@ -458,7 +452,6 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on')],
-    prevent_initial_call=True,
 )
 def update_graphs(store, H, T, material, calc_on):
     if not calc_on: raise PreventUpdate
@@ -567,11 +560,11 @@ def update_graphs(store, H, T, material, calc_on):
         theta_fit = None
         phi_fit = None
     
-    phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
+    phi_fig   = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
     theta_fig = create_theta_fig(time_ns, theta, theta_fit)
-    yz_fig = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
-                           np.cos(np.pi/2 + np.radians(theta)),
-                           time_ns)
+    yz_fig    = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
+                                np.cos(np.pi/2 + np.radians(theta)),
+                                time_ns)
 
     return phi_fig, theta_fig, yz_fig
 
@@ -581,7 +574,6 @@ def update_graphs(store, H, T, material, calc_on):
     State('H-slider',        'value'),
     State('param-store',       'data'),
     State('material-dropdown', 'value'),
-    prevent_initial_call=True,
 )
 def download_hfix(n_clicks, H, store, material):
     if not n_clicks:
@@ -611,7 +603,6 @@ def download_hfix(n_clicks, H, store, material):
     State('T-slider',          'value'),
     State('param-store',       'data'),
     State('material-dropdown', 'value'),
-    prevent_initial_call=True,
 )
 def download_tfix(n_clicks, T, store, material):
     if not n_clicks:
@@ -644,6 +635,7 @@ def download_tfix(n_clicks, T, store, material):
      Output('theta-graph', 'config'),
      Output('yz-graph', 'config')],
     Input('png-svg-switch', 'on')
+    prevent_initial_call=True,
 )
 def update_graph_config(svg_on):
     format = 'svg' if svg_on else 'png'
