@@ -197,7 +197,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         lf_exp = np.asarray(data[1], dtype=float)
         hf_exp = np.asarray(data[2], dtype=float)
     
-        # --- 1) базовый swap эксп. по плоскости T_plane (поверх него потом будет ещё swap) ---
+        # --- 1) базовый swap эксп. по плоскости T_plane (это остаётся) ---
         y_lf = lf_exp.copy()
         y_hf = hf_exp.copy()
         m_plane = (T_exp >= T_plane)
@@ -205,48 +205,47 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         y_lf[m_plane] = y_hf[m_plane]
         y_hf[m_plane] = tmp
     
-        # --- 2) ищем 1 или 2 "пересечения" теории f1 и f2 ---
-        eps = 1e-3  # ГГц
-        diff = f1 - f2
-        abs_diff = np.abs(diff)
+        # --- 2) пересечения теории по смене знака diff_th = f1 - f2 ---
+        diff_th = np.asarray(f1, dtype=float) - np.asarray(f2, dtype=float)
     
-        idx_eps = np.where(abs_diff <= eps)[0]
+        # (опционально, чтобы не ловить шум около нуля)
+        eps0 = 0.0  # можешь поставить, например, 1e-12
+        d = diff_th.copy()
+        d[np.abs(d) <= eps0] = 0.0
     
-        if idx_eps.size > 0:
-            # группируем непрерывные индексы (эпсилон-окрестности пересечения)
-            segments = []
-            s = int(idx_eps[0]); p = int(idx_eps[0])
-            for idx in idx_eps[1:]:
-                idx = int(idx)
-                if idx == p + 1:
-                    p = idx
-                else:
-                    segments.append((s, p))
-                    s = p = idx
-            segments.append((s, p))
+        cross_T = []
     
-            # представитель каждого пересечения = точка с минимальным |Δ| внутри сегмента
-            reps = []
-            for a, b in segments:
-                seg = np.arange(a, b + 1)
-                rep = int(seg[np.nanargmin(abs_diff[seg])])
-                reps.append(rep)
+        # точные нули (если вдруг есть)
+        zero_idx = np.where(d == 0.0)[0]
+        for i in zero_idx:
+            cross_T.append(float(T_vals[i]))
     
-            if len(reps) >= 2:
-                k1, k2 = reps[0], reps[-1]
-                T1, T2 = float(T_vals[k1]), float(T_vals[k2])
-                T_low, T_high = (T1, T2) if T1 <= T2 else (T2, T1)
-                m_cross = (T_exp >= T_low) & (T_exp <= T_high)
-            else:
-                T1 = float(T_vals[reps[0]])
-                m_cross = (T_exp >= T1)
-        else:
-            # если в eps-окрестности нет точек: берём глобальный минимум |Δ| как единственное "пересечение"
-            k1 = int(np.nanargmin(abs_diff))
-            T1 = float(T_vals[k1])
+        # смены знака между соседними узлами + линейная интерполяция
+        for i in range(len(T_vals) - 1):
+            d0, d1 = d[i], d[i + 1]
+            if d0 == 0.0 or d1 == 0.0:
+                continue
+            if d0 * d1 < 0.0:
+                T0, T1 = float(T_vals[i]), float(T_vals[i + 1])
+                # d(T) линейна на отрезке -> T_cross = T0 - d0*(T1-T0)/(d1-d0)
+                T_cross = T0 - d0 * (T1 - T0) / (d1 - d0)
+                cross_T.append(float(T_cross))
+    
+        # убираем дубликаты (на случай нулей + интерполяции рядом)
+        if cross_T:
+            cross_T = np.array(sorted(cross_T), dtype=float)
+            cross_T = cross_T[np.concatenate([[True], np.diff(cross_T) > 1e-9])].tolist()
+    
+        # --- 3) дополнительный swap эксп. по пересечениям ---
+        if len(cross_T) >= 2:
+            T_low, T_high = float(cross_T[0]), float(cross_T[-1])
+            m_cross = (T_exp >= T_low) & (T_exp <= T_high)
+        elif len(cross_T) == 1:
+            T1 = float(cross_T[0])
             m_cross = (T_exp >= T1)
+        else:
+            m_cross = np.zeros_like(T_exp, dtype=bool)
     
-        # --- 3) дополнительный swap эксп. между пересечениями / после единственного ---
         tmp = y_lf[m_cross].copy()
         y_lf[m_cross] = y_hf[m_cross]
         y_hf[m_cross] = tmp
