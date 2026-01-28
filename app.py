@@ -39,8 +39,7 @@ for i in range(1, sliders_range + 1):
     log_marks[f"{v:g}"]  = str(i)
     log_marks[f"{-v:g}"] = f"1/{i}"
 
-MATHJAX = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
-app = dash.Dash(__name__, external_scripts=[MATHJAX])
+app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div([
