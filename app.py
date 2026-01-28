@@ -369,9 +369,10 @@ def move_lam_slider(logk):
     Input("M-scale-slider", "value"),
     Input("lam-scale-slider", "value"),
     Input('material-dropdown', 'value'),
-    Input('exp-view-switch',  'on')],
+    Input('exp-view-switch',  'on'),
+    Input('png-svg-switch', 'on'),],
 )
-def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on):
+def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on):
     alpha_scale = 10**a_val
     k_scale     = 10**k_val
     m_scale     = 10**m_val
@@ -659,38 +660,6 @@ def update_graph_config(svg_on):
     yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','width': 600, 'height': 600,'scale': 1 if format == 'svg' else 2}}
 
     return phase_conf, freq_conf, H_fix_conf, T_fix_conf, phi_conf, theta_conf, yz_conf
-
-@app.callback(
-    [Output('phase-graph', 'figure'),
-     Output('frequency-surface-graph', 'figure'),
-     Output('H_fix-graph', 'figure'),
-     Output('T_fix-graph', 'figure'),
-     Output('phi-graph', 'figure'),
-     Output('theta-graph', 'figure'),
-     Output('yz-graph', 'figure')],
-    Input('png-svg-switch', 'on'),
-    [State('phase-graph', 'figure'),
-     State('frequency-surface-graph', 'figure'),
-     State('H_fix-graph', 'figure'),
-     State('T_fix-graph', 'figure'),
-     State('phi-graph', 'figure'),
-     State('theta-graph', 'figure'),
-     State('yz-graph', 'figure')],
-    prevent_initial_call=True,
-)
-def _force_modebar_rebuild(svg_on, f_phase, f_freq, f_h, f_t, f_phi, f_theta, f_yz):
-    fmt = 'svg' if svg_on else 'png'
-    rev = f"export-{fmt}"   # меняется при переключении
-
-    def bump(fig):
-        if fig is None:
-            return no_update
-        fig = deepcopy(fig)
-        fig.setdefault('layout', {})
-        fig['layout']['uirevision'] = rev
-        return fig
-
-    return tuple(bump(f) for f in (f_phase, f_freq, f_h, f_t, f_phi, f_theta, f_yz))
 
 if __name__ == '__main__':
     app.run_server(debug=False, host="0.0.0.0", port=8000)
