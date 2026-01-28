@@ -193,7 +193,7 @@ def compute_frequencies_T_fix(H_vec, m, M, K, gamma, alpha, lam):
     return (f1, t1), (f2, t2)
 
 def compute_phases(m_array, M_array, K_array, lam):
-    H_vals = np.arange(0, 4001, 10)
+    H_vals = np.arange(0, 4001, 25)
     H_mesh, m_mesh = np.meshgrid(H_vals, m_array)
     _, M_mesh = np.meshgrid(H_vals, M_array)
     _, K_mesh = np.meshgrid(H_vals, K_array)
