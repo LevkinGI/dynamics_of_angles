@@ -405,12 +405,12 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on)
     K_array   = k_scale * (K_array_1 if material == '1' else K_array_2)
     
     freq_res_grid = compute_frequencies(H_vals[::4], m_array[4::6], M_array[4::6], K_array[4::6], gamma, alpha, lam)
-    theta_0 = compute_phases(m_array, M_array, K_array, lam)
+    theta_0 = compute_phases(m_array[::3], M_array[::3], K_array[::3], lam[::3])
     
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
     T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
     freq_fig = create_freq_fig(T_vals[4::6], H_vals[::4], freq_res_grid)
-    phase_fig = create_phase_fig(T_vals, theta_0)
+    phase_fig = create_phase_fig(T_vals[::3], theta_0)
 
     return H_fix_fig, T_fix_fig, phase_fig, freq_fig
 
