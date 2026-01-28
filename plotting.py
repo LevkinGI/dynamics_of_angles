@@ -193,31 +193,71 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     ))
 
     if data is not None:
-        T_exp = np.asarray(data[0], dtype=float)
+        T_exp  = np.asarray(data[0], dtype=float)
         lf_exp = np.asarray(data[1], dtype=float)
         hf_exp = np.asarray(data[2], dtype=float)
-
-        # Чтобы эксперимент визуально соответствовал swap после 333 — тоже делим по T_plane
-        m_lo = T_exp <= T_plane
-        m_hi = T_exp > T_plane
-
-        # До плоскости: LF как LF, HF как HF
+    
+        # --- 1) базовый swap эксп. по плоскости T_plane (поверх него потом будет ещё swap) ---
+        y_lf = lf_exp.copy()
+        y_hf = hf_exp.copy()
+        m_plane = (T_exp >= T_plane)
+        tmp = y_lf[m_plane].copy()
+        y_lf[m_plane] = y_hf[m_plane]
+        y_hf[m_plane] = tmp
+    
+        # --- 2) ищем 1 или 2 "пересечения" теории f1 и f2 ---
+        eps = 1e-3  # ГГц
+        diff = f1 - f2
+        abs_diff = np.abs(diff)
+    
+        idx_eps = np.where(abs_diff <= eps)[0]
+    
+        if idx_eps.size > 0:
+            # группируем непрерывные индексы (эпсилон-окрестности пересечения)
+            segments = []
+            s = int(idx_eps[0]); p = int(idx_eps[0])
+            for idx in idx_eps[1:]:
+                idx = int(idx)
+                if idx == p + 1:
+                    p = idx
+                else:
+                    segments.append((s, p))
+                    s = p = idx
+            segments.append((s, p))
+    
+            # представитель каждого пересечения = точка с минимальным |Δ| внутри сегмента
+            reps = []
+            for a, b in segments:
+                seg = np.arange(a, b + 1)
+                rep = int(seg[np.nanargmin(abs_diff[seg])])
+                reps.append(rep)
+    
+            if len(reps) >= 2:
+                k1, k2 = reps[0], reps[-1]
+                T1, T2 = float(T_vals[k1]), float(T_vals[k2])
+                T_low, T_high = (T1, T2) if T1 <= T2 else (T2, T1)
+                m_cross = (T_exp >= T_low) & (T_exp <= T_high)
+            else:
+                T1 = float(T_vals[reps[0]])
+                m_cross = (T_exp >= T1)
+        else:
+            # если в eps-окрестности нет точек: берём глобальный минимум |Δ| как единственное "пересечение"
+            k1 = int(np.nanargmin(abs_diff))
+            T1 = float(T_vals[k1])
+            m_cross = (T_exp >= T1)
+    
+        # --- 3) дополнительный swap эксп. между пересечениями / после единственного ---
+        tmp = y_lf[m_cross].copy()
+        y_lf[m_cross] = y_hf[m_cross]
+        y_hf[m_cross] = tmp
+    
+        # --- 4) рисуем экспериментальные точки (после обоих swap) ---
         fig.add_trace(go.Scatter(
-            x=T_exp[m_lo], y=lf_exp[m_lo], mode='markers', name='LF (эксп.)',
+            x=T_exp, y=y_lf, mode='markers', name='LF (эксп.)',
             marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
         fig.add_trace(go.Scatter(
-            x=T_exp[m_lo], y=hf_exp[m_lo], mode='markers', name='HF (эксп.)',
-            marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
-        ))
-
-        # После плоскости: меняем местами, чтобы цвета соответствовали линиям
-        fig.add_trace(go.Scatter(
-            x=T_exp[m_hi], y=hf_exp[m_hi], mode='markers', name='LF (эксп.)',
-            marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
-        ))
-        fig.add_trace(go.Scatter(
-            x=T_exp[m_hi], y=lf_exp[m_hi], mode='markers', name='HF (эксп.)',
+            x=T_exp, y=y_hf, mode='markers', name='HF (эксп.)',
             marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
 
