@@ -39,12 +39,8 @@ for i in range(1, sliders_range + 1):
     log_marks[f"{v:g}"]  = str(i)
     log_marks[f"{-v:g}"] = f"1/{i}"
 
-app = dash.Dash(__name__, serve_locally=True)
-app.config.suppress_callback_exceptions = True
-app.index_string = app.index_string.replace(
-    "</head>",
-    '<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script></head>'
-)
+MATHJAX = "https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"
+app = dash.Dash(__name__, external_scripts=[MATHJAX])
 server = app.server
 
 app.layout = html.Div([
@@ -232,7 +228,6 @@ app.layout = html.Div([
             dcc.Download(id='download-H-file'),
             dcc.Graph(
                 id='H_fix-graph',
-                mathjax=True,
                 config={
                     'toImageButtonOptions': {
                         'format': 'png',
