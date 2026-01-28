@@ -371,8 +371,17 @@ def move_lam_slider(logk):
     Input('material-dropdown', 'value'),
     Input('exp-view-switch',  'on'),
     Input('png-svg-switch', 'on'),],
+    [State('H_fix-graph', 'figure'),
+     State('T_fix-graph', 'figure'),
+     State('phase-graph', 'figure'),
+     State('frequency-surface-graph', 'figure'),],
 )
-def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on):
+def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig):
+    ctx = callback_context
+    triggered_inputs = [t['prop_id'] for t in ctx.triggered]
+    switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
+    if switch_on: return H_fix_fig, T_fix_fig, phase_fig, freq_fig
+    
     alpha_scale = 10**a_val
     k_scale     = 10**k_val
     m_scale     = 10**m_val
@@ -461,10 +470,13 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on'),
-    Input('png-svg-switch', 'on'),],
+     Input('png-svg-switch', 'on'),],
+    [State('phi-graph', 'figure'),
+     State('theta-graph', 'figure'),
+     State('yz-graph', 'figure')]
     prevent_initial_call=True,
 )
-def update_graphs(store, H, T, material, calc_on, svg_on):
+def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz_fig):
     if not calc_on: raise PreventUpdate
         
     # Определяем, какой input вызвал callback
@@ -472,7 +484,9 @@ def update_graphs(store, H, T, material, calc_on, svg_on):
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     material_changed = any('material-dropdown' in ti for ti in triggered_inputs)
     params_changed   = any('param-store' in ti for ti in triggered_inputs)
-    switch_on = any('auto-calc-switch' in ti for ti in triggered_inputs)
+    switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
+
+    if switch_on: return phi_fig, theta_fig, yz_fig
         
     p = SimParams(**store[material])
     
