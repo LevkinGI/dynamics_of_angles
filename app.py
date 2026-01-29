@@ -217,7 +217,7 @@ app.layout = html.Div([
                     'format': 'png',       # Формат: 'svg', 'png', 'jpeg', 'webp'
                     'filename': 'Частоты 3D', # Имя файла при скачивании
                     'width': w_freq, 'height': h_freq,
-                    'scale': 3             # Масштаб (для растра), для svg не так важно
+                    'scale': 5             # Масштаб (для растра), для svg не так важно
                 }
             },
         ),
@@ -672,7 +672,7 @@ def download_tfix(n_clicks, T, store, material):
 def update_graph_config(svg_on):
     format = 'svg' if svg_on else 'png'
     phase_conf = {'toImageButtonOptions': {'format': format,'filename': 'ФД','width': w_square, 'height': w_square,'scale': 1 if format == 'svg' else 2}}
-    freq_conf = {'toImageButtonOptions': {'format': format,'filename': 'Частоты 3D','width': w_freq, 'height': h_freq,'scale': 1 if format == 'svg' else 3}}
+    freq_conf = {'toImageButtonOptions': {'format': format,'filename': 'Частоты 3D','width': w_freq, 'height': h_freq,'scale': 1 if format == 'svg' else 5}}
     H_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'H_fix','width': w_fix, 'height': h_fix,'scale': 1 if format == 'svg' else 2}}
     T_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'T_fix','width': w_fix, 'height': h_fix,'scale': 1 if format == 'svg' else 2}}
     phi_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика phi','width': w_angles,'height': h_angles,'scale': 1 if format == 'svg' else 2}}
