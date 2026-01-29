@@ -59,7 +59,7 @@ app.layout = html.Div([
         min=0,
         max=H_vals[-1],
         step=10,
-        value=1700,
+        value=2000,
         marks={str(i): str(i) for i in range(0, int(H_vals[-1]) + 1, 500)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
