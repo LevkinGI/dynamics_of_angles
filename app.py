@@ -47,7 +47,7 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(0.4, 1.0, 1.0, 1.0, 0.4)),
+            "1": asdict(SimParams(0.5, 1.0, 1.0, 1.0, 0.4)),
             "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
@@ -84,7 +84,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
             dcc.Slider(id='alpha-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.4),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.5),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
