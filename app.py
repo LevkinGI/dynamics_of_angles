@@ -29,7 +29,7 @@ w_fix, h_fix = 600, 400
 w_freq, h_freq = 600, 600
 w_angles, h_angles = 900, 400
 w_phase, h_phase = 600, 600
-w_yz, h_yz = 520, 400
+w_yz, h_yz = 600, 500
 
 sliders_range = 5
 log_marks = {}
@@ -512,7 +512,7 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
     M_val   = M_array[t_index]
     K_val   = K_array[t_index]
     kappa   = m_val / gamma
-    sim_time, sol = run_simulation(H, m_val, M_val, K_val, alpha, lam, kappa, simulation_time=1e-9)
+    sim_time, sol = run_simulation(H, m_val, M_val, K_val, alpha, lam, kappa, simulation_time=0.15e-9)
     time_ns = sim_time * 1e9
     theta   = np.degrees(sol[0])
     phi     = np.degrees(sol[1])
