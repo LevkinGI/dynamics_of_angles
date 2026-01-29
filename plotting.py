@@ -60,69 +60,109 @@ def create_theta_fig(time, theta, theta_fit):
 import numpy as np
 import plotly.graph_objects as go
 
-def create_yz_fig(y, z, time, H_oe):
+import numpy as np
+import plotly.graph_objects as go
+import plotly.colors as pc
+
+def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
+    """
+    y, z  : координаты (в ваших текущих 'сотых' единицах, где 0.01 = 1)
+    time  : массив времени (любой шкалы)
+    H_oe  : магнитное поле в Oe (в заголовке будет kOe)
+    colorscale : строка Plotly colorscale (например 'Viridis', 'Cividis', 'Plasma', ...)
+    n_bins : сколько цветовых "ступеней" для линии (больше -> плавнее, но тяжелее)
+    """
+
     y = np.asarray(y, dtype=float)
     z = np.asarray(z, dtype=float)
     t = np.asarray(time, dtype=float)
 
-    # пределы по осям
+    # (3) Замена единиц: 0.01 -> 1  => умножаем на 100
+    y = 100.0 * y
+    z = 100.0 * z
+
+    # Одинаковые пределы + одинаковый масштаб (2)
     lim = float(np.max([np.max(np.abs(y)), np.max(np.abs(z))]))
     limits = (-1.1 * lim, 1.1 * lim)
 
-    # форматирование H в заголовке (как правило удобнее в kOe)
+    # Заголовок (как у T_fix)
     H_kOe = float(H_oe) / 1000.0
-    H_text = f"H = {H_kOe:g} kOe"
+    title_text = f"H = {H_kOe:g} kOe"
 
     title_font = dict(family="Times New Roman, Times, serif", size=28)
     tick_font  = dict(family="Times New Roman, Times, serif", size=24)
 
-    # Если точек много — Scattergl быстрее
-    Trace = go.Scattergl if len(y) > 5000 else go.Scatter
-
     fig = go.Figure()
 
-    # Линия (нейтральная), чтобы траектория читалась как непрерывная
-    fig.add_trace(go.Scatter(
-        x=y, y=z,
-        mode="lines",
-        line=dict(width=2, color="rgba(0,0,0,0.35)"),
-        hoverinfo="skip",
-        showlegend=False
-    ))
+    # (1) Градиентная непрерывная линия:
+    # Plotly не умеет "настоящий" градиент на одной линии, поэтому делаем линии-отрезки,
+    # сгруппированные по бинам времени => немного трасс, визуально линия непрерывная.
+    if len(y) >= 2:
+        tmin, tmax = float(np.min(t)), float(np.max(t))
+        if np.isclose(tmax, tmin):
+            t_norm = np.zeros_like(t)
+        else:
+            t_norm = (t - tmin) / (tmax - tmin)
 
-    # Маркеры с цветом по времени (градиент) + colorbar
-    fig.add_trace(Trace(
-        x=y, y=z,
-        mode="markers",
-        marker=dict(
-            size=6,
-            color=t,
-            colorscale="Plasma",
-            cmin=float(np.min(t)),
-            cmax=float(np.max(t)),
-            showscale=True,
-            colorbar=dict(
-                title=dict(text="Time", font=title_font),
-                tickfont=tick_font,
-                thickness=22,
-                len=0.90,
-                y=0.5,
-                yanchor="middle",
-                outlinewidth=1,
-                outlinecolor="black",
+        # бин по "времени" для каждого сегмента (i -> i+1)
+        seg_bin = np.floor(t_norm[:-1] * (n_bins - 1)).astype(int)
+        seg_bin = np.clip(seg_bin, 0, n_bins - 1)
+
+        # заранее выбираем цвета для бинов
+        # sample_colorscale принимает позиции 0..1
+        bin_pos = np.linspace(0, 1, n_bins)
+        bin_colors = pc.sample_colorscale(colorscale, bin_pos)
+
+        # для каждого бина собираем разорванный набор сегментов (через None)
+        for b in range(n_bins):
+            idx = np.where(seg_bin == b)[0]
+            if idx.size == 0:
+                continue
+            xs, ys = [], []
+            for i in idx:
+                xs += [y[i], y[i+1], None]
+                ys += [z[i], z[i+1], None]
+
+            fig.add_trace(go.Scattergl(
+                x=xs, y=ys,
+                mode="lines",
+                line=dict(width=4, color=bin_colors[b]),
+                hoverinfo="skip",
+                showlegend=False
+            ))
+
+        # Colorbar отдельной "пустой" трассой (без точек на графике)
+        fig.add_trace(go.Scatter(
+            x=[limits[0]-10], y=[limits[0]-10],  # уводим за пределы
+            mode="markers",
+            marker=dict(
+                size=0.1,
+                color=[tmin, tmax],
+                cmin=tmin, cmax=tmax,
+                colorscale=colorscale,
+                showscale=True,
+                colorbar=dict(
+                    title=dict(text="Time", font=title_font),
+                    tickfont=tick_font,
+                    thickness=22,
+                    len=0.90,
+                    y=0.5,
+                    yanchor="middle",
+                    outlinewidth=1,
+                    outlinecolor="black",
+                ),
             ),
-            line=dict(width=0)
-        ),
-        hovertemplate="y=%{x:.4g}<br>z=%{y:.4g}<br>t=%{marker.color:.4g}<extra></extra>",
-        showlegend=False
-    ))
+            hoverinfo="skip",
+            showlegend=False,
+            opacity=0.0
+        ))
 
     fig.update_layout(
         template="plotly_white",
         font=dict(family="Times New Roman, Times, serif", size=14),
         margin=dict(l=90, r=120, t=10, b=70),
         title=dict(
-            text=H_text,
+            text=title_text,
             x=0.5, y=0.98,
             xref="paper", yref="paper",
             xanchor="center", yanchor="top",
@@ -131,29 +171,21 @@ def create_yz_fig(y, z, time, H_oe):
         xaxis=dict(
             title=dict(text="y (arb.units)", font=title_font, standoff=16),
             tickfont=tick_font,
-            showline=True,
-            linewidth=1,
-            linecolor="black",
+            showline=True, linewidth=1, linecolor="black",
             mirror=True,
-            showgrid=True,
-            gridcolor="#cccccc",
-            gridwidth=1,
+            showgrid=True, gridcolor="#cccccc", gridwidth=1,
             range=limits,
             tickangle=0,
         ),
         yaxis=dict(
             title=dict(text="z (arb.units)", font=title_font, standoff=16),
             tickfont=tick_font,
-            showline=True,
-            linewidth=1,
-            linecolor="black",
+            showline=True, linewidth=1, linecolor="black",
             mirror=True,
-            showgrid=True,
-            gridcolor="#cccccc",
-            gridwidth=1,
+            showgrid=True, gridcolor="#cccccc", gridwidth=1,
             range=limits,
             tickangle=0,
-            scaleanchor="x",   # одинаковый масштаб по осям
+            scaleanchor="x",
             scaleratio=1
         ),
         showlegend=False
