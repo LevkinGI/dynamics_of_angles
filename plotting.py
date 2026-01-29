@@ -142,7 +142,7 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
                 colorscale=colorscale,
                 showscale=True,
                 colorbar=dict(
-                    title=dict(text="Time", font=title_font),
+                    title=dict(text="Time (ns)", font=title_font),
                     tickfont=tick_font,
                     thickness=22,
                     len=0.90,
