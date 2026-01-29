@@ -594,7 +594,7 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
     theta_fig = create_theta_fig(time_ns, theta, theta_fit)
     yz_fig    = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
                                 np.cos(np.pi/2 + np.radians(theta)),
-                                time_ns)
+                                time_ns, H)
 
     return phi_fig, theta_fig, yz_fig
 
