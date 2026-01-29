@@ -268,7 +268,7 @@ app.layout = html.Div([
             dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','width': w_angles,'height': h_angles,'scale': 2}}),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '60%', 'height': 'calc(40vw)'}),
-        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': w_yz,'scale': 2}})
+        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': h_yz,'scale': 2}})
     ]),
 ])
 
