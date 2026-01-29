@@ -29,7 +29,7 @@ w_fix, h_fix = 600, 400
 w_freq, h_freq = 600, 600
 w_angles, h_angles = 900, 400
 w_phase, h_phase = 600, 600
-w_yz, h_yz = 730, 600
+w_yz, h_yz = 520, 400
 
 sliders_range = 5
 log_marks = {}
@@ -268,7 +268,7 @@ app.layout = html.Div([
             dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','width': w_angles,'height': h_angles,'scale': 2}}),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '60%', 'height': 'calc(40vw)'}),
-        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': h_yz,'scale': 2}})
+        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': h_yz,'scale': 3}})
     ]),
 ])
 
@@ -678,7 +678,7 @@ def update_graph_config(svg_on):
     T_fix_conf = {'toImageButtonOptions': {'format': format,'filename': 'T_fix','width': w_fix, 'height': h_fix,'scale': 1 if format == 'svg' else 2}}
     phi_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика phi','width': w_angles,'height': h_angles,'scale': 1 if format == 'svg' else 2}}
     theta_conf = {'toImageButtonOptions': {'format': format,'filename': 'Динамика theta','width': w_angles,'height': h_angles,'scale': 1 if format == 'svg' else 2}}
-    yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','width': w_yz, 'height': h_yz,'scale': 1 if format == 'svg' else 2}}
+    yz_conf = {'toImageButtonOptions': {'format': format,'filename': 'Проекция траектории','width': w_yz, 'height': h_yz,'scale': 1 if format == 'svg' else 3}}
 
     return phase_conf, freq_conf, H_fix_conf, T_fix_conf, phi_conf, theta_conf, yz_conf
 
