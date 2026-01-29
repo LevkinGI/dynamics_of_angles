@@ -29,7 +29,7 @@ w_fix, h_fix = 600, 400
 w_freq, h_freq = 600, 600
 w_angles, h_angles = 900, 400
 w_phase, h_phase = 600, 600
-w_yz, h_yz = 800, 600
+w_yz, h_yz = 730, 600
 
 sliders_range = 5
 log_marks = {}
