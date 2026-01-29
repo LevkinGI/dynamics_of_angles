@@ -57,49 +57,108 @@ def create_theta_fig(time, theta, theta_fit):
     )
     return fig
 
-def create_yz_fig(y, z, time, anim_speed=5):
-    frames = []
-    num_frames = len(time[::anim_speed])
-    for i in range(num_frames):
-        frame = go.Frame(
-            data=[go.Scatter(
-                x=y[: (i+1) * anim_speed],
-                y=z[: (i+1) * anim_speed],
-                mode='lines',
-                line=dict(color='rgb(255, 0, 0)', width=2)
-            )]
-        )
-        frames.append(frame)
-    fig = go.Figure(
-        data=[go.Scatter(x=y, y=z, mode='lines', line=dict(color='rgb(255, 0, 0)', width=2))],
-        frames=frames
-    )
-    lim = np.max([np.abs(y), np.abs(z)])
+import numpy as np
+import plotly.graph_objects as go
+
+def create_yz_fig(y, z, time, H_oe):
+    y = np.asarray(y, dtype=float)
+    z = np.asarray(z, dtype=float)
+    t = np.asarray(time, dtype=float)
+
+    # пределы по осям
+    lim = float(np.max([np.max(np.abs(y)), np.max(np.abs(z))]))
     limits = (-1.1 * lim, 1.1 * lim)
+
+    # форматирование H в заголовке (как правило удобнее в kOe)
+    H_kOe = float(H_oe) / 1000.0
+    H_text = f"H = {H_kOe:g} kOe"
+
+    title_font = dict(family="Times New Roman, Times, serif", size=28)
+    tick_font  = dict(family="Times New Roman, Times, serif", size=24)
+
+    # Если точек много — Scattergl быстрее
+    Trace = go.Scattergl if len(y) > 5000 else go.Scatter
+
+    fig = go.Figure()
+
+    # Линия (нейтральная), чтобы траектория читалась как непрерывная
+    fig.add_trace(go.Scatter(
+        x=y, y=z,
+        mode="lines",
+        line=dict(width=2, color="rgba(0,0,0,0.35)"),
+        hoverinfo="skip",
+        showlegend=False
+    ))
+
+    # Маркеры с цветом по времени (градиент) + colorbar
+    fig.add_trace(Trace(
+        x=y, y=z,
+        mode="markers",
+        marker=dict(
+            size=6,
+            color=t,
+            colorscale="Plasma",
+            cmin=float(np.min(t)),
+            cmax=float(np.max(t)),
+            showscale=True,
+            colorbar=dict(
+                title=dict(text="Time", font=title_font),
+                tickfont=tick_font,
+                thickness=22,
+                len=0.90,
+                y=0.5,
+                yanchor="middle",
+                outlinewidth=1,
+                outlinecolor="black",
+            ),
+            line=dict(width=0)
+        ),
+        hovertemplate="y=%{x:.4g}<br>z=%{y:.4g}<br>t=%{marker.color:.4g}<extra></extra>",
+        showlegend=False
+    ))
+
     fig.update_layout(
-        title="Проекция траектории на плоскость yz",
-        xaxis_title="Координата y (ед. L)",
-        yaxis_title="Координата z (ед. L)",
-        xaxis=dict(range=limits),
-        yaxis=dict(range=limits),
         template="plotly_white",
-        updatemenus=[{
-            "type": "buttons",
-            "showactive": True,
-            "x": 1,
-            "y": 1,
-            "xanchor": 'right',
-            "yanchor": 'top',
-            "direction": 'left',
-            "buttons": [{
-                "label": "Запуск",
-                "method": "animate",
-                "args": [None, {"frame": {"duration": 50, "redraw": True},
-                                "fromcurrent": False, "mode": "immediate"}]
-            }]
-        }],
-        font=dict(size=18)
+        font=dict(family="Times New Roman, Times, serif", size=14),
+        margin=dict(l=90, r=120, t=10, b=70),
+        title=dict(
+            text=H_text,
+            x=0.5, y=0.98,
+            xref="paper", yref="paper",
+            xanchor="center", yanchor="top",
+            font=title_font
+        ),
+        xaxis=dict(
+            title=dict(text="y (arb.units)", font=title_font, standoff=16),
+            tickfont=tick_font,
+            showline=True,
+            linewidth=1,
+            linecolor="black",
+            mirror=True,
+            showgrid=True,
+            gridcolor="#cccccc",
+            gridwidth=1,
+            range=limits,
+            tickangle=0,
+        ),
+        yaxis=dict(
+            title=dict(text="z (arb.units)", font=title_font, standoff=16),
+            tickfont=tick_font,
+            showline=True,
+            linewidth=1,
+            linecolor="black",
+            mirror=True,
+            showgrid=True,
+            gridcolor="#cccccc",
+            gridwidth=1,
+            range=limits,
+            tickangle=0,
+            scaleanchor="x",   # одинаковый масштаб по осям
+            scaleratio=1
+        ),
+        showlegend=False
     )
+
     return fig
 
 
