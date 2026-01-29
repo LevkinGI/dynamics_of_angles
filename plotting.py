@@ -90,8 +90,8 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
     H_kOe = float(H_oe) / 1000.0
     title_text = f"H = {H_kOe:g} kOe"
 
-    title_font = dict(family="Times New Roman, Times, serif", size=28)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=24)
+    title_font = dict(family="Times New Roman, Times, serif", size=28, color="black")
+    tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
 
     fig = go.Figure()
 
@@ -160,7 +160,7 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
 
     fig.update_layout(
         template="plotly_white",
-        font=dict(family="Times New Roman, Times, serif", size=14),
+        font=dict(family="Times New Roman, Times, serif", size=14, color="black"),
         margin=dict(l=90, r=120, t=10, b=70),
         title=dict(
             text=title_text,
@@ -172,6 +172,7 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
         xaxis=dict(
             title=dict(text="y (arb.units)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickcolor="black",
             tickmode="linear",
             dtick=1,
             showline=True, linewidth=1, linecolor="black",
@@ -183,6 +184,7 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
         yaxis=dict(
             title=dict(text="z (arb.units)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickcolor="black",
             tickmode="linear",
             dtick=1,
             showline=True, linewidth=1, linecolor="black",
@@ -255,8 +257,8 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     f1_lo, f1_hi = f1[mask_lo], f1[mask_hi]
     f2_lo, f2_hi = f2[mask_lo], f2[mask_hi]
 
-    title_font = dict(family="Times New Roman, Times, serif", size=28)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=24)
+    title_font = dict(family="Times New Roman, Times, serif", size=28, color="black")
+    tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
 
     fig = go.Figure()
 
@@ -358,7 +360,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
 
     fig.update_layout(
         template="plotly_white",
-        font=dict(family="Times New Roman, Times, serif", size=14),
+        font=dict(family="Times New Roman, Times, serif", size=14, color="black"),
         margin=dict(l=90, r=20, t=10, b=70),
         title=dict(
             text=f"H = {H/1000} kOe",
@@ -371,6 +373,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         xaxis=dict(
             title=dict(text="Temperature (K)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickcolor="black",
             tickangle=0,
             showline=True,
             linewidth=1,
@@ -383,6 +386,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         yaxis=dict(
             title=dict(text="Frequency (GHz)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickcolor="black",
             tickangle=0,
             showline=True,
             linewidth=1,
@@ -402,7 +406,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         yref="paper",
         text=r"T<sub>M</sub>",
         showarrow=False,
-        font=dict(family="Times New Roman, Times, serif", size=28),
+        font=dict(family="Times New Roman, Times, serif", size=28, color="black"),
         xanchor="left",
         yanchor="middle"
     )
@@ -454,8 +458,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     f1 = f1[order]
     f2 = f2[order]
 
-    title_font = dict(family="Times New Roman, Times, serif", size=28)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=24)
+    title_font = dict(family="Times New Roman, Times, serif", size=28, color="black")
+    tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
 
     fig = go.Figure()
 
@@ -482,7 +486,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
 
     fig.update_layout(
         template="plotly_white",
-        font=dict(family="Times New Roman, Times, serif", size=14),
+        font=dict(family="Times New Roman, Times, serif", size=14, color="black"),
         margin=dict(l=90, r=20, t=10, b=70),
         title=dict(
             text=f"T = {T} K",
@@ -495,6 +499,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         xaxis=dict(
             title=dict(text="Magnetic field (kOe)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickcolor="black",
             tickangle=0,
             showline=True,
             linewidth=1,
@@ -507,6 +512,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         yaxis=dict(
             title=dict(text="Frequency (GHz)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickcolor="black",
             tickangle=0,
             showline=True,
             linewidth=1,
@@ -549,8 +555,8 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
     z_plane = np.array([[zmin, zmin],
                         [zmax, zmax]])
 
-    title_font = dict(family="Times New Roman, Times, serif", size=18)
-    tick_font  = dict(family="Times New Roman, Times, serif", size=14)
+    title_font = dict(family="Times New Roman, Times, serif", size=18, color="black")
+    tick_font  = dict(family="Times New Roman, Times, serif", size=14, color="black")
 
     fig = go.Figure()
 
@@ -594,27 +600,30 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
 
     fig.update_layout(
         template="plotly_white",
-        font=dict(family="Times New Roman, Times, serif", size=14),
+        font=dict(family="Times New Roman, Times, serif", size=14, color="black"),
         margin=dict(l=120, r=20, t=10, b=70),
         scene=dict(
             xaxis=dict(
                 title=dict(text=pad + f"Magnetic field (kOe)", font=title_font),
                 tickfont=tick_font,
+                tickcolor="black",
             ),
             yaxis=dict(
                 title=dict(text=pad + f"Temperature (K)", font=title_font),
                 tickfont=tick_font,
+                tickcolor="black",
             ),
             zaxis=dict(
                 title=dict(text=pad + f"Frequency (GHz)", font=title_font),
                 tickfont=tick_font,
+                tickcolor="black",
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
             aspectratio=dict(x=1, y=1, z=0.3),
         ),
         legend=dict(
-            font=dict(family="Times New Roman, Times, serif", size=12),
+            font=dict(family="Times New Roman, Times, serif", size=12, color="black"),
             bgcolor="rgba(255,255,255,0.7)"
         )
     )
@@ -703,8 +712,8 @@ def create_phase_fig(T_vals, theta_0):
                            xanchor='left', yanchor='top')
 
     fig.update_layout(
-        xaxis=dict(title='T (K)', range=[T_vals.min(), T_vals.max()]),
-        yaxis=dict(title='H (kOe)', range=[H_kOe.min(), H_kOe.max()]),
+        xaxis=dict(title='T (K)', tickcolor="black", range=[T_vals.min(), T_vals.max()]),
+        yaxis=dict(title='H (kOe)', tickcolor="black", range=[H_kOe.min(), H_kOe.max()]),
         template='plotly_white',
         margin=dict(l=60, r=40, t=40, b=60)
     )
