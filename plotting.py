@@ -171,6 +171,8 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
         xaxis=dict(
             title=dict(text="y (arb.units)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickmode="linear",
+            dtick=1,
             showline=True, linewidth=1, linecolor="black",
             mirror=True,
             showgrid=True, gridcolor="#cccccc", gridwidth=1,
@@ -180,6 +182,8 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
         yaxis=dict(
             title=dict(text="z (arb.units)", font=title_font, standoff=16),
             tickfont=tick_font,
+            tickmode="linear",
+            dtick=1,
             showline=True, linewidth=1, linecolor="black",
             mirror=True,
             showgrid=True, gridcolor="#cccccc", gridwidth=1,
