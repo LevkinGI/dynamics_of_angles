@@ -83,8 +83,7 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
 
     # Одинаковые пределы + одинаковый масштаб (2)
     lim = float(np.max([np.max(np.abs(y)), np.max(np.abs(z))]))
-    # limits = (-1.1 * lim, 1.1 * lim)
-    limits = (-3, 3)
+    limits = (-1.1 * lim, 1.1 * lim)
 
     # Заголовок (как у T_fix)
     H_kOe = float(H_oe) / 1000.0
@@ -190,7 +189,7 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
             showline=True, linewidth=1, linecolor="black",
             mirror=True,
             showgrid=True, gridcolor="#cccccc", gridwidth=1,
-            # range=limits,
+            range=limits,
             tickangle=0,
             scaleanchor="x",
             scaleratio=1
