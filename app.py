@@ -29,7 +29,7 @@ w_fix, h_fix = 600, 400
 w_freq, h_freq = 600, 600
 w_angles, h_angles = 900, 400
 w_phase, h_phase = 600, 600
-w_yz, h_yz = 630, 498
+w_yz, h_yz = 630, 495
 
 sliders_range = 5
 log_marks = {}
@@ -47,7 +47,7 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(0.6, 1.0, 1.0, 1.0, 0.4)),
+            "1": asdict(SimParams(0.4, 1.0, 1.0, 1.0, 0.4)),
             "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
@@ -84,7 +84,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
             dcc.Slider(id='alpha-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.6),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.4),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
