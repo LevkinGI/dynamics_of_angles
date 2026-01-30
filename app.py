@@ -518,7 +518,7 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
     phi     = np.degrees(sol[1])
     
     # Выполнение аппроксимации
-    if False:
+    if True:
         A1_theta = np.max(theta) / 2
         A2_theta = A1_theta
         A1_phi   = np.max(phi) / 2
