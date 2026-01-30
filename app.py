@@ -540,9 +540,12 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
          f1_GHz_opt, f2_GHz_opt) = result_stage1.x
     
         initial_guess_stage2 = [A1_theta, A2_theta, A1_phi, A2_phi]
+        lower_bounds_stage2  = [0, 0, 0, 0]
+        upper_bounds_stage2  = [np.inf, np.inf, np.inf, np.inf]
         result_stage2 = least_squares(
             residuals_stage2,
             x0=initial_guess_stage2,
+            bounds=(lower_bounds_stage2, upper_bounds_stage2),
             args=(sim_time, theta, phi, f1_theta_opt, n1_theta_opt, f2_theta_opt, n2_theta_opt,
                   f1_phi_opt, n1_phi_opt, f2_phi_opt, n2_phi_opt, f1_GHz_opt, f2_GHz_opt),
             xtol=1e-4, ftol=1e-4, gtol=1e-4, max_nfev=10000
@@ -555,8 +558,8 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
             f1_GHz_opt, f2_GHz_opt
         ]
         lower_bounds_stage3 = [
-            -np.inf, -np.pi, 0.01, -np.inf, -np.pi, 0.01,
-            -np.inf, -np.pi, 0.01, -np.inf, -np.pi, 0.01, 0.1, 0.1
+            0, -np.pi, 0.01, 0, -np.pi, 0.01,
+            0, -np.pi, 0.01, 0, -np.pi, 0.01, 0.1, 0.1
         ]
         upper_bounds_stage3 = [
             np.inf, np.pi, 100, np.inf, np.pi, 100,
@@ -588,7 +591,7 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
                                    f1_GHz_opt, f2_GHz_opt)
         
         # approx_freqs_GHz = sorted(np.round([f1_GHz_opt, f2_GHz_opt], 1), reverse=True)
-        approx_freqs_GHz = [f1_phi_opt, f2_phi_opt]
+        approx_freqs_GHz = [f1_theta_opt, f2_theta_opt]
         theor_freqs_GHz = [A1_phi_opt/A2_phi_opt, A1_theta_opt/A2_theta_opt]
 
         phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
