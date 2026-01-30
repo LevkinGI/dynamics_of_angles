@@ -570,9 +570,15 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
             xtol=1e-8, ftol=1e-8, gtol=1e-8, max_nfev=10000
         )
         opt_params = result_stage3.x
-        (A1_theta_opt, f1_theta_opt, n1_theta_opt, A2_theta_opt, f2_theta_opt, n2_theta_opt,
-         A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
-         f1_GHz_opt, f2_GHz_opt) = opt_params
+        if opt_params[-2] >= opt_params[-1]:
+            (A1_theta_opt, f1_theta_opt, n1_theta_opt, A2_theta_opt, f2_theta_opt, n2_theta_opt,
+             A1_phi_opt, f1_phi_opt, n1_phi_opt, A2_phi_opt, f2_phi_opt, n2_phi_opt,
+             f1_GHz_opt, f2_GHz_opt) = opt_params
+        else:
+            (A2_theta_opt, f2_theta_opt, n2_theta_opt, A1_theta_opt, f1_theta_opt, n1_theta_opt,
+             A2_phi_opt, f2_phi_opt, n2_phi_opt, A1_phi_opt, f1_phi_opt, n1_phi_opt,
+             f2_GHz_opt, f1_GHz_opt) = opt_params
+            
     
         theta_fit = fit_function_theta(sim_time, A1_theta_opt, f1_theta_opt, n1_theta_opt,
                                    A2_theta_opt, f2_theta_opt, n2_theta_opt,
@@ -581,7 +587,9 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
                                    A2_phi_opt, f2_phi_opt, n2_phi_opt,
                                    f1_GHz_opt, f2_GHz_opt)
         
-        approx_freqs_GHz = sorted(np.round([f1_GHz_opt, f2_GHz_opt], 1), reverse=True)
+        # approx_freqs_GHz = sorted(np.round([f1_GHz_opt, f2_GHz_opt], 1), reverse=True)
+        approx_freqs_GHz = [f1_phi_opt, f2_phi_opt]
+        theor_freqs_GHz = [A1_phi_opt/A2_phi_opt, A1_theta_opt/A2_theta_opt]
 
         phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
         theta_fig = create_theta_fig(time_ns, theta, theta_fit)
