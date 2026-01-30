@@ -591,7 +591,7 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
                                    f1_GHz_opt, f2_GHz_opt)
         
         # approx_freqs_GHz = sorted(np.round([f1_GHz_opt, f2_GHz_opt], 1), reverse=True)
-        approx_freqs_GHz = [f1_theta_opt, f2_theta_opt]
+        approx_freqs_GHz = [n2_phi_opt/n1_phi_opt, n2_theta_opt/n1_theta_opt]
         theor_freqs_GHz = [A1_phi_opt/A2_phi_opt, A1_theta_opt/A2_theta_opt]
 
         phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
