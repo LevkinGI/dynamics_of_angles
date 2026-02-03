@@ -79,6 +79,7 @@ def run_simulation(
         atol: float = 1e-12,
         two_pulses: bool = True,
         t_pulse2: float = 0.0,
+        knock_scale: float = 1.0,
         pulse2_axis_on: bool = False,  # False -> z, True -> y
         pulse2_dir_on: bool = False,   # False -> по оси, True -> против
 ):
@@ -145,9 +146,9 @@ def run_simulation(
     # 2) второй импульс
     dir_sign = -1.0 if pulse2_dir_on else 1.0
     if pulse2_axis_on:
-        y_at_pulse[3] += dir_sign * knock
+        y_at_pulse[3] += dir_sign * knock_scale * knock
     else:
-        y_at_pulse[2] += dir_sign * (-knock)
+        y_at_pulse[2] += dir_sign * knock_scale * (-knock)
 
     # если правой части нет — всё закончили
     if t_right.size == 0:
