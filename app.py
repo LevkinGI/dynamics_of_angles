@@ -212,19 +212,15 @@ app.layout = html.Div([
             
                 html.Div([
                         html.Span("Период нч моды", style={"marginRight": "10px"}),
-                        daq.ToggleSwitch(
-                            id="mode-period-switch",
-                            value=False,  # off по умолчанию -> нч
-                        ),
+                        daq.ToggleSwitch(id="mode-period-switch", value=False),
                         html.Span("Период вч моды", style={"marginLeft": "10px"}),
                     ],
                     style={
-                        "display": "flex",
+                        "display": "grid",
+                        "gridTemplateColumns": "1fr auto 1fr",
                         "alignItems": "center",
-                        "justifyContent": "center",
                         "width": "100%",
                         "marginTop": "10px",
-                        "gap": "0px",
                         "whiteSpace": "nowrap",
                     },
                 ),
@@ -240,36 +236,29 @@ app.layout = html.Div([
                 ),
                 
                 html.Div([
-                        html.Span("Ось z", style={"marginRight": "10px"}),
-                        daq.ToggleSwitch(
-                            id="pulse2-axis-switch",
-                            value=False,   # off -> z (по умолчанию)
-                        ),
-                        html.Span("Ось y", style={"marginLeft": "10px"}),
+                        html.Span("Ось z", style={"justifySelf": "end", "paddingRight": "10px"}),
+                        daq.ToggleSwitch(id="pulse2-axis-switch", value=False),
+                        html.Span("Ось y", style={"justifySelf": "start", "paddingLeft": "10px"}),
                     ],
                     style={
-                        "display": "flex",
+                        "display": "grid",
+                        "gridTemplateColumns": "1fr auto 1fr",
                         "alignItems": "center",
-                        "justifyContent": "center",
                         "width": "100%",
                         "whiteSpace": "nowrap",
                     },
                 ),
                 
                 html.Div([
-                        html.Span("По оси", style={"marginRight": "10px"}),
-                        daq.ToggleSwitch(
-                            id="pulse2-dir-switch",
-                            value=False,   # off -> по оси (по умолчанию)
-                        ),
-                        html.Span("Против оси", style={"marginLeft": "10px"}),
+                        html.Span("По оси", style={"justifySelf": "end", "paddingRight": "10px"}),
+                        daq.ToggleSwitch(id="pulse2-dir-switch", value=False),
+                        html.Span("Против оси", style={"justifySelf": "start", "paddingLeft": "10px"}),
                     ],
                     style={
-                        "display": "flex",
+                        "display": "grid",
+                        "gridTemplateColumns": "1fr auto 1fr",
                         "alignItems": "center",
-                        "justifyContent": "center",
                         "width": "100%",
-                        "marginTop": "10px",
                         "whiteSpace": "nowrap",
                     },
                 ),
