@@ -349,7 +349,7 @@ app.layout = html.Div([
                 },
             ),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
-                  'width': '25%', 'height': 'calc(25vw)'}),
+                  'width': '25%'}),
         html.Div([
             html.Button('Скачать кривые', id='download-T-btn',
                         style={'margin-bottom': '5px'}),
@@ -366,7 +366,7 @@ app.layout = html.Div([
                 },
             ),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
-                  'width': '25%', 'height': 'calc(25vw)'}),
+                  'width': '25%'}),
     ]),
 
 
@@ -379,7 +379,7 @@ app.layout = html.Div([
             dcc.Graph(id='theta-graph', config={'toImageButtonOptions': {'format': 'png','filename': 'Динамика theta','width': w_angles,'height': h_angles,'scale': 2}}),
         ], style={'display': 'inline-block', 'verticalAlign': 'top',
                   'width': '60%', 'height': 'calc(40vw)'}),
-        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': h_yz,'scale': 3}})
+        dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': h_yz,'scale': 3}})
     ]),
 ])
 
