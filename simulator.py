@@ -141,7 +141,7 @@ def run_simulation(
     y_at_pulse = sol1.y[:, -1].copy()
 
     # 2) второй импульс
-    y_at_pulse[3] -= knock  # dtheta += knock
+    y_at_pulse[3] += knock  # dtheta += knock
 
     # если правой части нет — всё закончили
     if t_right.size == 0:
