@@ -66,7 +66,7 @@ import plotly.colors as pc
 
 def create_yz_fig(
     y, z, time, H_oe,
-    colorscale="Plasma", n_bins=200,
+    colorscale="Plasma", n_bins=300,
     pulse2_on=False,
     pulse2_time=None,          # в тех же единицах, что и time (у вас ns)
     pulse2_axis_on=False,      # False -> z, True -> y
@@ -80,11 +80,6 @@ def create_yz_fig(
     colorscale : строка Plotly colorscale (например 'Viridis', 'Cividis', 'Plasma', ...)
     n_bins : сколько цветовых "ступеней" для линии (больше -> плавнее, но тяжелее)
     """
-
-    y = np.asarray(y, dtype=float)
-    z = np.asarray(z, dtype=float)
-    t = np.asarray(time, dtype=float)
-
     # (3) Замена единиц: 0.01 -> 1  => умножаем на 100
     y = 100.0 * y
     z = 100.0 * z
@@ -106,11 +101,11 @@ def create_yz_fig(
     # Plotly не умеет "настоящий" градиент на одной линии, поэтому делаем линии-отрезки,
     # сгруппированные по бинам времени => немного трасс, визуально линия непрерывная.
     if len(y) >= 2:
-        tmin, tmax = float(np.min(t)), float(np.max(t))
+        tmin, tmax = float(np.min(time)), float(np.max(time))
         if np.isclose(tmax, tmin):
-            t_norm = np.zeros_like(t)
+            t_norm = np.zeros_like(time)
         else:
-            t_norm = (t - tmin) / (tmax - tmin)
+            t_norm = (time - tmin) / (tmax - tmin)
 
         # бин по "времени" для каждого сегмента (i -> i+1)
         seg_bin = np.floor(t_norm[:-1] * (n_bins - 1)).astype(int)
@@ -167,7 +162,7 @@ def create_yz_fig(
 
         if pulse2_on and (pulse2_time is not None):
             # индекс ближайшей точки траектории к моменту импульса
-            idx = int(np.argmin(np.abs(t - pulse2_time)))
+            idx = int(np.argmin(np.abs(time - pulse2_time)))
             y0 = float(y[idx])
             z0 = float(z[idx])
     
