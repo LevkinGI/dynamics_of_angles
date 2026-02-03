@@ -220,7 +220,6 @@ app.layout = html.Div([
                         "gridTemplateColumns": "1fr auto 1fr",
                         "alignItems": "center",
                         "width": "100%",
-                        "marginTop": "10px",
                         "whiteSpace": "nowrap",
                     },
                 ),
