@@ -148,7 +148,7 @@ app.layout = html.Div([
                 label='Моделирование при изменении параметров',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "20px"}
+                style={"marginLeft": "40px", "marginBottom": "10px"}
                 ),
             daq.BooleanSwitch(
                 id='two-pulse-switch',
@@ -156,7 +156,7 @@ app.layout = html.Div([
                 label='Моделирование с двумя импульсами',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "20px"}
+                style={"marginLeft": "40px", "marginBottom": "10px"}
             ),
             daq.BooleanSwitch(
                 id='exp-view-switch',
@@ -164,7 +164,7 @@ app.layout = html.Div([
                 label='Отображать экспериментальные данные',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "20px"}
+                style={"marginLeft": "40px", "marginBottom": "10px"}
                 ),
             daq.BooleanSwitch(
                 id='png-svg-switch',
