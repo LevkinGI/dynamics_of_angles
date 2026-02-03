@@ -178,7 +178,7 @@ def create_yz_fig(
                 xref="x", yref="y",
                 axref="x", ayref="y",
                 showarrow=True,
-                arrowhead=1,
+                arrowhead=4,
                 arrowsize=1,
                 arrowwidth=4,
                 arrowcolor=LF_COLOR,
