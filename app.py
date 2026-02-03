@@ -206,7 +206,7 @@ app.layout = html.Div([
                         2.75: "11/4 T",
                         3.00: "3T",
                     },
-                    tooltip={"placement": "bottom", "always_visible": True},
+                    tooltip={"placement": "bottom", "always_visible": False},
                     updatemode="mouseup",
                 ),
             ],
