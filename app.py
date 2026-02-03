@@ -232,6 +232,7 @@ app.layout = html.Div([
                 html.Div(
                     "Выбор направления прихода второго импульса",
                     style={
+                        "marginTop": "10px",
                         "fontSize": "18px",
                         "textAlign": "center",
                         "width": "100%",
@@ -251,7 +252,6 @@ app.layout = html.Div([
                         "alignItems": "center",
                         "justifyContent": "center",
                         "width": "100%",
-                        "marginTop": "10px",
                         "whiteSpace": "nowrap",
                     },
                 ),
