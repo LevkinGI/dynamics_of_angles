@@ -79,6 +79,8 @@ def run_simulation(
         atol: float = 1e-12,
         two_pulses: bool = True,
         t_pulse2: float = 0.0,
+        pulse2_axis_on: bool = False,  # False -> z, True -> y
+        pulse2_dir_on: bool = False,   # False -> по оси, True -> против
 ):
     chi = chi_func(m, M, lam)
     knock = (gamma**2) * (H + abs(m) / chi) * h_IFE * delta_t
@@ -141,7 +143,11 @@ def run_simulation(
     y_at_pulse = sol1.y[:, -1].copy()
 
     # 2) второй импульс
-    y_at_pulse[2] += knock  # dtheta += knock
+    dir_sign = -1.0 if pulse2_dir_on else 1.0
+    if pulse2_axis_on:
+        y_at_pulse[3] += dir_sign * knock
+    else:
+        y_at_pulse[2] += dir_sign * (-knock)
 
     # если правой части нет — всё закончили
     if t_right.size == 0:
