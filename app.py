@@ -179,11 +179,23 @@ app.layout = html.Div([
         ),
 
         html.Div([
-                daq.ToggleSwitch(
-                    id='mode-period-switch',
-                    value=False,
-                    label=['Период нч моды', 'Период вч моды'],
-                    style={"marginLeft": "20px", "marginBottom": "10px"}
+                html.Div([
+                        html.Span("Период нч моды", style={"marginRight": "10px"}),
+                        daq.ToggleSwitch(
+                            id="mode-period-switch",
+                            value=False,  # off по умолчанию -> нч
+                        ),
+                        html.Span("Период вч моды", style={"marginLeft": "10px"}),
+                    ],
+                    style={
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "flex-start",
+                        "marginLeft": "20px",
+                        "marginBottom": "30px",
+                        "gap": "0px",
+                        "whiteSpace": "nowrap",
+                    },
                 ),
                 dcc.Slider(
                     id='pulse-delay-slider',
@@ -192,19 +204,19 @@ app.layout = html.Div([
                     step=0.05,
                     value=0.25,
                     marks={
-                        0.00: "0",
+                        0: "0",
                         0.25: "T/4",
                         0.50: "T/2",
                         0.75: "3/4 T",
-                        1.00: "T",
+                        1: "T",
                         1.25: "5/4 T",
                         1.50: "3/2 T",
                         1.75: "7/4 T",
-                        2.00: "2T",
+                        2: "2T",
                         2.25: "9/4 T",
                         2.50: "5/2 T",
                         2.75: "11/4 T",
-                        3.00: "3T",
+                        3: "3T",
                     },
                     tooltip={"placement": "bottom", "always_visible": False},
                     updatemode="mouseup",
