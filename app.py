@@ -350,8 +350,8 @@ def update_slider_values(H, T):
     Output("pulse-delay-title", "children"),
     Input("mode-period-switch", "value"),
     Input("pulse-delay-slider", "value"),
-    Input("input-H", "value"),
-    Input("input-T", "value"),
+    Input("H-slider", "value"),
+    Input("T-slider", "value"),
     Input("material-dropdown", "value"),
 )
 def update_pulse_delay_title(mode_period_on, pulse_delay_T, H, T, material):
