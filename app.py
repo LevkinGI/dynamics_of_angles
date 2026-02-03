@@ -223,7 +223,7 @@ app.layout = html.Div([
                         "alignItems": "center",
                         "justifyContent": "center",
                         "width": "100%",
-                        "marginTop": "10px",
+                        "marginTop": "20px",
                         "gap": "0px",
                         "whiteSpace": "nowrap",
                     },
