@@ -211,9 +211,9 @@ app.layout = html.Div([
                 ),
             
                 html.Div([
-                        html.Span("Период нч моды", style={"marginRight": "10px"}),
+                        html.Span("Период нч моды", style={"justifySelf": "end", "paddingRight": "10px"}),
                         daq.ToggleSwitch(id="mode-period-switch", value=False),
-                        html.Span("Период вч моды", style={"marginLeft": "10px"}),
+                        html.Span("Период вч моды", style={"justifySelf": "start", "paddingLeft": "10px"}),
                     ],
                     style={
                         "display": "grid",
