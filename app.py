@@ -786,9 +786,18 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
     
     phi_fig   = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
     theta_fig = create_theta_fig(time_ns, theta, theta_fit)
-    yz_fig    = create_yz_fig(np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi)),
-                                np.cos(np.pi/2 + np.radians(theta)),
-                                time_ns, H)
+    
+    y_tr = np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi))
+    z_tr = np.cos(np.pi/2 + np.radians(theta))
+    yz_fig = create_yz_fig(
+        y_tr, z_tr,
+        time_ns, H,
+        pulse2_on=bool(two_pulse_on),
+        pulse2_time=float(t_pulse2 * 1e9),   # ns
+        pulse2_axis_on=bool(pulse2_axis_on),
+        pulse2_dir_on=bool(pulse2_dir_on),
+        knock_scale=float(p.knock_scale),
+    )
 
     return phi_fig, theta_fig, yz_fig
 
