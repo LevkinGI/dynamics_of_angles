@@ -162,6 +162,7 @@ def create_yz_fig(
 
         if pulse2_on and (pulse2_time is not None):
             # индекс ближайшей точки траектории к моменту импульса
+            idx = np.where(time < pulse2_time)[0][-1]
             idx = int(np.argmin(np.abs(time - pulse2_time)))
             y0 = float(y[idx])
             z0 = float(z[idx])
