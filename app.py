@@ -151,6 +151,14 @@ app.layout = html.Div([
                 style={"marginLeft": "60px"}
                 ),
             daq.BooleanSwitch(
+                id='two-pulse-switch',
+                on=True,
+                label='Моделирование с двумя импульсами',
+                labelPosition='top',
+                color='#119DFF',
+                style={"marginLeft": "60px"}
+            ),
+            daq.BooleanSwitch(
                 id='exp-view-switch',
                 on=True,
                 label='Отображать экспериментальные данные',
@@ -168,6 +176,45 @@ app.layout = html.Div([
                 ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
+        ),
+
+        html.Div([
+                daq.ToggleSwitch(
+                    id='mode-period-switch',
+                    value=False,
+                    label=['Период нч моды', 'Период вч моды'],
+                    style={"marginLeft": "20px", "marginBottom": "10px"}
+                ),
+                dcc.Slider(
+                    id='pulse-delay-slider',
+                    min=0,
+                    max=3,
+                    step=0.05,
+                    value=0.25,
+                    marks={
+                        0.00: "0",
+                        0.25: "T/4",
+                        0.50: "T/2",
+                        0.75: "3/4 T",
+                        1.00: "T",
+                        1.25: "5/4 T",
+                        1.50: "3/2 T",
+                        1.75: "7/4 T",
+                        2.00: "2T",
+                        2.25: "9/4 T",
+                        2.50: "5/2 T",
+                        2.75: "11/4 T",
+                        3.00: "3T",
+                    },
+                    tooltip={"placement": "bottom", "always_visible": True},
+                    updatemode="mouseup",
+                ),
+            ],
+            style={
+                "marginLeft": "30px",
+                "flexGrow": "1",      # занять всю оставшуюся ширину
+                "minWidth": "300px",
+            },
         ),
         ],
         style={
@@ -476,13 +523,16 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('T-slider', 'value'),
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on'),
+     Input('two-pulse-switch', 'on'),
+     Input('mode-period-switch', 'value'),
+     Input('pulse-delay-slider', 'value'),
      Input('png-svg-switch', 'on'),],
     [State('phi-graph', 'figure'),
      State('theta-graph', 'figure'),
      State('yz-graph', 'figure')],
     prevent_initial_call=True,
 )
-def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz_fig):
+def update_graphs(store, H, T, material, calc_on, two_pulse_on, mode_period_on, pulse_delay_T, svg_on, phi_fig, theta_fig, yz_fig):
     if not calc_on: raise PreventUpdate
         
     # Определяем, какой input вызвал callback
@@ -507,12 +557,22 @@ def update_graphs(store, H, T, material, calc_on, svg_on, phi_fig, theta_fig, yz
     t_index = np.abs(T_vals - T).argmin()
 
     theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
+    
+    # выбор, по какому периоду отмеряем задержку
+    f_ref_GHz = float(theor_freqs_GHz[0]) if mode_period_on else float(theor_freqs_GHz[1])
+    T_ref = 1.0 / (f_ref_GHz * 1e9)          # период в секундах
+    t_pulse2 = (pulse_delay_T or 0.0) * T_ref  # задержка (сек)
 
     m_val   = m_array[t_index]
     M_val   = M_array[t_index]
     K_val   = K_array[t_index]
     kappa   = m_val / gamma
-    sim_time, sol = run_simulation(H, m_val, M_val, K_val, alpha, lam, kappa, simulation_time=0.3e-9)
+    sim_time, sol = run_simulation(
+                                    H, m_val, M_val, K_val, alpha, lam, kappa,
+                                    simulation_time=0.3e-9,
+                                    two_pulses=bool(two_pulse_on),
+                                    t_pulse2=float(t_pulse2),
+                                )
     time_ns = sim_time * 1e9
     theta   = np.degrees(sol[0])
     phi     = np.degrees(sol[1])
