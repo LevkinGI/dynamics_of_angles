@@ -190,12 +190,18 @@ app.layout = html.Div([
                     style={
                         "display": "flex",
                         "alignItems": "center",
-                        "justifyContent": "flex-start",
+                        "justifyContent": "center",
+                        "width": "100%",
                         "marginLeft": "20px",
                         "marginBottom": "30px",
                         "gap": "0px",
                         "whiteSpace": "nowrap",
                     },
+                ),
+                html.Div(
+                    id="pulse-delay-title",
+                    children="Время прихода второго импульса 0 нс",
+                    style={"marginLeft": "20px", "marginBottom": "10px", "fontSize": "18px"},
                 ),
                 dcc.Slider(
                     id='pulse-delay-slider',
@@ -339,6 +345,25 @@ app.layout = html.Div([
 )
 def update_slider_values(H, T):
     return f'Магнитное поле H = {H} Э:', f'Температура T = {T} K:'
+
+@app.callback(
+    Output("pulse-delay-title", "children"),
+    Input("mode-period-switch", "value"),
+    Input("pulse-delay-slider", "value"),
+    Input("input-H", "value"),
+    Input("input-T", "value"),
+    Input("material-dropdown", "value"),
+)
+def update_pulse_delay_title(mode_period_on, pulse_delay_T, H, T, material):
+    if H is None or T is None or material is None:
+        return "Время прихода второго импульса — нс"
+
+    theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
+    f_ref_GHz = float(theor_freqs_GHz[0]) if mode_period_on else float(theor_freqs_GHz[1])
+    T_ref = 1.0 / (f_ref_GHz * 1e9)               # сек
+    t_pulse2 = float(pulse_delay_T or 0.0) * T_ref # сек
+
+    return f"Время прихода второго импульса {t_pulse2*1e9:.2f} нс"
 
 @app.callback(
     [Output('T-slider', 'min'),
