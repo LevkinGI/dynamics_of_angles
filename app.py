@@ -47,8 +47,8 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(0.5, 1.0, 1.0, 1.0, 0.4)),
-            "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0)),
+            "1": asdict(SimParams(0.5, 1.0, 1.0, 1.0, 0.4, 1.0)),
+            "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
 
@@ -133,6 +133,18 @@ app.layout = html.Div([
             html.Label(id='lam-scale-label'),
             dcc.Slider(id='lam-scale-slider',
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.4),
+                       marks=log_marks,
+                       updatemode="mouseup",
+                       vertical=True, verticalHeight=180,
+                      ),
+            ],
+            style={"marginLeft": "30px", "position": "relative"}
+        ),
+        
+        html.Div([
+            html.Label(id='knock-scale-label'),
+            dcc.Slider(id='knock-scale-slider',
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
@@ -501,6 +513,17 @@ def move_lam_slider(logk):
     return f"{k:.2f} × λ"
 
 @app.callback(
+    Output("knock-scale-label", "children"),
+    Input("knock-scale-slider", "drag_value"),
+    prevent_initial_call=True,
+)
+def move_knock_slider(logk):
+    if logk is None:
+        raise PreventUpdate
+    k = 10**logk
+    return f"{k:.2f} × knock"
+
+@app.callback(
     [Output('H_fix-graph', 'figure'),
      Output('T_fix-graph', 'figure'),
      Output('phase-graph', 'figure'),
@@ -576,13 +599,14 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on,
     Output('k-scale-slider',      'value'),
     Output('m-scale-slider',      'value'),
     Output('M-scale-slider',      'value'),
-    Output('lam-scale-slider',      'value')],
+    Output('lam-scale-slider',      'value'),
+    Output('knock-scale-slider',      'value')],
     Input('material-dropdown', 'value'),
     State('param-store',       'data'),
 )
 def sync_sliders_with_material(material, store):
     p = SimParams(**store[material])
-    return np.log10(p.alpha_scale), np.log10(p.k_scale), np.log10(p.m_scale), np.log10(p.M_scale), np.log10(p.lam_scale)
+    return np.log10(p.alpha_scale), np.log10(p.k_scale), np.log10(p.m_scale), np.log10(p.M_scale), np.log10(p.lam_scale), np.log10(p.knock_scale)
 
 @app.callback(
     Output('param-store', 'data'),
@@ -591,17 +615,19 @@ def sync_sliders_with_material(material, store):
     Input('k-scale-slider',    'value'),
     Input('m-scale-slider',    'value'),
     Input('M-scale-slider',    'value'),
-    Input('lam-scale-slider',    'value')],
+    Input('lam-scale-slider',    'value'),
+    Input('knock-scale-slider',    'value')],
     State('param-store',       'data'),
     prevent_initial_call=True,
 )
-def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
+def update_params(material, a_k, k_k, m_k, M_k, lam_k, knock_k, store):
     p = SimParams(**store[material])
     p.alpha_scale = 10 ** a_k
     p.k_scale = 10 ** k_k
     p.m_scale = 10 ** m_k
     p.M_scale = 10 ** M_k
     p.lam_scale = 10 ** lam_k
+    p.knock_scale = 10 ** knock_k
     store[material] = asdict(p)
     return store
 
@@ -665,6 +691,7 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
                                     simulation_time=0.3e-9,
                                     two_pulses=bool(two_pulse_on),
                                     t_pulse2=float(t_pulse2),
+                                    knock_scale = p.knock_scale,
                                     pulse2_axis_on=bool(pulse2_axis_on),
                                     pulse2_dir_on=bool(pulse2_dir_on),
                                 )
