@@ -100,7 +100,7 @@ def run_simulation(
     t_eval = np.linspace(0.0, simulation_time, num_points)
 
     # Если второй импульс выключен или вне интервала — обычная интеграция
-    if (not two_pulses) or (t_pulse2 is None) or (t_pulse2 <= 0.0) or (t_pulse2 >= simulation_time):
+    if (not two_pulses) or (t_pulse2 is None) or (t_pulse2 < 0.0) or (t_pulse2 >= simulation_time):
         sol = solve_ivp(
             dynamics,
             (0.0, simulation_time),
