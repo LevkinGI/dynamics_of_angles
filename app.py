@@ -63,7 +63,7 @@ app.layout = html.Div([
         marks={str(i): str(i) for i in range(0, int(H_vals[-1]) + 1, 500)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
-    html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
+    # html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
     html.Label(id='T-label'),
     dcc.Slider(
         id='T-slider',
@@ -74,7 +74,7 @@ app.layout = html.Div([
         marks={str(i): str(i) for i in range(290, 351, 10)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
-    html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
+    # html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
 
 
 
@@ -179,30 +179,12 @@ app.layout = html.Div([
         ),
 
         html.Div([
-                html.Div([
-                        html.Span("Период нч моды", style={"marginRight": "10px"}),
-                        daq.ToggleSwitch(
-                            id="mode-period-switch",
-                            value=False,  # off по умолчанию -> нч
-                        ),
-                        html.Span("Период вч моды", style={"marginLeft": "10px"}),
-                    ],
-                    style={
-                        "display": "flex",
-                        "alignItems": "center",
-                        "justifyContent": "center",
-                        "width": "100%",
-                        "marginLeft": "20px",
-                        "marginBottom": "30px",
-                        "gap": "0px",
-                        "whiteSpace": "nowrap",
-                    },
-                ),
                 html.Div(
                     id="pulse-delay-title",
                     children="Время прихода второго импульса 0 нс",
                     style={"marginLeft": "20px", "marginBottom": "10px", "fontSize": "18px"},
                 ),
+            
                 dcc.Slider(
                     id='pulse-delay-slider',
                     min=0,
@@ -226,6 +208,70 @@ app.layout = html.Div([
                     },
                     tooltip={"placement": "bottom", "always_visible": False},
                     updatemode="mouseup",
+                ),
+            
+                html.Div([
+                        html.Span("Период нч моды", style={"marginRight": "10px"}),
+                        daq.ToggleSwitch(
+                            id="mode-period-switch",
+                            value=False,  # off по умолчанию -> нч
+                        ),
+                        html.Span("Период вч моды", style={"marginLeft": "10px"}),
+                    ],
+                    style={
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "width": "100%",
+                        "marginTop": "10px",
+                        "gap": "0px",
+                        "whiteSpace": "nowrap",
+                    },
+                ),
+            
+                html.Div(
+                    "Выбор направления прихода второго импульса",
+                    style={
+                        "fontSize": "18px",
+                        "textAlign": "center",
+                        "width": "100%",
+                    },
+                ),
+                
+                html.Div([
+                        html.Span("Ось z", style={"marginRight": "10px"}),
+                        daq.ToggleSwitch(
+                            id="pulse2-axis-switch",
+                            value=False,   # off -> z (по умолчанию)
+                        ),
+                        html.Span("Ось y", style={"marginLeft": "10px"}),
+                    ],
+                    style={
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "width": "100%",
+                        "marginTop": "10px",
+                        "whiteSpace": "nowrap",
+                    },
+                ),
+                
+                html.Div([
+                        html.Span("По оси", style={"marginRight": "10px"}),
+                        daq.ToggleSwitch(
+                            id="pulse2-dir-switch",
+                            value=False,   # off -> по оси (по умолчанию)
+                        ),
+                        html.Span("Против оси", style={"marginLeft": "10px"}),
+                    ],
+                    style={
+                        "display": "flex",
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "width": "100%",
+                        "marginTop": "10px",
+                        "whiteSpace": "nowrap",
+                    },
                 ),
             ],
             style={
@@ -561,15 +607,17 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, store):
      Input('material-dropdown', 'value'),
      Input('auto-calc-switch',  'on'),
      Input('two-pulse-switch', 'on'),
-     Input('mode-period-switch', 'value'),
      Input('pulse-delay-slider', 'value'),
+     Input('mode-period-switch', 'value'),
+     Input('pulse2-axis-switch', 'value'),
+     Input('pulse2-dir-switch', 'value'),
      Input('png-svg-switch', 'on'),],
     [State('phi-graph', 'figure'),
      State('theta-graph', 'figure'),
      State('yz-graph', 'figure')],
     prevent_initial_call=True,
 )
-def update_graphs(store, H, T, material, calc_on, two_pulse_on, mode_period_on, pulse_delay_T, svg_on, phi_fig, theta_fig, yz_fig):
+def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, mode_period_on, pulse2_axis_on, pulse2_dir_on, svg_on, phi_fig, theta_fig, yz_fig):
     if not calc_on: raise PreventUpdate
         
     # Определяем, какой input вызвал callback
@@ -609,6 +657,8 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, mode_period_on, 
                                     simulation_time=0.3e-9,
                                     two_pulses=bool(two_pulse_on),
                                     t_pulse2=float(t_pulse2),
+                                    pulse2_axis_on=bool(pulse2_axis_on),
+                                    pulse2_dir_on=bool(pulse2_dir_on),
                                 )
     time_ns = sim_time * 1e9
     theta   = np.degrees(sol[0])
