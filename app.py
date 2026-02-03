@@ -181,7 +181,7 @@ app.layout = html.Div([
         html.Div([
                 html.Div(
                     id="pulse-delay-title",
-                    children="Время прихода второго импульса 0 нс",
+                    children="Время прихода второго импульса - нс",
                     style={"marginLeft": "20px", "marginBottom": "10px", "fontSize": "18px"},
                 ),
             
@@ -394,15 +394,35 @@ def update_slider_values(H, T):
 
 @app.callback(
     Output("pulse-delay-title", "children"),
-    Input("mode-period-switch", "value"),
-    Input("pulse-delay-slider", "value"),
-    Input("H-slider", "value"),
-    Input("T-slider", "value"),
-    Input("material-dropdown", "value"),
+    [Input("mode-period-switch", "value"),
+     Input("pulse-delay-slider", "value"),
+     Input("H-slider", "value"),
+     Input("T-slider", "value"),
+     Input("alpha-scale-slider", "value"),
+     Input("k-scale-slider", "value"),
+     Input("m-scale-slider", "value"),
+     Input("M-scale-slider", "value"),
+     Input("lam-scale-slider", "value"),
+     Input("material-dropdown", "value"),]
 )
-def update_pulse_delay_title(mode_period_on, pulse_delay_T, H, T, material):
+def update_pulse_delay_title(mode_period_on, pulse_delay_T, H, T, a_val, k_val, m_val, M_val, lam_val, material):
     if H is None or T is None or material is None:
         return "Время прихода второго импульса — нс"
+    
+    alpha_scale = 10**a_val
+    k_scale     = 10**k_val
+    m_scale     = 10**m_val
+    M_scale     = 10**M_val
+    lam_scale   = 10**lam_val
+    
+    m_array = m_scale * (m_array_1 if material == '1' else m_array_2)
+    M_array = M_scale * (M_array_1 if material == '1' else M_array_2)
+    K_array = k_scale * (K_array_1 if material == '1' else K_array_2)
+    alpha   = alpha_scale * (alpha_1 if material == '1' else alpha_2)
+    lam     = lam_scale * (lam_1 if material == '1' else lam_2)
+
+    T_vals  = T_vals_1 if material=='1' else T_vals_2
+    t_index = np.abs(T_vals - T).argmin()
 
     theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
     f_ref_GHz = float(theor_freqs_GHz[0]) if mode_period_on else float(theor_freqs_GHz[1])
