@@ -64,7 +64,15 @@ import numpy as np
 import plotly.graph_objects as go
 import plotly.colors as pc
 
-def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
+def create_yz_fig(
+    y, z, time, H_oe,
+    colorscale="Plasma", n_bins=200,
+    pulse2_on=False,
+    pulse2_time=None,          # в тех же единицах, что и time (у вас ns)
+    pulse2_axis_on=False,      # False -> z, True -> y
+    pulse2_dir_on=False,       # False -> по оси, True -> против
+    knock_scale=1.0,
+):
     """
     y, z  : координаты (в ваших текущих 'сотых' единицах, где 0.01 = 1)
     time  : массив времени (любой шкалы)
@@ -156,6 +164,29 @@ def create_yz_fig(y, z, time, H_oe, colorscale="Plasma", n_bins=200):
             showlegend=False,
             opacity=0.0
         ))
+
+        if pulse2_on and (pulse2_time is not None):
+            # индекс ближайшей точки траектории к моменту импульса
+            idx = int(np.argmin(np.abs(t - pulse2_time)))
+            y0 = float(y[idx])
+            z0 = float(z[idx])
+    
+            # направление: по оси (+), против оси (-)
+            sgn = -1.0 if pulse2_dir_on else 1.0
+            dy, dz = (sgn * knock_scale, 0.0) if pulse2_axis_on else (0.0, sgn * knock_scale)
+    
+            # рисуем стрелку от точки траектории в сторону (dy,dz)
+            fig.add_annotation(
+                x=y0 + dy, y=z0 + dz,     # наконечник
+                ax=y0, ay=z0,             # основание в точке траектории
+                xref="x", yref="y",
+                axref="x", ayref="y",
+                showarrow=True,
+                arrowhead=3,
+                arrowsize=1.2,
+                arrowwidth=3,
+                arrowcolor=LF_COLOR,
+            )
 
     fig.update_layout(
         template="plotly_white",
