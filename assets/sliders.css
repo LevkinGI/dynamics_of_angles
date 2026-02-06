@@ -1,77 +1,81 @@
 /* =========================
-   NEUTRAL SLIDER THEME
-   for dcc.Slider / dcc.RangeSlider (rc-slider)
+   NEUTRAL SLIDER THEME (FORCED)
    ========================= */
 
-/* фон "рельсы" */
-.rc-slider-rail {
-  background-color: #d6d9de; /* светло-серый, не бросается */
-  height: 4px;
+/* Rail */
+.rc-slider .rc-slider-rail,
+.rc-slider [class*="rc-slider-rail"] {
+  background-color: #d6d9de !important;
+  height: 4px !important;
 }
 
-/* активный участок */
-.rc-slider-track {
-  background-color: #8a94a6; /* приглушённый серо-синий */
-  height: 4px;
+/* Track (все варианты, включая track-1/track-2) */
+.rc-slider .rc-slider-track,
+.rc-slider [class*="rc-slider-track"] {
+  background-color: #8a94a6 !important;
+  height: 4px !important;
 }
 
-/* для range-slider (вторая часть трека) */
-.rc-slider-tracks {
-  background-color: #8a94a6;
+/* Handle */
+.rc-slider .rc-slider-handle,
+.rc-slider [class*="rc-slider-handle"] {
+  width: 14px !important;
+  height: 14px !important;
+  margin-top: -5px !important;      /* для горизонтального */
+  border: 2px solid #8a94a6 !important;
+  background-color: #ffffff !important;
+  opacity: 1 !important;
+  box-shadow: none !important;
 }
 
-/* ползунок (кружок) */
-.rc-slider-handle {
-  width: 14px;
-  height: 14px;
-  margin-top: -5px;           /* выровнять по высоте относительно 4px rail */
-  border: 2px solid #8a94a6;  /* в тон трека */
-  background-color: #ffffff;  /* белый, как фон */
-  opacity: 1;
+/* Hover/focus/active */
+.rc-slider .rc-slider-handle:hover,
+.rc-slider .rc-slider-handle:focus,
+.rc-slider .rc-slider-handle:active {
+  border-color: #6f7a8e !important;
+  box-shadow: 0 0 0 3px rgba(138, 148, 166, 0.25) !important;
 }
 
-/* hover/focus/active — мягко, без “кислоты” */
-.rc-slider-handle:hover,
-.rc-slider-handle:focus,
-.rc-slider-handle:active {
-  border-color: #6f7a8e;
-  box-shadow: 0 0 0 3px rgba(138, 148, 166, 0.25);
+/* Marks */
+.rc-slider .rc-slider-mark-text,
+.rc-slider [class*="rc-slider-mark-text"] {
+  color: #6b7280 !important;
+  font-size: 12px !important;
+}
+.rc-slider .rc-slider-mark-text-active {
+  color: #4b5563 !important;
 }
 
-/* точки на шкале (если dots=True) */
-.rc-slider-dot {
-  border-color: #c8cdd6;
+/* Dots (если dots=True) */
+.rc-slider .rc-slider-dot {
+  border-color: #c8cdd6 !important;
 }
-.rc-slider-dot-active {
-  border-color: #8a94a6;
-}
-
-/* подписи делений */
-.rc-slider-mark-text {
-  color: #6b7280; /* нейтральный “серый текст” */
-  font-size: 12px;
-}
-.rc-slider-mark-text-active {
-  color: #4b5563;
+.rc-slider .rc-slider-dot-active {
+  border-color: #8a94a6 !important;
 }
 
-/* tooltip (если включён) */
-.rc-slider-tooltip-inner {
-  background-color: #4b5563;
-  border-color: #4b5563;
+/* Tooltip */
+.rc-slider .rc-slider-tooltip-inner {
+  background-color: #4b5563 !important;
+  border-color: #4b5563 !important;
 }
-.rc-slider-tooltip-arrow {
+.rc-slider .rc-slider-tooltip-arrow {
   border-top-color: #4b5563 !important;
 }
 
 /* =========================
-   VERTICAL SLIDERS
+   VERTICAL
    ========================= */
 .rc-slider-vertical .rc-slider-rail,
-.rc-slider-vertical .rc-slider-track {
-  width: 4px;
+.rc-slider-vertical [class*="rc-slider-rail"] {
+  width: 4px !important;
 }
-
-.rc-slider-vertical .rc-slider-handle {
-  margin-left: -5px; /* выровнять по ширине относительно 4px rail */
+.rc-slider-vertical .rc-slider-track,
+.rc-slider-vertical [class*="rc-slider-track"] {
+  width: 4px !important;
+}
+.rc-slider-vertical .rc-slider-handle,
+.rc-slider-vertical [class*="rc-slider-handle"] {
+  margin-left: -5px !important;     /* для вертикального */
+  margin-top: 0 !important;
 }
