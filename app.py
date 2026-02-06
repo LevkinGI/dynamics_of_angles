@@ -194,6 +194,7 @@ app.layout = html.Div([
                 html.Div(
                     id="pulse-delay-title",
                     children="Время прихода второго импульса - нс",
+                    color='#119DFF',
                     style={"marginLeft": "20px", "marginBottom": "10px", "fontSize": "18px"},
                 ),
             
