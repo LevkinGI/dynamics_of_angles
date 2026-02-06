@@ -28,8 +28,8 @@ def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, 
                 f"<b>Материал</b> {'FeFe' if material == '1' else 'GdFe'}<br>"
                 f"<b>Магнитное поле</b> H = {H} Э<br>"
                 f"<b>Температура</b> T = {T} K<br>"
-                f"<b>HF</b> Аппроксимация: {approx_freqs_GHz[0]} ГГц; Аналитика: {theor_freqs_GHz[0]} ГГц<br>"
-                f"<b>LF</b> Аппроксимация: {approx_freqs_GHz[1]} ГГц; Аналитика: {theor_freqs_GHz[1]} ГГц"
+                f"<b>HF</b> Аппроксимация: {approx_freqs_GHz[0]:.1f} ГГц; Аналитика: {theor_freqs_GHz[0]:.1f} ГГц<br>"
+                f"<b>LF</b> Аппроксимация: {approx_freqs_GHz[1]:.1f} ГГц; Аналитика: {theor_freqs_GHz[1]:.1f} ГГц"
             ),
             "showarrow": False,
             "xref": "paper",
