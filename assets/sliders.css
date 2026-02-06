@@ -1,0 +1,77 @@
+/* =========================
+   NEUTRAL SLIDER THEME
+   for dcc.Slider / dcc.RangeSlider (rc-slider)
+   ========================= */
+
+/* фон "рельсы" */
+.rc-slider-rail {
+  background-color: #d6d9de; /* светло-серый, не бросается */
+  height: 4px;
+}
+
+/* активный участок */
+.rc-slider-track {
+  background-color: #8a94a6; /* приглушённый серо-синий */
+  height: 4px;
+}
+
+/* для range-slider (вторая часть трека) */
+.rc-slider-tracks {
+  background-color: #8a94a6;
+}
+
+/* ползунок (кружок) */
+.rc-slider-handle {
+  width: 14px;
+  height: 14px;
+  margin-top: -5px;           /* выровнять по высоте относительно 4px rail */
+  border: 2px solid #8a94a6;  /* в тон трека */
+  background-color: #ffffff;  /* белый, как фон */
+  opacity: 1;
+}
+
+/* hover/focus/active — мягко, без “кислоты” */
+.rc-slider-handle:hover,
+.rc-slider-handle:focus,
+.rc-slider-handle:active {
+  border-color: #6f7a8e;
+  box-shadow: 0 0 0 3px rgba(138, 148, 166, 0.25);
+}
+
+/* точки на шкале (если dots=True) */
+.rc-slider-dot {
+  border-color: #c8cdd6;
+}
+.rc-slider-dot-active {
+  border-color: #8a94a6;
+}
+
+/* подписи делений */
+.rc-slider-mark-text {
+  color: #6b7280; /* нейтральный “серый текст” */
+  font-size: 12px;
+}
+.rc-slider-mark-text-active {
+  color: #4b5563;
+}
+
+/* tooltip (если включён) */
+.rc-slider-tooltip-inner {
+  background-color: #4b5563;
+  border-color: #4b5563;
+}
+.rc-slider-tooltip-arrow {
+  border-top-color: #4b5563 !important;
+}
+
+/* =========================
+   VERTICAL SLIDERS
+   ========================= */
+.rc-slider-vertical .rc-slider-rail,
+.rc-slider-vertical .rc-slider-track {
+  width: 4px;
+}
+
+.rc-slider-vertical .rc-slider-handle {
+  margin-left: -5px; /* выровнять по ширине относительно 4px rail */
+}
