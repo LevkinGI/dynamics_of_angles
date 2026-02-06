@@ -424,7 +424,7 @@ def update_pulse_delay_title(mode_period_on, pulse_delay_T, H, T, a_val, k_val, 
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
 
-    theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
+    theor_freqs_GHz = sorted([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], reverse=True)
     f_ref_GHz = float(theor_freqs_GHz[0]) if mode_period_on else float(theor_freqs_GHz[1])
     T_ref = 1.0 / (f_ref_GHz * 1e9)               # сек
     t_pulse2 = float(pulse_delay_T or 0.0) * T_ref # сек
@@ -675,7 +675,7 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
     T_vals  = T_vals_1 if material=='1' else T_vals_2
     t_index = np.abs(T_vals - T).argmin()
 
-    theor_freqs_GHz = sorted(np.round([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], 1), reverse=True)
+    theor_freqs_GHz = sorted([float(x[0, 0]) for (x, _) in compute_frequencies(H, m_array[t_index], M_array[t_index], K_array[t_index], gamma, alpha, lam)], reverse=True)
     
     # выбор, по какому периоду отмеряем задержку
     f_ref_GHz = float(theor_freqs_GHz[0]) if mode_period_on else float(theor_freqs_GHz[1])
