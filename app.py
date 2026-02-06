@@ -24,7 +24,6 @@ from fitting_cy import fit_function_theta, fit_function_phi
 from fitting import residuals_stage1, residuals_stage2, combined_residuals
 from plotting import *
 from copy import deepcopy
-from pathlib import Path
 
 w_fix, h_fix = 600, 400
 w_freq, h_freq = 600, 600
@@ -41,8 +40,7 @@ for i in range(1, sliders_range + 1):
     log_marks[f"{v:g}"]  = str(i)
     log_marks[f"{-v:g}"] = f"1/{i}"
 
-BASE_DIR = Path(__file__).resolve().parent
-app = dash.Dash(__name__, assets_folder=str(BASE_DIR / "assets"))
+app = dash.Dash(__name__)
 server = app.server
 
 app.layout = html.Div([
