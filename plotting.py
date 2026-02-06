@@ -12,6 +12,11 @@ HF_MID   = '#86b4df'
 PLANE_COLOR = '#c7cfd6'
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material):
+    hf_app = "—" if (approx_freqs_GHz[0] is None) else f"{approx_freqs_GHz[0]:.1f}"
+    lf_app = "—" if (approx_freqs_GHz[1] is None) else f"{approx_freqs_GHz[1]:.1f}"
+    hf_th  = "—" if (theor_freqs_GHz[0] is None) else f"{theor_freqs_GHz[0]:.1f}"
+    lf_th  = "—" if (theor_freqs_GHz[1] is None) else f"{theor_freqs_GHz[1]:.1f}"
+
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=time, y=phi, mode='lines', name='Численное решение', line=dict(color='red')))
     if phi_fit is not None:
@@ -28,8 +33,8 @@ def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, 
                 f"<b>Материал</b> {'FeFe' if material == '1' else 'GdFe'}<br>"
                 f"<b>Магнитное поле</b> H = {H} Э<br>"
                 f"<b>Температура</b> T = {T} K<br>"
-                f"<b>HF</b> Аппроксимация: {approx_freqs_GHz[0]:.1f} ГГц; Аналитика: {theor_freqs_GHz[0]:.1f} ГГц<br>"
-                f"<b>LF</b> Аппроксимация: {approx_freqs_GHz[1]:.1f} ГГц; Аналитика: {theor_freqs_GHz[1]:.1f} ГГц"
+                f"<b>HF</b> Аппроксимация: {hf_app} ГГц; Аналитика: {hf_th} ГГц<br>"
+                f"<b>LF</b> Аппроксимация: {lf_app} ГГц; Аналитика: {lf_th} ГГц"
             ),
             "showarrow": False,
             "xref": "paper",
