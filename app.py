@@ -381,56 +381,6 @@ app.layout = html.Div([
                   'width': '60%', 'height': 'calc(40vw)'}),
         dcc.Graph(id='yz-graph', style={'display': 'inline-block', 'width': '40%', 'height': 'calc(40vw)'}, config={'toImageButtonOptions': {'format': 'png','filename': 'Проекция траектории','width': w_yz,'height': h_yz,'scale': 3}})
     ]),
-    html.Style("""
-        .rc-slider .rc-slider-rail,
-        .rc-slider [class*="rc-slider-rail"]{
-          background-color: #d6d9de !important;
-          height: 4px !important;
-        }
-        
-        .rc-slider .rc-slider-track,
-        .rc-slider [class*="rc-slider-track"]{
-          background-color: #8a94a6 !important;
-          height: 4px !important;
-        }
-        
-        .rc-slider .rc-slider-handle,
-        .rc-slider [class*="rc-slider-handle"]{
-          width: 14px !important;
-          height: 14px !important;
-          margin-top: -5px !important;
-          border: 2px solid #8a94a6 !important;
-          background-color: #ffffff !important;
-          opacity: 1 !important;
-          box-shadow: none !important;
-        }
-        
-        .rc-slider .rc-slider-handle:hover,
-        .rc-slider .rc-slider-handle:focus,
-        .rc-slider .rc-slider-handle:active{
-          border-color: #6f7a8e !important;
-          box-shadow: 0 0 0 3px rgba(138,148,166,0.25) !important;
-        }
-        
-        .rc-slider .rc-slider-mark-text,
-        .rc-slider [class*="rc-slider-mark-text"]{
-          color: #6b7280 !important;
-          font-size: 12px !important;
-        }
-        
-        .rc-slider-vertical .rc-slider-rail,
-        .rc-slider-vertical [class*="rc-slider-rail"],
-        .rc-slider-vertical .rc-slider-track,
-        .rc-slider-vertical [class*="rc-slider-track"]{
-          width: 4px !important;
-        }
-        
-        .rc-slider-vertical .rc-slider-handle,
-        .rc-slider-vertical [class*="rc-slider-handle"]{
-          margin-left: -5px !important;
-          margin-top: 0 !important;
-        }
-    """)
 ])
 
 @app.callback(
