@@ -118,7 +118,7 @@ def run_simulation(
     # --- ДВА УЧАСТКА: [0, t_pulse2] и [t_pulse2, T] ---
     # Разбиваем t_eval так, чтобы точка t_pulse2 была в сетке
     # (если её нет — добавим вручную)
-    left_mask = t_eval < t_pulse2
+    left_mask = t_eval <= t_pulse2
     right_mask = t_eval > t_pulse2
 
     t_left = t_eval[left_mask]
