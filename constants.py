@@ -46,8 +46,8 @@ from typing import Iterable
 T_298 = np.load('T_298.npy')
 T_308 = np.load('T_308.npy')
 T_320 = np.load('T_320.npy')
-H_100 = np.load('H_100.npy')
-H_170 = np.load('H_170.npy')
+H_1000 = np.load('H_100.npy')
+H_1700 = np.load('H_170.npy')
 
 # Исходные параметры (Материал 1)
 H_step = 10
