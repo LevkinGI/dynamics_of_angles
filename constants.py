@@ -218,6 +218,6 @@ __all__ = [
     'compute_frequencies', 'compute_phases',
     'compute_frequencies_H_fix', 'compute_frequencies_T_fix',
     # данные
-    'T_298', 'T_308', 'T_320', 'T_323',
+    'T_298', 'T_308', 'T_320',
     'H_1000', 'H_1700',
 ]
