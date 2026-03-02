@@ -729,18 +729,18 @@ def create_phase_fig(T_vals, theta_0):
     fig.add_trace(contour)
 
     mask = (theta_0[:, 0] > 0) & (theta_0[:, 0] < 0.1)
-    if np.any(mask):
-        idx_min, idx_max = np.where(mask)[0][[0, -1]]
-        y_noncol = H_kOe[idx_max] + 0.3
-        y_col    = H_kOe[idx_min] - 0.3
-        fig.add_annotation(x=T_vals[0], y=y_noncol,
-                           text='non‑collinear',
-                           showarrow=False, font=dict(color='white', size=14),
-                           xanchor='left', yanchor='bottom')
-        fig.add_annotation(x=T_vals[0], y=y_col,
-                           text='collinear',
-                           showarrow=False, font=dict(color='white', size=14),
-                           xanchor='left', yanchor='top')
+    # if np.any(mask):
+    #     idx_min, idx_max = np.where(mask)[0][[0, -1]]
+    #     y_col    = H_kOe[idx_max] + 0.3
+    #     y_noncol = H_kOe[idx_min] - 0.3
+    #     fig.add_annotation(x=T_vals[0], y=y_noncol,
+    #                        text='non‑collinear',
+    #                        showarrow=False, font=dict(color='white', size=14),
+    #                        xanchor='left', yanchor='bottom')
+    #     fig.add_annotation(x=T_vals[0], y=y_col,
+    #                        text='collinear',
+    #                        showarrow=False, font=dict(color='white', size=14),
+    #                        xanchor='left', yanchor='top')
 
     fig.update_layout(
         xaxis=dict(title='T (K)', tickcolor="black", range=[T_vals.min(), T_vals.max()]),
