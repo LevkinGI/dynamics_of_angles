@@ -651,7 +651,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid):
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.3),
+            aspectratio=dict(x=1, y=1, z=0.7),
         ),
         legend=dict(
             font=dict(family="Times New Roman, Times, serif", size=12, color="black"),
