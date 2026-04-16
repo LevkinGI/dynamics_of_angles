@@ -76,7 +76,7 @@ def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.nda
     return 1.0 / (lam * denom)
 
 # Загрузка данных для материала 1
-m_array_1 = np.load('m_array_18.07.2025.npy')
+m_array_1 = np.load('m_array_new.npy')
 M_array_1 = np.load('M_array_18.07.2025.npy')
 K_array_1 = K_T(T_vals_1)
 
