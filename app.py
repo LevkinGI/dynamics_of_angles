@@ -575,9 +575,9 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on,
     if material == '1' and exp_on:
         if T==293: T_data = T_293
         elif T==298: T_data = T_298
-        elif T==308+5: T_data = T_308
+        elif T==308: T_data = T_308
         elif T==310: T_data = T_310
-        elif T==320+5: T_data = T_320
+        elif T==320: T_data = T_320
         elif T==323: T_data = T_323
         else: T_data = None
         if H==1000: H_data = H_1000 
