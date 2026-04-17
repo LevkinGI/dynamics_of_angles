@@ -8,6 +8,7 @@ flask
 numpy
 scipy
 pandas
+openpyxl
 cython
 numba
 gunicorn
