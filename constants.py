@@ -2,6 +2,110 @@
 import numpy as np
 from typing import Iterable
 
+def parse_excel_table_to_array(path: Path) -> np.ndarray:
+    """
+    Читает Excel-файл с данными по одному срезу (H = const или T = const)
+    и возвращает numpy-массив формы (9, N):
+
+    [
+        axis_values,   # меняющаяся ось: H или T
+        f_lf,
+        f_hf,
+        tau_lf,
+        tau_hf,
+        err_f_lf,
+        err_f_hf,
+        err_tau_lf,
+        err_tau_hf
+    ]
+
+    Если какой-то строки нет, возвращается массив NaN той же длины.
+    """
+
+    df = pd.read_excel(path, header=None)
+    if df.shape[1] < 2:
+        raise ValueError(f"{path.name}: слишком мало столбцов для данных.")
+      
+    def _to_float_array(series) -> np.ndarray:
+        return np.asarray(pd.to_numeric(series, errors="coerce"), dtype=float)
+  
+    axis_values = _to_float_array(df.iloc[0, 1:])
+    if np.any(~np.isfinite(axis_values)):
+        raise ValueError(f"{path.name}: не удалось прочитать значения оси (первая строка).")
+
+    def _extract_rows(df_body: pd.DataFrame) -> dict[str, np.ndarray]:
+        """Извлекает числовые ряды из таблицы по текстовым меткам."""
+        def _normalize_label(label: str) -> str:
+            normalized = label.strip().lower()
+            normalized = normalized.replace("ё", "е")
+            for ch in [" ", ".", ",", "\t"]:
+                normalized = normalized.replace(ch, "")
+            return normalized
+  
+        label_map = {
+            "частотанчггц": "f_lf",
+            "частотавчггц": "f_hf",
+            "времязатуханиянчнс": "tau_lf",
+            "времязатуханиявчнс": "tau_hf",
+            "погрчастотанчггц": "err_f_lf",
+            "погрчастотавчггц": "err_f_hf",
+            "погрвремязатуханиянчнс": "err_tau_lf",
+            "погрвремязатуханиявчнс": "err_tau_hf",
+        }
+        result: dict[str, np.ndarray] = {}
+        for _, row in df_body.iterrows():
+            label_raw = str(row.iloc[0])
+            key = _normalize_label(label_raw)
+            mapped = label_map.get(key)
+            if mapped is None:
+                continue
+            result[mapped] = _to_float_array(row.iloc[1:])
+        return result
+  
+    rows_map = _extract_rows(df.iloc[1:, :])
+
+    if rows_map.get("f_lf") is None and rows_map.get("f_hf") is None:
+        raise ValueError(f"{path.name}: не найдено строк с частотами.")
+
+    n = len(axis_values)
+
+    def get_row(key: str) -> np.ndarray:
+        row = rows_map.get(key)
+        if row is None:
+            return np.full(n, np.nan, dtype=float)
+
+        arr = np.asarray(row, dtype=float)
+
+        if arr.size != n:
+            raise ValueError(
+                f"{path.name}: строка '{key}' имеет длину {arr.size}, ожидалось {n}."
+            )
+
+        return arr
+
+    f_lf = get_row("f_lf")
+    f_hf = get_row("f_hf")
+    tau_lf = get_row("tau_lf")
+    tau_hf = get_row("tau_hf")
+
+    err_f_lf = get_row("err_f_lf")
+    err_f_hf = get_row("err_f_hf")
+    err_tau_lf = get_row("err_tau_lf")
+    err_tau_hf = get_row("err_tau_hf")
+
+    result = np.vstack([
+        axis_values,
+        f_lf,
+        f_hf,
+        tau_lf,
+        tau_hf,
+        err_f_lf,
+        err_f_hf,
+        err_tau_lf,
+        err_tau_hf,
+    ])
+    return result
+
 # Данные
 T_293 = np.array([[1000, 1200, 1400, 1600, 1800, 2000],
                   [9.17440137,  9.423370201,  9.735918686,  10.01455683,  10.37994595,  10.5903492],
