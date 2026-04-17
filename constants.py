@@ -27,13 +27,24 @@ def load_exp(path: Path) -> np.ndarray:
     df = pd.read_excel(path, header=None)
     if df.shape[1] < 2:
         raise ValueError(f"{path.name}: слишком мало столбцов для данных.")
-      
+
+    def _parse_filename(name: str) -> tuple[str, float]:
+        stem = Path(name).stem
+        if stem.upper().startswith("T_"):
+            return "T", float(stem.split("_", 1)[1])
+        if stem.upper().startswith("H_"):
+            return "H", float(stem.split("_", 1)[1])
+        raise ValueError(f"{name}: имя файла должно начинаться с T_<val> или H_<val>.")
+
     def _to_float_array(series) -> np.ndarray:
         return np.asarray(pd.to_numeric(series, errors="coerce"), dtype=float)
   
+    fixed_type, fixed_value = _parse_filename(path.name)
     axis_values = _to_float_array(df.iloc[0, 1:])
     if np.any(~np.isfinite(axis_values)):
         raise ValueError(f"{path.name}: не удалось прочитать значения оси (первая строка).")
+    if fixed_type == "T":
+        axis_values = axis_values * 10
 
     def _extract_rows(df_body: pd.DataFrame) -> dict[str, np.ndarray]:
         """Извлекает числовые ряды из таблицы по текстовым меткам."""
