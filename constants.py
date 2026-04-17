@@ -3,7 +3,6 @@ import numpy as np
 import pandas as pd
 from typing import Iterable
 from pathlib import Path
-import openpyxl
 
 def load_exp(path: Path) -> np.ndarray:
     """
