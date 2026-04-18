@@ -325,14 +325,21 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         T_exp  = np.asarray(data[0], dtype=float)
         lf_exp = np.asarray(data[1], dtype=float)
         hf_exp = np.asarray(data[2], dtype=float)
+        err_lf_exp = np.asarray(data[5], dtype=float)
+        err_hf_exp = np.asarray(data[6], dtype=float)
     
         # --- 1) базовый swap эксп. по плоскости T_plane (это остаётся) ---
         y_lf = lf_exp.copy()
         y_hf = hf_exp.copy()
+        err_y_lf = lf_exp.copy()
+        err_y_hf = hf_exp.copy()
         m_plane = (T_exp > T_plane)
         tmp = y_lf[m_plane].copy()
         y_lf[m_plane] = y_hf[m_plane]
         y_hf[m_plane] = tmp
+        err_tmp = err_y_lf[m_plane].copy()
+        err_y_lf[m_plane] = err_y_hf[m_plane]
+        err_y_hf[m_plane] = err_tmp
     
         # --- 2) пересечения теории по смене знака diff_th = f1 - f2 ---
         diff_th = np.asarray(f1, dtype=float) - np.asarray(f2, dtype=float)
@@ -378,14 +385,19 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
         tmp = y_lf[m_cross].copy()
         y_lf[m_cross] = y_hf[m_cross]
         y_hf[m_cross] = tmp
+        err_tmp = err_y_lf[m_cross].copy()
+        err_y_lf[m_cross] = err_y_hf[m_cross]
+        err_y_hf[m_cross] = err_tmp
     
         # --- 4) рисуем экспериментальные точки (после обоих swap) ---
         fig.add_trace(go.Scatter(
             x=T_exp, y=y_lf, mode='markers', name='LF (эксп.)',
+            error_y=dict(type="data", array=err_y_lf),
             marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
         fig.add_trace(go.Scatter(
             x=T_exp, y=y_hf, mode='markers', name='HF (эксп.)',
+            error_y=dict(type="data", array=err_y_hf),
             marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
 
@@ -503,15 +515,17 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         line=dict(width=2, color=LF_COLOR)
     ))
 
-    if data is not None:
+    if data is not None:        
         fig.add_trace(go.Scatter(
             x=np.asarray(data[0], dtype=float)/1000.0, y=np.asarray(data[1], dtype=float),
             mode='markers', name='LF (эксп.)',
+            error_y=dict(type="data", array=np.asarray(data[5], dtype=float)),
             marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
         fig.add_trace(go.Scatter(
             x=np.asarray(data[0], dtype=float)/1000.0, y=np.asarray(data[2], dtype=float),
             mode='markers', name='HF (эксп.)',
+            error_y=dict(type="data", array=np.asarray(data[6], dtype=float)),
             marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
 
