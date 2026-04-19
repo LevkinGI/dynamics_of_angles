@@ -424,39 +424,6 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
 
     return fig
 
-# def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
-#     (f1, t1), (f2, t2) = T_fix_res
-#     fig = make_subplots(
-#         rows=2, cols=1,
-#         shared_xaxes=True,
-#         vertical_spacing=0.1,
-#     )
-#     fig.add_trace(go.Scatter(x=H_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
-#     fig.add_trace(go.Scatter(x=H_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
-#     if data is not None:
-#         x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
-#         fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
-#         fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
-#         fig.add_trace(go.Scatter(x=x_m, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
-#         fig.add_trace(go.Scatter(x=x_m, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
-#     fig.add_trace(go.Scatter(x=H_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
-#     fig.add_trace(go.Scatter(x=H_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
-#     fig.update_layout(
-#         title={
-#             'text': f"T = {T} K",
-#             'x': 0.5,
-#             'xanchor': 'center',
-#             'yanchor': 'top'
-#         },
-#         font=dict(size=18),
-#         template="plotly_white",
-#         showlegend=False
-#     )
-#     fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
-#     fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
-#     fig.update_xaxes(title_text="Магнитное поле (Э)", row=2, col=1)
-#     return fig
-
 def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
     H_kOe = np.asarray(H_vals, dtype=float) / 1000.0
     (f1, t1), (f2, t2) = T_fix_res
@@ -483,17 +450,36 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         line=dict(width=2, color=LF_COLOR)
     ))
 
-    if data is not None:        
+    if data is not None:   
+        H_exp  = np.asarray(data[0], dtype=float)
+        lf_exp = np.asarray(data[1], dtype=float)
+        hf_exp = np.asarray(data[2], dtype=float)
+        err_lf_exp = np.asarray(data[5], dtype=float)
+        err_hf_exp = np.asarray(data[6], dtype=float)
+        
+        if T == 320:
+            y_lf = lf_exp.copy()
+            y_hf = hf_exp.copy()
+            err_y_lf = err_lf_exp.copy()
+            err_y_hf = err_hf_exp.copy()
+            m_cross = (H_exp >= 900)
+            tmp = y_lf[m_cross].copy()
+            y_lf[m_cross] = y_hf[m_cross]
+            y_hf[m_cross] = tmp
+            err_tmp = err_y_lf[m_cross].copy()
+            err_y_lf[m_cross] = err_y_hf[m_cross]
+            err_y_hf[m_cross] = err_tmp
+            
         fig.add_trace(go.Scatter(
-            x=np.asarray(data[0], dtype=float)/1000.0, y=np.asarray(data[1], dtype=float),
+            x=np.asarray(H_exp, dtype=float)/1000.0, y=np.asarray(y_lf, dtype=float),
             mode='markers', name='LF (эксп.)',
-            error_y=dict(type="data", array=np.asarray(data[5], dtype=float)),
+            error_y=dict(type="data", array=np.asarray(err_y_lf, dtype=float)),
             marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
         fig.add_trace(go.Scatter(
-            x=np.asarray(data[0], dtype=float)/1000.0, y=np.asarray(data[2], dtype=float),
+            x=np.asarray(H_exp, dtype=float)/1000.0, y=np.asarray(y_hf, dtype=float),
             mode='markers', name='HF (эксп.)',
-            error_y=dict(type="data", array=np.asarray(data[6], dtype=float)),
+            error_y=dict(type="data", array=np.asarray(err_y_hf, dtype=float)),
             marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
 
