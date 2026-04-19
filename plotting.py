@@ -233,38 +233,6 @@ def create_yz_fig(
 
 
 dot_size = 8
-# def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
-#     (f1, t1), (f2, t2) = H_fix_res
-#     fig = make_subplots(
-#         rows=2, cols=1,
-#         shared_xaxes=True,
-#         vertical_spacing=0.1,
-#     )
-#     fig.add_trace(go.Scatter(x=T_vals, y=f1, mode='lines', name='HF', line=dict(color='blue')), row=1, col=1)
-#     fig.add_trace(go.Scatter(x=T_vals, y=f2, mode='lines', name='LF', line=dict(color='red')), row=1, col=1)
-#     if data is not None:
-#         x_m, lf_freq, hf_freq, lf_tau, hf_tau = data
-#         fig.add_trace(go.Scatter(x=x_m, y=hf_freq, mode='markers', name='HF (эксп.)', marker=dict(color='blue', size=dot_size)), row=1, col=1)
-#         fig.add_trace(go.Scatter(x=x_m, y=lf_freq, mode='markers', name='LF (эксп.)', marker=dict(color='red', size=dot_size)), row=1, col=1)
-#         fig.add_trace(go.Scatter(x=x_m, y=hf_tau, mode='markers', name='HF', marker=dict(color='blue', size=dot_size)), row=2, col=1)
-#         fig.add_trace(go.Scatter(x=x_m, y=lf_tau, mode='markers', name='LF', marker=dict(color='red', size=dot_size)), row=2, col=1)
-#     fig.add_trace(go.Scatter(x=T_vals, y=t1, mode='lines', name='HF', line=dict(color='blue')), row=2, col=1)
-#     fig.add_trace(go.Scatter(x=T_vals, y=t2, mode='lines', name='LF', line=dict(color='red')), row=2, col=1)
-#     fig.update_layout(
-#         title={
-#             'text': f"H = {H} Э",
-#             'x': 0.5,
-#             'xanchor': 'center',
-#             'yanchor': 'top'
-#         },
-#         font=dict(size=18),
-#         template="plotly_white",
-#         showlegend=False
-#     )
-#     fig.update_yaxes(title_text="Частота (ГГц)", row=1, col=1)
-#     fig.update_yaxes(title_text="Время затухания (нс)", row=2, col=1)
-#     fig.update_xaxes(title_text="Температура (K)", row=2, col=1)
-#     return fig
     
 def create_H_fix_fig(T_vals, H_fix_res, H, data=None):
     T_plane = 333.0
