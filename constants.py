@@ -193,7 +193,7 @@ delta_t = 250e-15           # с
 
 def K_T(T: Iterable[float] | float) -> np.ndarray:
     """Анизотропия как функция температуры."""
-    return 0.522 * (T - 358.0) ** 2
+    return 0.522 * (T - 353.0) ** 2
 
 def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
