@@ -47,7 +47,7 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(0.6, 1.84, 1.0, 1.0, 0.4, 1.0)),
+            "1": asdict(SimParams(0.6, 1.40, 1.15, 1.0, 0.5, 1.0)),
             "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
@@ -96,7 +96,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='k-scale-label'),
             dcc.Slider(id='k-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.84),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.40),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
@@ -108,7 +108,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='m-scale-label'),
             dcc.Slider(id='m-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.15),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
@@ -132,7 +132,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='lam-scale-label'),
             dcc.Slider(id='lam-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.4),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.5),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=180,
