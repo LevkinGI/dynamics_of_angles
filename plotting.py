@@ -456,12 +456,13 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None):
         hf_exp = np.asarray(data[2], dtype=float)
         err_lf_exp = np.asarray(data[5], dtype=float)
         err_hf_exp = np.asarray(data[6], dtype=float)
+
+        y_lf = lf_exp.copy()
+        y_hf = hf_exp.copy()
+        err_y_lf = err_lf_exp.copy()
+        err_y_hf = err_hf_exp.copy()
         
         if T == 320:
-            y_lf = lf_exp.copy()
-            y_hf = hf_exp.copy()
-            err_y_lf = err_lf_exp.copy()
-            err_y_hf = err_hf_exp.copy()
             m_cross = (H_exp >= 900)
             tmp = y_lf[m_cross].copy()
             y_lf[m_cross] = y_hf[m_cross]
