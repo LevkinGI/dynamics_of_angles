@@ -50,7 +50,6 @@ def _tr(language='eng'):
             'phase_y': 'H (кЭ)',
             'field_title': 'H = {value} кЭ',
             'temperature_title': 'T = {value} K',
-            'tm_label': r'T<sub>M</sub>',
         }
     return {
         'numerical_solution': 'Numerical solution',
@@ -77,7 +76,6 @@ def _tr(language='eng'):
         'phase_y': 'H (kOe)',
         'field_title': 'H = {value} kOe',
         'temperature_title': 'T = {value} K',
-        'tm_label': r'T<sub>M</sub>',
     }
 
 def create_phi_fig(time, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material, language='eng'):
@@ -443,7 +441,7 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None, language='eng'):
         y=0.5,
         xref="x",
         yref="paper",
-        text=tr['tm_label'],
+        text=r'T<sub>M</sub>',
         showarrow=False,
         font=dict(family="Times New Roman, Times, serif", size=28, color="black"),
         xanchor="left",
