@@ -48,8 +48,8 @@ def _tr(language='eng'):
             'phase_colorbar': 'θ₀ (рад)',
             'phase_x': 'T (K)',
             'phase_y': 'H (кЭ)',
-            'field_title': 'Поле H = {value} кЭ',
-            'temperature_title': 'Температура T = {value} K',
+            'field_title': 'H = {value} кЭ',
+            'temperature_title': 'T = {value} K',
             'tm_label': r'T<sub>M</sub>',
         }
     return {
@@ -75,8 +75,8 @@ def _tr(language='eng'):
         'phase_colorbar': 'θ₀ (rad)',
         'phase_x': 'T (K)',
         'phase_y': 'H (kOe)',
-        'field_title': 'Magnetic field H = {value} kOe',
-        'temperature_title': 'Temperature T = {value} K',
+        'field_title': 'H = {value} kOe',
+        'temperature_title': 'T = {value} K',
         'tm_label': r'T<sub>M</sub>',
     }
 
