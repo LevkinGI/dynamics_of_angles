@@ -52,7 +52,7 @@ app.layout = html.Div([
         }
     ),
 
-    html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
+    # html.H1("Динамика углов θ и φ при различных значениях магнитного поля и температуры"),
     html.Label(id='H-label'),
     dcc.Slider(
         id='H-slider',
@@ -63,7 +63,7 @@ app.layout = html.Div([
         marks={str(i): str(i) for i in range(0, int(H_vals[-1]) + 1, 500)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
-    # html.Div(id='selected-H-value', style={'margin-bottom': '20px'}),
+    html.Div(id='selected-H-value', style={'margin-bottom': '30px'}),
     html.Label(id='T-label'),
     dcc.Slider(
         id='T-slider',
@@ -74,7 +74,7 @@ app.layout = html.Div([
         marks={str(i): str(i) for i in range(290, 351, 10)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
-    # html.Div(id='selected-T-value', style={'margin-bottom': '20px'}),
+    html.Div(id='selected-T-value', style={'margin-bottom': '30px'}),
 
 
 
@@ -92,7 +92,6 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px","position": "relative"}
             ),
-        
         html.Div([
             html.Label(id='k-scale-label'),
             dcc.Slider(id='k-scale-slider',
@@ -104,7 +103,6 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
-        
         html.Div([
             html.Label(id='m-scale-label'),
             dcc.Slider(id='m-scale-slider',
@@ -116,7 +114,6 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
-        
         html.Div([
             html.Label(id='M-scale-label'),
             dcc.Slider(id='M-scale-slider',
@@ -128,7 +125,6 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
-        
         html.Div([
             html.Label(id='lam-scale-label'),
             dcc.Slider(id='lam-scale-slider',
@@ -140,7 +136,6 @@ app.layout = html.Div([
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
-        
         html.Div([
             html.Label(id='knock-scale-label'),
             dcc.Slider(id='knock-scale-slider',
@@ -204,7 +199,6 @@ app.layout = html.Div([
                     children="Время прихода второго импульса - нс",
                     style={"marginLeft": "20px", "marginBottom": "10px", "fontSize": "18px"},
                 ),
-            
                 dcc.Slider(
                     id='pulse-delay-slider',
                     min=0,
@@ -229,6 +223,7 @@ app.layout = html.Div([
                     tooltip={"placement": "bottom", "always_visible": False},
                     updatemode="mouseup",
                 ),
+                html.Div(id='selected-delay-value', style={'margin-bottom': '30px'}),
             
                 html.Div([
                         html.Span("Период нч моды", style={"justifySelf": "end", "paddingRight": "10px"}),
@@ -557,7 +552,7 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on,
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
     if switch_on: return H_fix_fig, T_fix_fig, phase_fig, freq_fig
-    if ru_on: language = 'ru' else 'eng'
+    language = 'ru' if ru_on else 'eng'
     
     alpha_scale = 10**a_val
     k_scale     = 10**k_val
@@ -673,7 +668,7 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
     switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
 
     if switch_on: return phi_fig, theta_fig, yz_fig
-    if ru_on: language = 'ru' else 'eng'
+    language = 'ru' if ru_on else 'eng'
         
     p = SimParams(**store[material])
     
