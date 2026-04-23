@@ -87,7 +87,7 @@ app.layout = html.Div([
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.6),
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+                       vertical=True, verticalHeight=220,
                       ),
             ],
             style={"marginLeft": "30px","position": "relative"}
@@ -98,7 +98,7 @@ app.layout = html.Div([
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.40),
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+                       vertical=True, verticalHeight=220,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -109,7 +109,7 @@ app.layout = html.Div([
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.15),
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+                       vertical=True, verticalHeight=220,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -120,7 +120,7 @@ app.layout = html.Div([
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+                       vertical=True, verticalHeight=220,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -131,7 +131,7 @@ app.layout = html.Div([
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.5),
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+                       vertical=True, verticalHeight=220,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
@@ -142,7 +142,7 @@ app.layout = html.Div([
                        min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
                        marks=log_marks,
                        updatemode="mouseup",
-                       vertical=True, verticalHeight=180,
+                       vertical=True, verticalHeight=220,
                       ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
