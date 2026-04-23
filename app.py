@@ -547,7 +547,7 @@ def move_knock_slider(logk):
      State('phase-graph', 'figure'),
      State('frequency-surface-graph', 'figure'),],
 )
-def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig, ru_on):
+def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, ru_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig):
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
