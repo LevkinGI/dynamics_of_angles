@@ -186,6 +186,14 @@ app.layout = html.Div([
                 color='#119DFF',
                 style={"marginLeft": "40px"}
                 ),
+            daq.BooleanSwitch(
+                id='eng-ru-switch',
+                on=False,
+                label='Делать подписи на русском',
+                labelPosition='top',
+                color='#119DFF',
+                style={"marginLeft": "40px"}
+                ),
             ],
             style={"marginLeft": "30px", "position": "relative"}
         ),
@@ -537,17 +545,19 @@ def move_knock_slider(logk):
     Input("lam-scale-slider", "value"),
     Input('material-dropdown', 'value'),
     Input('exp-view-switch',  'on'),
-    Input('png-svg-switch', 'on'),],
+    Input('png-svg-switch', 'on'),
+    Input('eng-ru-switch', 'on'),],
     [State('H_fix-graph', 'figure'),
      State('T_fix-graph', 'figure'),
      State('phase-graph', 'figure'),
      State('frequency-surface-graph', 'figure'),],
 )
-def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig):
+def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig, ru_on):
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
     if switch_on: return H_fix_fig, T_fix_fig, phase_fig, freq_fig
+    if ru_on: language = 'ru' else 'eng'
     
     alpha_scale = 10**a_val
     k_scale     = 10**k_val
@@ -587,10 +597,10 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on,
         T_data = None
         H_data = None
     
-    H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data)
-    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data)
-    freq_fig = create_freq_fig(T_vals[4::6], H_vals[::2], freq_res_grid)
-    phase_fig = create_phase_fig(T_vals[::6], theta_0)
+    H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data, language=language)
+    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data, language=language)
+    freq_fig = create_freq_fig(T_vals[4::6], H_vals[::2], freq_res_grid, language=language)
+    phase_fig = create_phase_fig(T_vals[::6], theta_0, language=language)
 
     return H_fix_fig, T_fix_fig, phase_fig, freq_fig
 
@@ -645,13 +655,14 @@ def update_params(material, a_k, k_k, m_k, M_k, lam_k, knock_k, store):
      Input('mode-period-switch', 'value'),
      Input('pulse2-axis-switch', 'value'),
      Input('pulse2-dir-switch', 'value'),
-     Input('png-svg-switch', 'on'),],
+     Input('png-svg-switch', 'on'),
+     Input('eng-ru-switch', 'on'),],
     [State('phi-graph', 'figure'),
      State('theta-graph', 'figure'),
      State('yz-graph', 'figure')],
     prevent_initial_call=True,
 )
-def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, mode_period_on, pulse2_axis_on, pulse2_dir_on, svg_on, phi_fig, theta_fig, yz_fig):
+def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, mode_period_on, pulse2_axis_on, pulse2_dir_on, svg_on, ru_on, phi_fig, theta_fig, yz_fig):
     if not calc_on: raise PreventUpdate
         
     # Определяем, какой input вызвал callback
@@ -662,6 +673,7 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
     switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
 
     if switch_on: return phi_fig, theta_fig, yz_fig
+    if ru_on: language = 'ru' else 'eng'
         
     p = SimParams(**store[material])
     
@@ -776,16 +788,16 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
         approx_freqs_GHz = [n2_phi_opt/n1_phi_opt, n2_theta_opt/n1_theta_opt]
         theor_freqs_GHz = [A1_phi_opt/A2_phi_opt, A1_theta_opt/A2_theta_opt]
 
-        phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
-        theta_fig = create_theta_fig(time_ns, theta, theta_fit)
+        phi_fig = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material, language=language)
+        theta_fig = create_theta_fig(time_ns, theta, theta_fit, language=language)
 
     else:
         approx_freqs_GHz = (None, None)
         theta_fit = None
         phi_fit = None
     
-    phi_fig   = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material)
-    theta_fig = create_theta_fig(time_ns, theta, theta_fit)
+    phi_fig   = create_phi_fig(time_ns, phi, phi_fit, H, T, approx_freqs_GHz, theor_freqs_GHz, material, language=language)
+    theta_fig = create_theta_fig(time_ns, theta, theta_fit, language=language)
     
     y_tr = np.sin(np.pi/2 + np.radians(theta)) * np.sin(np.radians(phi))
     z_tr = np.cos(np.pi/2 + np.radians(theta))
@@ -797,6 +809,7 @@ def update_graphs(store, H, T, material, calc_on, two_pulse_on, pulse_delay_T, m
         pulse2_axis_on=bool(pulse2_axis_on),
         pulse2_dir_on=bool(pulse2_dir_on),
         knock_scale=float(p.knock_scale),
+        language=language,
     )
 
     return phi_fig, theta_fig, yz_fig
