@@ -47,7 +47,7 @@ app.layout = html.Div([
     dcc.Store(
         id='param-store',
         data={
-            "1": asdict(SimParams(0.6, 1.40, 1.15, 1.0, 0.5, 1.0)),
+            "1": asdict(SimParams(alpha_scale_init, k_scale_init, m_scale_init, M_scale_init, lam_scale_init, knock_scale_init)),
             "2": asdict(SimParams(1.0, 1.0, 1.0, 1.0, 1.0, 1.0)),
         }
     ),
@@ -59,7 +59,7 @@ app.layout = html.Div([
         min=0,
         max=H_vals[-1],
         step=10,
-        value=1700,
+        value=H_init,
         marks={str(i): str(i) for i in range(0, int(H_vals[-1]) + 1, 500)},
         tooltip={"placement": "bottom", "always_visible": False}, updatemode="mouseup",
     ),
@@ -84,7 +84,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='alpha-scale-label'),
             dcc.Slider(id='alpha-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.6),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(alpha_scale_init),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=220,
@@ -95,7 +95,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='k-scale-label'),
             dcc.Slider(id='k-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.40),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(k_scale_init),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=220,
@@ -106,7 +106,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='m-scale-label'),
             dcc.Slider(id='m-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(1.15),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(m_scale_init),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=220,
@@ -117,7 +117,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='M-scale-label'),
             dcc.Slider(id='M-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(M_scale_init),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=220,
@@ -128,7 +128,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='lam-scale-label'),
             dcc.Slider(id='lam-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(0.5),
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(lam_scale_init),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=220,
@@ -139,7 +139,7 @@ app.layout = html.Div([
         html.Div([
             html.Label(id='knock-scale-label'),
             dcc.Slider(id='knock-scale-slider',
-                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=0.0,
+                       min=-np.log10(sliders_range), max=np.log10(sliders_range), step=0.001, value=np.log10(knock_scale_init),
                        marks=log_marks,
                        updatemode="mouseup",
                        vertical=True, verticalHeight=220,
