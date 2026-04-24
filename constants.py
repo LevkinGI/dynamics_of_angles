@@ -177,10 +177,10 @@ H_1700 = load_exp(Path('measurement/H_1700.xlsx'))
 
 T_init, H_init = 320, 1000
 alpha_scale_init = 0.6
-k_scale_init     = 1.4
-m_scale_init     = 1.15
+k_scale_init     = 1.0
+m_scale_init     = 1.0
 M_scale_init     = 1.0
-lam_scale_init   = 0.5
+lam_scale_init   = 0.4
 knock_scale_init = 1.0
 
 # Исходные параметры (Материал 1)
