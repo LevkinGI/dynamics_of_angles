@@ -185,7 +185,7 @@ T_init = 320
 
 gamma = 1.76e7              # рад/(с·Oe)
 lam_1 = 12500
-lam_2 = 10000 # Заглушка!
+lam_2 = 10000 # Заглушка
 alpha_1 = 1e-3
 alpha_2 = 1.7e-2
 h_IFE = 7500                # Ое
@@ -193,7 +193,7 @@ delta_t = 250e-15           # с
 
 def K_T(T: Iterable[float] | float) -> np.ndarray:
     """Анизотропия как функция температуры."""
-    return 0.522 * (T - 358.0) ** 2
+    return 0.522 * (T - 370.0) ** 2
 
 def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.ndarray | float:
     """Вычисление магнитной восприимчивости."""
@@ -202,7 +202,7 @@ def chi_func(m: np.ndarray | float, M: np.ndarray | float, lam: float) -> np.nda
     return 1.0 / (lam * denom)
 
 # Загрузка данных для материала 1
-m_array_1 = np.load('m_array_new.npy')
+m_array_1 = np.load('m_array_18.07.2025.npy')
 M_array_1 = np.load('M_array_18.07.2025.npy')
 K_array_1 = K_T(T_vals_1)
 
