@@ -179,7 +179,7 @@ app.layout = html.Div([
                 label='Скачивать картинки в векторном формате .svg',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px"}
+                style={"marginLeft": "40px", "marginBottom": "10px"}
                 ),
             daq.BooleanSwitch(
                 id='eng-ru-switch',
