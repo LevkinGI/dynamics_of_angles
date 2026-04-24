@@ -175,13 +175,20 @@ T_320 = load_exp(Path('measurement/T_320.xlsx'))
 H_1000 = load_exp(Path('measurement/H_1000.xlsx'))
 H_1700 = load_exp(Path('measurement/H_1700.xlsx'))
 
+T_init, H_init = 320, 1000
+alpha_scale_init = 0.6
+k_scale_init     = 1.4
+m_scale_init     = 1.15
+M_scale_init     = 1.0
+lam_scale_init   = 0.5
+knock_scale_init = 1.0
+
 # Исходные параметры (Материал 1)
 H_step = 10
 H_lim = 2000
 H_vals = np.arange(0, H_lim + 1, H_step)
 T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
-T_init = 320
 
 gamma = 1.76e7              # рад/(с·Oe)
 lam_1 = 12500
@@ -346,4 +353,8 @@ __all__ = [
     # данные
     'T_298', 'T_308', 'T_320',
     'H_1000', 'H_1700',
+    # начальные значения ползунков
+    'T_init', 'H_init',
+    'alpha_scale_init',  'k_scale_init', 'm_scale_init',
+    'M_scale_init', 'lam_scale_init', 'knock_scale_init',
 ]
