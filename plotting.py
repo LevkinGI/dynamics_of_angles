@@ -1,4 +1,4 @@
-# plotting.py
+.# plotting.py
 import plotly.graph_objs as go
 import plotly.colors as pc
 import numpy as np
@@ -627,23 +627,23 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, language='eng'):
         margin=dict(l=120, r=20, t=10, b=70),
         scene=dict(
             xaxis=dict(
-                title=dict(text=tr['magnetic_field_axis'], font=title_font), # Убрали pad +
+                title=dict(text='')  # dict(text=tr['magnetic_field_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
             ),
             yaxis=dict(
-                title=dict(text=tr['temperature_axis'], font=title_font), # Убрали pad +
+                title=dict(text='')  # dict(text=tr['temperature_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
             ),
             zaxis=dict(
-                title=dict(text=tr['frequency_axis'], font=title_font), # Убрали pad +
+                title=dict(text='')  # dict(text=tr['frequency_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
             ),
             camera=dict(projection=dict(type='orthographic')),
             aspectmode='manual',
-            aspectratio=dict(x=1, y=1, z=0.7),
+            aspectratio=dict(x=1, y=1, z=0.3),
         ),
         legend=dict(
             font=dict(family="Times New Roman, Times, serif", size=12, color="black"),
