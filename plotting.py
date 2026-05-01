@@ -577,7 +577,7 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, language='eng'):
     Hmin, Hmax = float(np.nanmin(H_kOe)), float(np.nanmax(H_kOe))
     x_plane = np.array([[Hmin, Hmax], [Hmin, Hmax]])
     y_plane = np.array([[T_plane, T_plane], [T_plane, T_plane]])
-    z_plane = np.array([[0, 0], [zmax, zmax]])
+    z_plane = np.array([[zmin, zmin], [zmax, zmax]])
 
     title_font = dict(family="Times New Roman, Times, serif", size=18, color="black")
     tick_font  = dict(family="Times New Roman, Times, serif", size=14, color="black")
@@ -637,7 +637,6 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, language='eng'):
                 tickcolor="black",
             ),
             zaxis=dict(
-                range=[0, zmax],
                 title=dict(text=''),  # dict(text=tr['frequency_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
