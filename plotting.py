@@ -627,18 +627,18 @@ def create_freq_fig(T_vals, H_vals, freq_res_grid, language='eng'):
         margin=dict(l=120, r=20, t=10, b=70),
         scene=dict(
             xaxis=dict(
-                title=dict(text='')  # dict(text=tr['magnetic_field_axis'], font=title_font),
+                title=dict(text=''),  # dict(text=tr['magnetic_field_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
             ),
             yaxis=dict(
-                title=dict(text='')  # dict(text=tr['temperature_axis'], font=title_font),
+                title=dict(text=''),  # dict(text=tr['temperature_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
             ),
             zaxis=dict(
                 range=[0, zmax],
-                title=dict(text='')  # dict(text=tr['frequency_axis'], font=title_font),
+                title=dict(text=''),  # dict(text=tr['frequency_axis'], font=title_font),
                 tickfont=tick_font,
                 tickcolor="black",
             ),
