@@ -1,4 +1,4 @@
-.# plotting.py
+# plotting.py
 import plotly.graph_objs as go
 import plotly.colors as pc
 import numpy as np
