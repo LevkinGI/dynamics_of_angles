@@ -582,7 +582,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
     if use_theory_inset:
         layout_kwargs.update(
             xaxis2=dict(
-                domain=[0.57, 0.96],
+                domain=[0.4, 0.96],
                 anchor="y2",
                 tickfont=inset_tick_font,
                 tickcolor="black",
@@ -596,7 +596,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 zeroline=False,
             ),
             yaxis2=dict(
-                domain=[0.55, 0.93],
+                domain=[0.6, 0.9],
                 anchor="x2",
                 tickfont=inset_tick_font,
                 tickcolor="black",
@@ -609,31 +609,15 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 gridwidth=1,
                 zeroline=False,
             ),
-            annotations=[
-                dict(
-                    text=tr.get(
-                        'theory_inset_title',
-                        'Theory' if language == 'eng' else 'Теория'
-                    ),
-                    x=0.765,
-                    y=0.95,
-                    xref="paper",
-                    yref="paper",
-                    showarrow=False,
-                    font=inset_title_font,
-                    xanchor="center",
-                    yanchor="bottom"
-                )
-            ],
             shapes=[
                 dict(
                     type="rect",
                     xref="paper",
                     yref="paper",
-                    x0=0.57,
+                    x0=0.4,
                     x1=0.96,
-                    y0=0.55,
-                    y1=0.93,
+                    y0=0.6,
+                    y1=0.9,
                     line=dict(color="black", width=1),
                     fillcolor="white",
                     layer="below"
