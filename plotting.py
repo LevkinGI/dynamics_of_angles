@@ -519,7 +519,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
             err_y_hf[m_cross] = err_tmp
 
         if use_theory_inset:
-            def _add_fast_linear_fit(x, y, color, name):
+            def _add_fast_linear_fit(x, y, color):
                 mask = np.isfinite(x) & np.isfinite(y)
                 if np.count_nonzero(mask) < 2:
                     return
@@ -544,13 +544,12 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     x=x_fit,
                     y=y_fit,
                     mode='lines',
-                    name=name,
                     line=dict(width=2, color=color, dash="dash"),
                     hoverinfo='skip'
                 ))
 
-            _add_fast_linear_fit(H_exp_kOe, y_lf, LF_COLOR, 'LF linear fit')
-            _add_fast_linear_fit(H_exp_kOe, y_hf, HF_COLOR, 'HF linear fit')
+            _add_fast_linear_fit(H_exp / 1000, y_lf, LF_COLOR)
+            _add_fast_linear_fit(H_exp / 1000, y_hf, HF_COLOR)
 
         fig.add_trace(go.Scatter(
             x=H_exp / 1000.0,
