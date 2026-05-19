@@ -620,9 +620,16 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
         layout_kwargs["annotations"] = fit_annotations
 
     if use_theory_inset:
+        if T == 320:
+            x0, x1 = 0.4, 0.96
+            y0, y1 = 0.6, 0.85
+        else:
+            x0, x1 = 0.4, 0.96
+            y0, y1 = 0.37, 0.62
+            
         layout_kwargs.update(
             xaxis2=dict(
-                domain=[0.4, 0.96],
+                domain=[x0, x1],
                 anchor="y2",
                 tickfont=inset_tick_font,
                 tickcolor="black",
@@ -636,7 +643,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 zeroline=False,
             ),
             yaxis2=dict(
-                domain=[0.6, 0.85],
+                domain=[y0, y1],
                 anchor="x2",
                 tickfont=inset_tick_font,
                 tickcolor="black",
@@ -654,10 +661,10 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     type="rect",
                     xref="paper",
                     yref="paper",
-                    x0=0.4,
-                    x1=0.96,
-                    y0=0.6,
-                    y1=0.85,
+                    x0=x0,
+                    x1=x1,
+                    y0=y0,
+                    y1=y1,
                     line=dict(color="black", width=1),
                     fillcolor="white",
                     layer="below"
