@@ -571,7 +571,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 label_text = f"df/dH = {sign}{abs(slope_gamma):.1f}γ"
 
                 label_x_frac = 0.8 if slope >= 0 else 0.5
-                label_yshift = -25 if slope >= 0 else -30
+                label_yshift = -40 if slope >= 0 else -35
                 x_label = x0 + label_x_frac * (x1 - x0)
                 y_label = slope * x_label + intercept
 
