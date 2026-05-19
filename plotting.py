@@ -550,7 +550,12 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 slope = np.sum(w * dx * dy) / den
                 intercept = y_mean - slope * x_mean
 
-                x_fit = np.array([x_fit_src[0], x_fit_src[-1]], dtype=float)
+                x0 = np.min(x_fit_src)
+                x1 = np.max(x_fit_src)
+                if x0 == x1:
+                    return
+
+                x_fit = np.array([x0, x1], dtype=float)
                 y_fit = slope * x_fit + intercept
 
                 fig.add_trace(go.Scatter(
