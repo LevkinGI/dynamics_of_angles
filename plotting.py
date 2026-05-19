@@ -526,8 +526,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 x_fit_src = x[mask]
                 y_fit_src = y[mask]
 
-                x0 = np.min(x_fit_src)
-                x1 = np.max(x_fit_src)
+                x0 = 0    # np.min(x_fit_src)
+                x1 = 2    # np.max(x_fit_src)
                 if x0 == x1:
                     return
 
