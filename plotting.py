@@ -450,8 +450,11 @@ def create_H_fix_fig(T_vals, H_fix_res, H, data=None, language='eng'):
 
     return fig
 
-def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng'):
+def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_inset=False):
     tr = _tr(language)
+
+    use_theory_inset = theory_inset and (data is not None)
+
     H_kOe = np.asarray(H_vals, dtype=float) / 1000.0
     (f1, t1), (f2, t2) = T_fix_res
     f1 = np.asarray(f1, dtype=float)
@@ -465,15 +468,31 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng'):
     title_font = dict(family="Times New Roman, Times, serif", size=28, color="black")
     tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
 
+    inset_tick_font = dict(family="Times New Roman, Times, serif", size=16, color="black")
+    inset_title_font = dict(family="Times New Roman, Times, serif", size=18, color="black")
+
     fig = go.Figure()
 
+    theory_axis_kwargs = {}
+    if use_theory_inset:
+        theory_axis_kwargs = dict(xaxis="x2", yaxis="y2")
+
     fig.add_trace(go.Scatter(
-        x=H_kOe, y=f1, mode='lines', name='HF',
-        line=dict(width=2, color=HF_COLOR)
+        x=H_kOe,
+        y=f1,
+        mode='lines',
+        name='HF',
+        line=dict(width=2, color=HF_COLOR),
+        **theory_axis_kwargs
     ))
+
     fig.add_trace(go.Scatter(
-        x=H_kOe, y=f2, mode='lines', name='LF',
-        line=dict(width=2, color=LF_COLOR)
+        x=H_kOe,
+        y=f2,
+        mode='lines',
+        name='LF',
+        line=dict(width=2, color=LF_COLOR),
+        **theory_axis_kwargs
     ))
 
     if data is not None:
@@ -490,36 +509,45 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng'):
 
         if T == 320:
             m_cross = H_exp >= 900
+
             tmp = y_lf[m_cross].copy()
             y_lf[m_cross] = y_hf[m_cross]
             y_hf[m_cross] = tmp
+
             err_tmp = err_y_lf[m_cross].copy()
             err_y_lf[m_cross] = err_y_hf[m_cross]
             err_y_hf[m_cross] = err_tmp
 
         fig.add_trace(go.Scatter(
-            x=np.asarray(H_exp, dtype=float) / 1000.0, y=np.asarray(y_lf, dtype=float),
-            mode='markers', name='LF' + tr['experiment_suffix'],
+            x=H_exp / 1000.0,
+            y=np.asarray(y_lf, dtype=float),
+            mode='markers',
+            name='LF' + tr['experiment_suffix'],
             error_y=dict(type="data", array=np.asarray(err_y_lf, dtype=float)),
             marker=dict(color=LF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
+
         fig.add_trace(go.Scatter(
-            x=np.asarray(H_exp, dtype=float) / 1000.0, y=np.asarray(y_hf, dtype=float),
-            mode='markers', name='HF' + tr['experiment_suffix'],
+            x=H_exp / 1000.0,
+            y=np.asarray(y_hf, dtype=float),
+            mode='markers',
+            name='HF' + tr['experiment_suffix'],
             error_y=dict(type="data", array=np.asarray(err_y_hf, dtype=float)),
             marker=dict(color=HF_COLOR, size=dot_size, line=dict(width=1, color="#000000"))
         ))
 
-    fig.update_layout(
+    layout_kwargs = dict(
         template="plotly_white",
         font=dict(family="Times New Roman, Times, serif", size=14, color="black"),
         margin=dict(l=90, r=20, t=10, b=70),
         title=dict(
             text=tr['temperature_title'].format(value=f"{T:g}"),
-            x=0.5, y=0.98,
+            x=0.5,
+            y=0.98,
             xref='paper',
             yref='paper',
-            xanchor='center', yanchor='top',
+            xanchor='center',
+            yanchor='top',
             font=title_font
         ),
         xaxis=dict(
@@ -550,6 +578,70 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng'):
         ),
         showlegend=False
     )
+
+    if use_theory_inset:
+        layout_kwargs.update(
+            xaxis2=dict(
+                domain=[0.57, 0.96],
+                anchor="y2",
+                tickfont=inset_tick_font,
+                tickcolor="black",
+                showline=True,
+                linewidth=1,
+                linecolor="black",
+                mirror=True,
+                showgrid=True,
+                gridcolor="#dddddd",
+                gridwidth=1,
+                zeroline=False,
+            ),
+            yaxis2=dict(
+                domain=[0.55, 0.93],
+                anchor="x2",
+                tickfont=inset_tick_font,
+                tickcolor="black",
+                showline=True,
+                linewidth=1,
+                linecolor="black",
+                mirror=True,
+                showgrid=True,
+                gridcolor="#dddddd",
+                gridwidth=1,
+                zeroline=False,
+            ),
+            annotations=[
+                dict(
+                    text=tr.get(
+                        'theory_inset_title',
+                        'Theory' if language == 'eng' else 'Теория'
+                    ),
+                    x=0.765,
+                    y=0.95,
+                    xref="paper",
+                    yref="paper",
+                    showarrow=False,
+                    font=inset_title_font,
+                    xanchor="center",
+                    yanchor="bottom"
+                )
+            ],
+            shapes=[
+                dict(
+                    type="rect",
+                    xref="paper",
+                    yref="paper",
+                    x0=0.57,
+                    x1=0.96,
+                    y0=0.55,
+                    y1=0.93,
+                    line=dict(color="black", width=1),
+                    fillcolor="white",
+                    layer="below"
+                )
+            ]
+        )
+
+    fig.update_layout(**layout_kwargs)
 
     return fig
 
