@@ -576,7 +576,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     yref="y",
                     text=label_text,
                     showarrow=False,
-                    font={**inset_tick_font, "color": color},
+                    font={**tick_font, "color": color},
                     bgcolor="rgba(255,255,255,0.75)",
                     borderpad=2,
                     xanchor="center",
