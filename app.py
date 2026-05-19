@@ -155,7 +155,7 @@ app.layout = html.Div([
                 label='Моделирование при изменении параметров',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "10px"}
+                style={"marginLeft": "40px", "marginBottom": "20px"}
                 ),
             daq.BooleanSwitch(
                 id='two-pulse-switch',
@@ -163,23 +163,36 @@ app.layout = html.Div([
                 label='Моделирование с двумя импульсами',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "10px"}
+                style={"marginLeft": "40px", "marginBottom": "20px"}
             ),
-            daq.BooleanSwitch(
-                id='exp-view-switch',
-                on=True,
-                label='Отображать экспериментальные данные',
-                labelPosition='top',
-                color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "10px"}
-                ),
             daq.BooleanSwitch(
                 id='png-svg-switch',
                 on=False,
                 label='Скачивать картинки в векторном формате .svg',
                 labelPosition='top',
                 color='#119DFF',
-                style={"marginLeft": "40px", "marginBottom": "10px"}
+                style={"marginLeft": "40px"}
+                ),
+            ],
+            style={"marginLeft": "30px", "position": "relative"}
+        ),
+
+        html.Div([
+            daq.BooleanSwitch(
+                id='exp-view-switch',
+                on=True,
+                label='Отображать экспериментальные данные',
+                labelPosition='top',
+                color='#119DFF',
+                style={"marginLeft": "40px", "marginBottom": "20px"}
+                ),
+            daq.BooleanSwitch(
+                id='inset-switch',
+                on=True,
+                label='Рисовать теорию в инсете',
+                labelPosition='top',
+                color='#119DFF',
+                style={"marginLeft": "40px", "marginBottom": "20px"}
                 ),
             daq.BooleanSwitch(
                 id='eng-ru-switch',
@@ -541,13 +554,14 @@ def move_knock_slider(logk):
     Input('material-dropdown', 'value'),
     Input('exp-view-switch',  'on'),
     Input('png-svg-switch', 'on'),
+    Input('inset-switch', 'on'),
     Input('eng-ru-switch', 'on'),],
     [State('H_fix-graph', 'figure'),
      State('T_fix-graph', 'figure'),
      State('phase-graph', 'figure'),
      State('frequency-surface-graph', 'figure'),],
 )
-def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, ru_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig):
+def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on, svg_on, inset_on, ru_on, H_fix_fig, T_fix_fig, phase_fig, freq_fig):
     ctx = callback_context
     triggered_inputs = [t['prop_id'] for t in ctx.triggered]
     switch_on = any('png-svg-switch' in ti for ti in triggered_inputs)
@@ -593,7 +607,7 @@ def live_fix_graphs(H, T, a_val, k_val, m_val, M_val, lam_val, material, exp_on,
         H_data = None
     
     H_fix_fig = create_H_fix_fig(T_vals, H_fix_res, H, data=H_data, language=language)
-    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data, language=language)
+    T_fix_fig = create_T_fix_fig(H_vals, T_fix_res, T, data=T_data, language=language, theory_inset=inset_on)
     freq_fig = create_freq_fig(T_vals[4::6], H_vals[::2], freq_res_grid, language=language)
     phase_fig = create_phase_fig(T_vals[::6], theta_0, language=language)
 
