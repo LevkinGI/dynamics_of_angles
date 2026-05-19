@@ -467,10 +467,9 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
 
     title_font = dict(family="Times New Roman, Times, serif", size=28, color="black")
     tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
-
     inset_tick_font = dict(family="Times New Roman, Times, serif", size=16, color="black")
-    inset_title_font = dict(family="Times New Roman, Times, serif", size=18, color="black")
 
+    fit_annotations = []
     fig = go.Figure()
 
     theory_axis_kwargs = {}
@@ -560,6 +559,30 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     line=dict(width=2, color=color, dash="dash"),
                     hoverinfo='skip'
                 ))
+                
+                slope_gamma = 2.0 * np.pi * slope * 1e6 / gamma
+                sign = "−" if slope_gamma < 0 else ""
+                label_text = f"df/dH = {sign}{abs(slope_gamma):.1f}γ"
+
+                label_x_frac = 0.75 if slope >= 0 else 0.62
+                label_yshift = 16 if slope >= 0 else -18
+                x_label = x0 + label_x_frac * (x1 - x0)
+                y_label = slope * x_label + intercept
+
+                fit_annotations.append(dict(
+                    x=x_label,
+                    y=y_label,
+                    xref="x",
+                    yref="y",
+                    text=label_text,
+                    showarrow=False,
+                    font={**inset_tick_font, "color": color},
+                    bgcolor="rgba(255,255,255,0.75)",
+                    borderpad=2,
+                    xanchor="center",
+                    yanchor="middle",
+                    yshift=label_yshift
+                ))
 
             _add_fast_linear_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
             _add_fast_linear_fit(H_exp / 1000, y_hf, err_y_hf, HF_COLOR)
@@ -625,6 +648,9 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
         ),
         showlegend=False
     )
+
+    if fit_annotations:
+        layout_kwargs["annotations"] = fit_annotations
 
     if use_theory_inset:
         layout_kwargs.update(
