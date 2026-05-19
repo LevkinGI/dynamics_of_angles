@@ -519,13 +519,13 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
             err_y_hf[m_cross] = err_tmp
 
         if use_theory_inset:
-            def _add_fast_linear_fit(x, y, yerr, color):
+            def _get_fit_data(x, y, yerr):
                 mask = np.isfinite(x) & np.isfinite(y) & np.isfinite(yerr) & (yerr > 0)
 
                 if np.count_nonzero(mask) < 2:
                     mask = np.isfinite(x) & np.isfinite(y)
                     if np.count_nonzero(mask) < 2:
-                        return
+                        return None
                     x_fit_src = x[mask]
                     y_fit_src = y[mask]
                     w = np.ones_like(x_fit_src, dtype=float)
@@ -537,23 +537,60 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
 
                 w_sum = np.sum(w)
                 if w_sum <= 0:
-                    return
-
-                x_mean = np.sum(w * x_fit_src) / w_sum
-                y_mean = np.sum(w * y_fit_src) / w_sum
-                dx = x_fit_src - x_mean
-                dy = y_fit_src - y_mean
-                den = np.sum(w * dx * dx)
-                if den == 0:
-                    return
-
-                slope = np.sum(w * dx * dy) / den
-                intercept = y_mean - slope * x_mean
+                    return None
 
                 x0 = np.min(x_fit_src)
                 x1 = np.max(x_fit_src)
                 if x0 == x1:
+                    return None
+
+                return x_fit_src, y_fit_src, w, w_sum, x0, x1
+
+            # Previous weighted linear fit with free slope.
+            # def _add_fast_linear_fit(x, y, yerr, color):
+            #     fit_data = _get_fit_data(x, y, yerr)
+            #     if fit_data is None:
+            #         return
+            #
+            #     x_fit_src, y_fit_src, w, w_sum, x0, x1 = fit_data
+            #
+            #     x_mean = np.sum(w * x_fit_src) / w_sum
+            #     y_mean = np.sum(w * y_fit_src) / w_sum
+            #     dx = x_fit_src - x_mean
+            #     dy = y_fit_src - y_mean
+            #     den = np.sum(w * dx * dx)
+            #     if den == 0:
+            #         return
+            #
+            #     slope = np.sum(w * dx * dy) / den
+            #     intercept = y_mean - slope * x_mean
+            #
+            #     x_fit = np.array([x0, x1], dtype=float)
+            #     y_fit = slope * x_fit + intercept
+            #
+            #     fig.add_trace(go.Scatter(
+            #         x=x_fit,
+            #         y=y_fit,
+            #         mode='lines',
+            #         line=dict(width=2, color=color, dash="dash"),
+            #         hoverinfo='skip'
+            #     ))
+            #
+            # _add_fast_linear_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
+            # _add_fast_linear_fit(H_exp / 1000, y_hf, err_y_hf, HF_COLOR)
+
+            def _add_fixed_slope_fit(x, y, yerr, color):
+                fit_data = _get_fit_data(x, y, yerr)
+                if fit_data is None:
                     return
+
+                x_fit_src, y_fit_src, w, w_sum, x0, x1 = fit_data
+
+                # x is measured in kOe, y is measured in GHz.
+                # dω/dH = ±gamma corresponds to df/dH = ±gamma / (2π · 10^6) in GHz/kOe.
+                slope_gamma_sign = 1.0 if color == LF_COLOR else -1.0
+                slope = slope_gamma_sign * gamma / (2.0 * np.pi * 1e6)
+                intercept = np.sum(w * (y_fit_src - slope * x_fit_src)) / w_sum
 
                 x_fit = np.array([x0, x1], dtype=float)
                 y_fit = slope * x_fit + intercept
@@ -565,33 +602,12 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     line=dict(width=2, color=color, dash="dash"),
                     hoverinfo='skip'
                 ))
-                
-                slope_gamma = 2.0 * np.pi * slope * 1e6 / gamma
-                sign = "−" if slope_gamma < 0 else ""
-                label_text = f"df/dH = {sign}{abs(slope_gamma):.1f}γ"
 
-                label_x_frac = 0.8 if slope >= 0 else 0.5
-                label_yshift = -40 if slope >= 0 else -35
-                x_label = x0 + label_x_frac * (x1 - x0)
-                y_label = slope * x_label + intercept
+            _add_fixed_slope_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
+            _add_fixed_slope_fit(H_exp / 1000, y_hf, err_y_hf, HF_COLOR)
 
-                fit_annotations.append(dict(
-                    x=x_label,
-                    y=y_label,
-                    xref="x",
-                    yref="y",
-                    text=label_text,
-                    showarrow=False,
-                    font={**tick_font, "color": color},
-                    bgcolor="rgba(255,255,255,0.75)",
-                    borderpad=2,
-                    xanchor="center",
-                    yanchor="middle",
-                    yshift=label_yshift
-                ))
-
-            _add_fast_linear_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
-            _add_fast_linear_fit(H_exp / 1000, y_hf, err_y_hf, HF_COLOR)
+            # _add_fast_linear_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
+            # _add_fast_linear_fit(H_exp / 1000, y_hf, err_y_hf, HF_COLOR)
 
         fig.add_trace(go.Scatter(
             x=H_exp / 1000.0,
