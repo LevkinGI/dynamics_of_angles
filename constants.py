@@ -175,7 +175,7 @@ T_320 = load_exp(Path('measurement/T_320.xlsx'))
 H_1000 = load_exp(Path('measurement/H_1000.xlsx'))
 H_1700 = load_exp(Path('measurement/H_1700.xlsx'))
 
-T_init, H_init = 320, 1000
+T_init, H_init = 320, 1700
 alpha_scale_init = 0.6
 k_scale_init     = 1.0
 m_scale_init     = 1.0
