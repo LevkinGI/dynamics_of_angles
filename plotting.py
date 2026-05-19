@@ -518,6 +518,40 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
             err_y_lf[m_cross] = err_y_hf[m_cross]
             err_y_hf[m_cross] = err_tmp
 
+        if use_theory_inset:
+            def _add_fast_linear_fit(x, y, color, name):
+                mask = np.isfinite(x) & np.isfinite(y)
+                if np.count_nonzero(mask) < 2:
+                    return
+
+                x_fit_src = x[mask]
+                y_fit_src = y[mask]
+
+                x_mean = x_fit_src.mean()
+                y_mean = y_fit_src.mean()
+                dx = x_fit_src - x_mean
+                den = np.dot(dx, dx)
+                if den == 0:
+                    return
+
+                slope = np.dot(dx, y_fit_src - y_mean) / den
+                intercept = y_mean - slope * x_mean
+
+                x_fit = np.array([x_fit_src[0], x_fit_src[-1]], dtype=float)
+                y_fit = slope * x_fit + intercept
+
+                fig.add_trace(go.Scatter(
+                    x=x_fit,
+                    y=y_fit,
+                    mode='lines',
+                    name=name,
+                    line=dict(width=2, color=color, dash="dash"),
+                    hoverinfo='skip'
+                ))
+
+            _add_fast_linear_fit(H_exp_kOe, y_lf, LF_COLOR, 'LF linear fit')
+            _add_fast_linear_fit(H_exp_kOe, y_hf, HF_COLOR, 'HF linear fit')
+
         fig.add_trace(go.Scatter(
             x=H_exp / 1000.0,
             y=np.asarray(y_lf, dtype=float),
