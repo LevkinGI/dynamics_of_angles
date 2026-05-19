@@ -561,8 +561,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     hoverinfo='skip'
                 ))
 
-            _add_fast_linear_fit(H_exp / 1000, y_lf, LF_COLOR)
-            _add_fast_linear_fit(H_exp / 1000, y_hf, HF_COLOR)
+            _add_fast_linear_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
+            _add_fast_linear_fit(H_exp / 1000, y_hf, err_y_hf, HF_COLOR)
 
         fig.add_trace(go.Scatter(
             x=H_exp / 1000.0,
