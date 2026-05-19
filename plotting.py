@@ -596,7 +596,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 zeroline=False,
             ),
             yaxis2=dict(
-                domain=[0.6, 0.9],
+                domain=[0.6, 0.85],
                 anchor="x2",
                 tickfont=inset_tick_font,
                 tickcolor="black",
@@ -617,7 +617,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     x0=0.4,
                     x1=0.96,
                     y0=0.6,
-                    y1=0.9,
+                    y1=0.85,
                     line=dict(color="black", width=1),
                     fillcolor="white",
                     layer="below"
