@@ -470,6 +470,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
     tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
     inset_tick_font = dict(family="Times New Roman, Times, serif", size=16, color="black")
 
+    fit_annotations = []
     fig = go.Figure()
 
     theory_axis_kwargs = {}
@@ -549,6 +550,11 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 slope = np.sum(w * dx * dy) / den
                 intercept = y_mean - slope * x_mean
 
+                x0 = np.min(x_fit_src)
+                x1 = np.max(x_fit_src)
+                if x0 == x1:
+                    return
+
                 x_fit = np.array([x0, x1], dtype=float)
                 y_fit = slope * x_fit + intercept
 
@@ -558,6 +564,30 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                     mode='lines',
                     line=dict(width=2, color=color, dash="dash"),
                     hoverinfo='skip'
+                ))
+                
+                slope_gamma = 2.0 * np.pi * slope * 1e6 / gamma
+                sign = "−" if slope_gamma < 0 else ""
+                label_text = f"df/dH = {sign}{abs(slope_gamma):.1f}γ"
+
+                label_x_frac = 0.8 if slope >= 0 else 0.5
+                label_yshift = -40 if slope >= 0 else -35
+                x_label = x0 + label_x_frac * (x1 - x0)
+                y_label = slope * x_label + intercept
+
+                fit_annotations.append(dict(
+                    x=x_label,
+                    y=y_label,
+                    xref="x",
+                    yref="y",
+                    text=label_text,
+                    showarrow=False,
+                    font={**tick_font, "color": color},
+                    bgcolor="rgba(255,255,255,0.75)",
+                    borderpad=2,
+                    xanchor="center",
+                    yanchor="middle",
+                    yshift=label_yshift
                 ))
 
             _add_fast_linear_fit(H_exp / 1000, y_lf, err_y_lf, LF_COLOR)
@@ -623,6 +653,9 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
         ),
         showlegend=False
     )
+
+    if fit_annotations:
+        layout_kwargs["annotations"] = fit_annotations
 
     if use_theory_inset:
         layout_kwargs.update(
