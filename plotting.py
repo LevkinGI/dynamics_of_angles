@@ -570,8 +570,8 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
                 sign = "−" if slope_gamma < 0 else ""
                 label_text = f"df/dH = {sign}{abs(slope_gamma):.1f}γ"
 
-                label_x_frac = 0.75 if slope >= 0 else 0.62
-                label_yshift = 16 if slope >= 0 else -18
+                label_x_frac = 0.8 if slope >= 0 else 0.58
+                label_yshift = -24 if slope >= 0 else -28
                 x_label = x0 + label_x_frac * (x1 - x0)
                 y_label = slope * x_label + intercept
 
@@ -626,7 +626,6 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
             font=title_font
         ),
         xaxis=dict(
-            range=[0, 2],
             title=dict(text=tr['magnetic_field_axis'], font=title_font, standoff=16),
             tickfont=tick_font,
             tickcolor="black",
