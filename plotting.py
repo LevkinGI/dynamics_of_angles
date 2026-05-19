@@ -2,6 +2,7 @@
 import plotly.graph_objs as go
 import plotly.colors as pc
 import numpy as np
+from constants import gamma
 
 LF_COLOR = '#e74c3c'
 LF_LIGHT = '#f3c1b7'
