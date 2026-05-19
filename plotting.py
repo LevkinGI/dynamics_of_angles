@@ -519,22 +519,35 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
             err_y_hf[m_cross] = err_tmp
 
         if use_theory_inset:
-            def _add_fast_linear_fit(x, y, color):
-                mask = np.isfinite(x) & np.isfinite(y)
+            def _add_fast_linear_fit(x, y, yerr, color):
+                mask = np.isfinite(x) & np.isfinite(y) & np.isfinite(yerr) & (yerr > 0)
+
                 if np.count_nonzero(mask) < 2:
+                    mask = np.isfinite(x) & np.isfinite(y)
+                    if np.count_nonzero(mask) < 2:
+                        return
+                    x_fit_src = x[mask]
+                    y_fit_src = y[mask]
+                    w = np.ones_like(x_fit_src, dtype=float)
+                else:
+                    x_fit_src = x[mask]
+                    y_fit_src = y[mask]
+                    sigma = yerr[mask]
+                    w = 1.0 / (sigma * sigma)
+
+                w_sum = np.sum(w)
+                if w_sum <= 0:
                     return
 
-                x_fit_src = x[mask]
-                y_fit_src = y[mask]
-
-                x_mean = x_fit_src.mean()
-                y_mean = y_fit_src.mean()
+                x_mean = np.sum(w * x_fit_src) / w_sum
+                y_mean = np.sum(w * y_fit_src) / w_sum
                 dx = x_fit_src - x_mean
-                den = np.dot(dx, dx)
+                dy = y_fit_src - y_mean
+                den = np.sum(w * dx * dx)
                 if den == 0:
                     return
 
-                slope = np.dot(dx, y_fit_src - y_mean) / den
+                slope = np.sum(w * dx * dy) / den
                 intercept = y_mean - slope * x_mean
 
                 x_fit = np.array([x_fit_src[0], x_fit_src[-1]], dtype=float)
