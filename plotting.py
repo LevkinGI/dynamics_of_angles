@@ -551,7 +551,7 @@ def create_T_fix_fig(H_vals, T_fix_res, T, data=None, language='eng', theory_ins
             font=title_font
         ),
         xaxis=dict(
-            range=[0, 2]
+            range=[0, 2],
             title=dict(text=tr['magnetic_field_axis'], font=title_font, standoff=16),
             tickfont=tick_font,
             tickcolor="black",
