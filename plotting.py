@@ -193,7 +193,7 @@ def create_yz_fig(
                 ys += [z[i], z[i + 1], None]
 
             fig.add_trace(go.Scattergl(
-                x=graph_scale, y=0,
+                x=xs, y=ys,
                 mode="lines",
                 line=dict(width=4, color=bin_colors[b]),
                 hoverinfo="skip",
