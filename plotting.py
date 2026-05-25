@@ -139,11 +139,12 @@ def create_yz_fig(
     pulse2_axis_on=False,
     pulse2_dir_on=False,
     knock_scale=1.0,
+    graph_scale=1/3.0,
     language='eng',
 ):
     tr = _tr(language)
-    y = 100.0 * y
-    z = 100.0 * z
+    y = 100.0 * y * graph_scale
+    z = 100.0 * z * graph_scale
 
     lim = float(np.max([np.max(np.abs(y)), np.max(np.abs(z))]))
     limits = (-1.1 * lim, 1.1 * lim)
@@ -156,7 +157,7 @@ def create_yz_fig(
 
     fig = go.Figure()
 
-    if len(y) >= 2:
+    if len(y) >= 2:        
         tmin, tmax = float(np.min(time)), float(np.max(time))
         if np.isclose(tmax, tmin):
             t_norm = np.zeros_like(time)
@@ -168,6 +169,18 @@ def create_yz_fig(
 
         bin_pos = np.linspace(0, 1, n_bins)
         bin_colors = pc.sample_colorscale(colorscale, bin_pos)
+        
+        fig.add_annotation(
+            x=dy, y=0,
+            ax=0, ay=0,
+            xref="x", yref="y",
+            axref="x", ayref="y",
+            showarrow=True,
+            arrowhead=3,
+            arrowsize=1,
+            arrowwidth=4,
+            arrowcolor=bin_colors[0],
+        )
 
         for b in range(n_bins):
             idx = np.where(seg_bin == b)[0]
@@ -179,7 +192,7 @@ def create_yz_fig(
                 ys += [z[i], z[i + 1], None]
 
             fig.add_trace(go.Scattergl(
-                x=xs, y=ys,
+                x=graph_scale, y=0,
                 mode="lines",
                 line=dict(width=4, color=bin_colors[b]),
                 hoverinfo="skip",
@@ -218,6 +231,8 @@ def create_yz_fig(
 
             sgn = -1.0 if pulse2_dir_on else 1.0
             dy, dz = (sgn * knock_scale, 0.0) if pulse2_axis_on else (0.0, sgn * knock_scale)
+            dy *= graph_scale
+            dz *= graph_scale
 
             fig.add_annotation(
                 x=y0 + dy, y=z0 + dz,
