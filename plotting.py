@@ -172,7 +172,7 @@ def create_yz_fig(
         bin_colors = pc.sample_colorscale(colorscale, bin_pos)
         
         fig.add_annotation(
-            x=dy, y=0,
+            x=graph_scale, y=0,
             ax=0, ay=0,
             xref="x", yref="y",
             axref="x", ayref="y",
