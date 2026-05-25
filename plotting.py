@@ -152,7 +152,7 @@ def create_yz_fig(
     limits = (-1.1 * lim, 1.1 * lim)
 
     H_kOe = float(H_oe) / 1000.0
-    title_text = tr['field_title'].format(value=f"{H_kOe:g}")
+    title_text = tr['field_title'].format(value=f"{H_kOe:g}") if pulse2_on and (pulse2_time is not None) else ""
 
     title_font = dict(family="Times New Roman, Times, serif", size=28, color="black")
     tick_font  = dict(family="Times New Roman, Times, serif", size=24, color="black")
@@ -252,9 +252,9 @@ def create_yz_fig(
         margin=dict(l=90, r=120, t=10, b=70),
         title=dict(
             text=title_text,
-            x=0.5, y=0.98,
+            x=0.5, y=0.02,
             xref="paper", yref="paper",
-            xanchor="center", yanchor="top",
+            xanchor="center", yanchor="bottom",
             font=title_font
         ),
         xaxis=dict(
