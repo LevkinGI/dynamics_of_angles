@@ -133,15 +133,15 @@ def create_theta_fig(time, theta, theta_fit, language='eng'):
 
 def create_yz_fig(
     y, z, time, H_oe,
-    *,
     colorscale="Plasma", n_bins=300,
     pulse2_on=False,
     pulse2_time=None,
     pulse2_axis_on=False,
     pulse2_dir_on=False,
     knock_scale=1.0,
-    graph_scale=1 / 3.0,
     language='eng',
+    *,
+    graph_scale=1 / 3.0,
 ):
     tr = _tr(language)
     y = 100.0 * y * graph_scale
