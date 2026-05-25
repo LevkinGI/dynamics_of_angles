@@ -141,11 +141,12 @@ def create_yz_fig(
     knock_scale=1.0,
     language='eng',
     *,
-    graph_scale=1 / 3.0,
+    arrow_scale=1 / 4.0,
 ):
     tr = _tr(language)
-    y = 100.0 * y * graph_scale
-    z = 100.0 * z * graph_scale
+    norm = np.max(np.sqrt(y**2 + z**2))
+    y /= norm
+    z /= norm
 
     lim = float(np.max([np.max(np.abs(y)), np.max(np.abs(z))]))
     limits = (-1.1 * lim, 1.1 * lim)
@@ -172,7 +173,7 @@ def create_yz_fig(
         bin_colors = pc.sample_colorscale(colorscale, bin_pos)
         
         fig.add_annotation(
-            x=graph_scale, y=0,
+            x=arrow_scale, y=0,
             ax=0, ay=0,
             xref="x", yref="y",
             axref="x", ayref="y",
@@ -231,9 +232,7 @@ def create_yz_fig(
             z0 = float(z[idx])
 
             sgn = -1.0 if pulse2_dir_on else 1.0
-            dy, dz = (sgn * knock_scale, 0.0) if pulse2_axis_on else (0.0, sgn * knock_scale)
-            dy *= graph_scale
-            dz *= graph_scale
+            dy, dz = (sgn * knock_scale * arrow_scale, 0.0) if pulse2_axis_on else (0.0, sgn * knock_scale * arrow_scale)
 
             fig.add_annotation(
                 x=y0 + dy, y=z0 + dz,
