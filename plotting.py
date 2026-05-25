@@ -133,7 +133,7 @@ def create_theta_fig(time, theta, theta_fit, language='eng'):
 
 def create_yz_fig(
     y, z, time, H_oe,
-    colorscale="Plasma", n_bins=300,
+    colorscale="Plasma", n_bins=700,
     pulse2_on=False,
     pulse2_time=None,
     pulse2_axis_on=False,
@@ -141,7 +141,7 @@ def create_yz_fig(
     knock_scale=1.0,
     language='eng',
     *,
-    arrow_scale=1 / 4.0,
+    arrow_scale=1 / 3.0,
 ):
     tr = _tr(language)
     norm = np.max(np.sqrt(y**2 + z**2))
