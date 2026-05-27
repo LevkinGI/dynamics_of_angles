@@ -144,7 +144,7 @@ def create_yz_fig(
     arrow_scale=1 / 3.0,
 ):
     tr = _tr(language)
-    norm = np.max([y, z])
+    norm = np.max([np.abs(y), np.abs(z)])
     y /= norm
     z /= norm
 
