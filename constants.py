@@ -186,7 +186,7 @@ knock_scale_init = 1.0
 
 # Исходные параметры (Материал 1)
 H_step = 10
-H_lim = 2500
+H_lim = 2000
 H_vals = np.arange(0, H_lim + 1, H_step)
 T_vals_1 = np.linspace(290, 350, 601)
 T_vals_2 = np.linspace(290, 350, 61)
